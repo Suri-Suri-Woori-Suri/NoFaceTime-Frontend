@@ -1,0 +1,29 @@
+.Header {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100vw;
+  height: 150px;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+.Logo {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-shadow: -5px 1px 8px grey;
+  color: white;
+  letter-spacing: -0.13em;
+  font-family: "Anton", Arial, sans-serif;
+  user-select: none;
+  font-size: 45px;
+  transition: all 0.25s ease-out;
+}
+
+.letter:hover {
+  text-shadow: -6px 2px 8px grey;
+}
