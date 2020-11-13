@@ -11,7 +11,7 @@ export const signInWithGoogle = () => {
       const { POST } = API_METHOD;
       const postData = {
         email: userInfo.additionalUserInfo.profile.email,
-        nickname: userInfo.additionalUserInfo.profile.userName,
+        nickname: userInfo.additionalUserInfo.profile.name,
       };
 
       const authorizedUserWithToken = await axios.post({
