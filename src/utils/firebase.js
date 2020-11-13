@@ -1,16 +1,30 @@
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import axios from 'axios';
 
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_API_KEY,
-  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-  databaseURL: process.env.REACT_APP_DATABASE_URL,
-  projectId: process.env.REACT_APP_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_APP_ID
+import { authService, googleProvider } from '../config/firebase';
+import { API_METHOD } from '../constants';
+
+export const signInWithGoogle = () => {
+  googleProvider.addScope('email');
+
+  return authService.signInWithPopup(googleProvider)
+    .then(async (userInfo) => {
+      const { POST } = API_METHOD;
+      const postData = {
+        email: userInfo.additionalUserInfo.profile.email,
+        nickname: userInfo.additionalUserInfo.profile.userName,
+      };
+
+      const authorizedUserWithToken = await axios.post({
+        method: POST,
+        url: 'http://localhost:5000/login',
+        data: postData
+      }).then((response) => {
+        console.log("token?", response);
+      });
+
+      return authorizedUserWithToken;
+    }).catch((error) => {
+      console.error(error);
+    });
 };
 
-export const firebaseService = firebase.initializeApp(firebaseConfig);
-export const authService = firebase.auth();
-export const googleProvider = new firebase.auth.GoogleAuthProvider();

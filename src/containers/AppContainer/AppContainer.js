@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 // import { connect } from 'react-redux';
 
-import { authService } from '../../utils/firebase';
+import { authService } from '../../config/firebase';
 
 import Home from '../../components/Home/Home';
+import Header from '../../components/Header/Header';
 import Login from '../../components/Login/Login';
 import Room from '../../components/Room/Room';
 import Group from '../../components/Group/Group';
@@ -18,6 +19,7 @@ const AppContainer = () => {
     <div className={styles.AppContainer}>
       <Switch>
         <Route exact path='/'>
+          <Header />
           {
             isLoggedIn
               ? <Redirect to="/rooms" />
@@ -25,6 +27,7 @@ const AppContainer = () => {
           }
         </Route>
         <Route path='/login'>
+          <Header />
           {
             isLoggedIn
               ? <Redirect to="/rooms" />
