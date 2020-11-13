@@ -11,19 +11,21 @@
 }
 
 .Logo {
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  text-shadow: -5px 1px 8px grey;
+  text-shadow: -5px 5px 5px grey;
   color: white;
-  letter-spacing: -0.13em;
+  letter-spacing: 0px;
   font-family: "Anton", Arial, sans-serif;
   user-select: none;
   font-size: 45px;
-  transition: all 0.25s ease-out;
+  transition: all 0.05s ease-out;
+  text-decoration: none;
 }
 
 .letter:hover {
-  text-shadow: -6px 2px 8px grey;
+  transform: translateY(1px);
+  text-shadow: -4px 5px 4px grey;
 }

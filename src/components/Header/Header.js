@@ -7,22 +7,26 @@ import styles from './Header.module.css';
 const Header = () => {
   return (
     <div className={styles.Header}>
-      <div className={styles.Logo}>
-        <span className={styles.letter}>N</span>
-        <span className={styles.letter}>o</span>
-        <span className={styles.letter}>F</span>
-        <span className={styles.letter}>a</span>
-        <span className={styles.letter}>c</span>
-        <span className={styles.letter}>e</span>
-        <span className={styles.letter}>T</span>
-        <span className={styles.letter}>i</span>
-        <span className={styles.letter}>m</span>
-        <span className={styles.letter}>e</span>
-      </div>
+      <Link to='/' className={styles.Logo}>
+        <div className={styles.Logo}>
+          <div className={styles.letter}>N</div>
+          <div className={styles.letter}>o</div>
+          <div className={styles.letter}>_</div>
+          <div className={styles.letter}>F</div>
+          <div className={styles.letter}>a</div>
+          <div className={styles.letter}>c</div>
+          <div className={styles.letter}>e</div>
+          <div className={styles.letter}>T</div>
+          <div className={styles.letter}>i</div>
+          <div className={styles.letter}>m</div>
+          <div className={styles.letter}>e</div>
+        </div>
+      </Link>
       <Link to='/login'>
         <ButtonInHeader />
       </Link>
-    </div>);
+    </div>
+  );
 };
 
 export default Header;

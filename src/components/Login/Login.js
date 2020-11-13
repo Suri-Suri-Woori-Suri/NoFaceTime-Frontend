@@ -1,10 +1,20 @@
 import React from 'react';
+
 import { signInWithGoogle } from '../../utils/firebase';
 import styles from './Login.module.css';
 
-const Login = () => {
+const Login = ({ setIsLoggedIn }) => {
   const showPopUpToSignIn = async () => {
-    const loginResult = await signInWithGoogle();
+    const userData = await signInWithGoogle();
+
+    if (!userData) {
+      alert('로그인에 실패하였습니다.');
+      setIsLoggedIn(false);
+      return;
+    }
+
+    setIsLoggedIn(true);
+    return;
   };
 
   return (
@@ -17,7 +27,7 @@ const Login = () => {
           Google Login
         </button>
       </div>
-    </div >
+    </div>
   );
 };
 
