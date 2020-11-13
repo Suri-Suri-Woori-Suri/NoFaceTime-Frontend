@@ -1,11 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+//import { Provider } from 'react-redux';
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import AppContainer from './containers/AppContainer/AppContainer';
 import './index.css';
-import App from './App';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Router>
+      <AppContainer />
+    </Router>
   </React.StrictMode>,
   document.getElementById('root')
 );
