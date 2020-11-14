@@ -65,3 +65,17 @@
 	background:  #46b8da;
   color: white;
 }
+
+.removeRoomButton {
+  float: right;
+  height: 40px;
+  background-color: rgb(255, 192, 188);
+  border: 1px solid rgb(167, 0, 0);
+  border-radius: 4px;
+  font-size: 20px;
+  color: rgb(167, 0, 0);
+}
+
+.removeRoomButton:hover {
+  background-color: rgb(255, 235, 234);
+}
