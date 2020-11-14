@@ -1,30 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Modal.module.css';
-import { API_METHOD } from '../../constants';
+import { createRoom } from '../../api/index';
 
-const Modal = ({ setShowModal, roomName, children }) => {
-  const { POST } = API_METHOD;
-  console.log(roomName)
-
-  const closeModal = (event) => {
-    event.preventDefault();
+const Modal = ({ currentUser, setShowModal, roomName, children }) => {
+  const [isFetched, setIsFetched] = useState(false);
+  console.log("isFetched?", isFetched);
+  const closeModal = () => {
     setShowModal(false);
   };
 
-  const createRoom = async () => {
-    if (roomName.length === 0) return;
-
-    const response = await fetch('http://localhost:5000/rooms', {
-      method: POST,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify({ roomName })
-    });
-
-    console.log(response);
+  const toggle = () => {
+    setIsFetched(!isFetched);
   };
+
+  useEffect(() => {
+    if (!isFetched) return;
+    createRoom(currentUser, roomName);
+    toggle();
+  }, [isFetched]);
 
   return (
     <div className={styles.Modal}>
@@ -32,7 +25,7 @@ const Modal = ({ setShowModal, roomName, children }) => {
         {children}
         <div>
           <button className={`${styles.Button} ${styles.CloseModalButton}`} onClick={closeModal}>Cancel</button>
-          <button className={`${styles.Button} ${styles.CreateButton}`} onClick={createRoom}>Create</button>
+          <button className={`${styles.Button} ${styles.CreateButton}`} onClick={toggle}>Create</button>
         </div>
       </div>
     </div>
