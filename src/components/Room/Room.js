@@ -4,7 +4,8 @@ import Sidebar from '../Sidebar/Sidebar';
 import ContentWrap from '../ContentWrap/ContentWrap';
 import Modal from '../Modal/Modal';
 
-const Room = ({ currentUser }) => {
+const Room = ({ currentUser, setCurrentUser }) => {
+  console.log('Room, currentUser', currentUser);
   const [showModal, setShowModal] = useState(false);
   const [roomName, setRoomName] = useState('');
 
@@ -28,9 +29,9 @@ const Room = ({ currentUser }) => {
 
   return (
     <div className={styles.Body}>
-      {showModal && <Modal currentUser={currentUser} setShowModal={setShowModal} roomName={roomName}>{modalContent}</Modal>}
+      {showModal && <Modal currentUser={currentUser} setCurrentUser={setCurrentUser} setShowModal={setShowModal} roomName={roomName}>{modalContent}</Modal>}
       <Sidebar />
-      <ContentWrap setShowModal={setShowModal} />
+      <ContentWrap currentUser={currentUser} setShowModal={setShowModal} />
     </div>
   );
 };

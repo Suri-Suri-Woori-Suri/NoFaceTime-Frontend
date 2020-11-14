@@ -10,7 +10,22 @@ export const createRoom = async (currentUser, roomName) => {
       'Content-Type': 'application/json'
     },
     credentials: 'include',
-    body: JSON.stringify({ roomName, currentUser })
+    body: JSON.stringify({ currentUser, roomName })
+  });
+
+  console.log(response);
+};
+
+export const deleteRoom = async (currentUser, roomId) => {
+  const { DELETE } = API_METHOD;
+
+  const response = await fetch(`http://localhost:5000/rooms/${roomId}`, {
+    method: DELETE,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',
+    body: JSON.stringify({ currentUser, roomId })
   });
 
   console.log(response);
