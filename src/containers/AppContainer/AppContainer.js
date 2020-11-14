@@ -12,6 +12,7 @@ import Group from '../../components/Group/Group';
 
 const AppContainer = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(authService.currentUser);
+  const [currentUser, setCurrentUser] = useState({});
 
   return (
     <div>
@@ -42,6 +43,7 @@ const AppContainer = () => {
                 <Header />
                 <Login
                   setIsLoggedIn={setIsLoggedIn}
+                  setCurrentUser={setCurrentUser}
                 />
               </Route>
               <Route path='/rooms'>

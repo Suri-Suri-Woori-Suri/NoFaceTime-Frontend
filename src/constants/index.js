@@ -3,4 +3,4 @@ export const API_METHOD = {
   POST: 'POST',
   PATCH: 'PATCH',
   DELETE: 'DELETE'
-}
+};
