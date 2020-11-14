@@ -4,7 +4,7 @@ import { API_METHOD } from '../constants';
 export const signInWithGoogle = () => {
   googleProvider.addScope('email');
 
-  authService.signInWithPopup(googleProvider)
+  return authService.signInWithPopup(googleProvider)
     .then(async (userInfo) => {
       const { POST } = API_METHOD;
       const postData = {
@@ -12,20 +12,22 @@ export const signInWithGoogle = () => {
         nickname: userInfo.additionalUserInfo.profile.name,
       };
 
-      fetch('http://localhost:5000/login', {
+      const userData = fetch('http://localhost:5000/login', {
         method: POST,
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(postData)
-      }).then((result) => {
-        return result.json();
+      }).then((data) => {
+        return data.json();
       }).then((data) => {
         return data;
       }).catch((err) => {
         console.error(err);
       });
+
+      return userData;
     }).catch((err) => {
       console.error(err);
     });
