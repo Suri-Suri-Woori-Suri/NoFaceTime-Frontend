@@ -1,0 +1,27 @@
+.SideContainer {
+  vertical-align: top;
+  width: 20%;
+  background: #eee;
+  display: table-cell;
+}
+
+.MenuBox {
+  margin-top: 80%;
+  background-color: tomato;
+}
+
+.Menu {
+  display: block;
+  height: 40px;
+  width: 100%;
+  padding: 20px 0px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #2196F3;
+  background-color: rgb(223, 243, 224);
+  border: 1px solid rgba(0, 0, 0, 0.267);
+}
+
+.Menu:hover {
+  background-color: rgb(183, 237, 250);
+}

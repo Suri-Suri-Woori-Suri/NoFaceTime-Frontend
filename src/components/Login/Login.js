@@ -3,7 +3,7 @@ import React from 'react';
 import { signInWithGoogle } from '../../utils/firebase';
 import styles from './Login.module.css';
 
-const Login = ({ setIsLoggedIn }) => {
+const Login = ({ setIsLoggedIn, setCurrentUser }) => {
   const showPopUpToSignIn = async () => {
     const userData = await signInWithGoogle();
 
@@ -14,6 +14,7 @@ const Login = ({ setIsLoggedIn }) => {
     }
 
     setIsLoggedIn(true);
+    setCurrentUser({ ...userData });
     return;
   };
 
