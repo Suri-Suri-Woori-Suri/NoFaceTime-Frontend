@@ -28,7 +28,7 @@ const AppContainer = () => {
                 <Redirect to='/rooms' />
               </Route>
               <Route path='/rooms'>
-                <Room />
+                <Room currentUser={currentUser}/>
               </Route>
               <Route path='/groups'>
                 <Group />
