@@ -1,7 +1,12 @@
 import React from 'react';
 import styles from './RoomContent.module.css';
 
-const RoomContent = () => {
+const RoomContent = ({ setShowModal }) => {
+  const popupModal = (event) => {
+    event.preventDefault();
+    setShowModal(true);
+  };
+
   return (
     <div className={styles.RoomContent}>
       <div className={styles.Rooms}>
@@ -14,7 +19,7 @@ const RoomContent = () => {
           <div className={styles.RoomName}>방 이름</div>
           <div className={styles.RoomName}>방 이름</div>
       </div>
-      <button className={styles.AddRoomButton}>Add Room</button>
+      <button className={styles.AddRoomButton} onClick={popupModal}>Add Room</button>
     </div>
   );
 };

@@ -1,0 +1,34 @@
+.Modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.651);
+}
+
+.ModalContent {
+  position: relative;
+  margin: 5% auto;
+  width: 50%;
+  height: 60%;
+  background: rgba(255, 255, 255, 0.945);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.Button {
+  height: 40px;
+  width: 80px;
+  border-radius: 3px
+}
+
+.CloseModalButton {
+  background-color: #ff5852;
+  border-color: #aaaaaa;
+}
+
+.CreateButton {
+  background-color: #2196f3;
+  border-color: aliceblue;
+}

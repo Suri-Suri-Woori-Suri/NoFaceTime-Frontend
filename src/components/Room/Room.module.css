@@ -4,3 +4,22 @@
   display: table;
   background-color: rgb(221, 206, 221);
 }
+
+.ModalContent {
+  text-align: center;
+}
+
+.ModalTitle {
+  font-size: 30px;
+  font-weight: 300
+}
+
+.RoomNameInput {
+  margin: 30px auto;
+	width: 400px;
+  height: 40px;
+  border: 1px solid #c9d3dd;
+	background: #ffffff;
+  border-radius: 10px;
+  text-align: center;
+}
