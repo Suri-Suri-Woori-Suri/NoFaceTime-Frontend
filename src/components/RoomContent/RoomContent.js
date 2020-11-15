@@ -31,7 +31,7 @@ const RoomContent = ({ currentUser, setShowModal }) => {
 
     console.log('deleteRoom!!!!');
     //deleteRoom(selectedRoom, currentUser);
-    //setCurrentUser({...currentUser, rooms: mockData}); //mockData 없음. 나중에 바꾸기
+    //setCurrentUser({...currentUser, rooms: mockData});
     setSelectedRoom(null);
   }, [selectedRoom]);
 
@@ -39,20 +39,20 @@ const RoomContent = ({ currentUser, setShowModal }) => {
     const roomId = room.id;
 
     return (
-      <div className={styles.RoomName} key={roomId}>{room.name}
+      <div className={styles.Room} key={roomId}>{room.name}
         <button className={styles.removeRoomButton} onClick={() => setSelectedRoom(roomId)}>Delete</button>
       </div>
     );
   }) : undefined;
 
   return (
-    <div className={styles.RoomContent}>
+    <div className={styles.Content}>
       <div className={styles.Rooms}>
         <label className={styles.Title}>Your Room</label>
-        <div className={styles.RoomName}>방 이름
+        <div className={styles.Room}>방 이름
           <button className={styles.removeRoomButton} >Delete</button>
         </div>
-        <div className={styles.RoomName}>방 이름
+        <div className={styles.Room}>방 이름
           <button className={styles.removeRoomButton} >Delete</button>
         </div>
         {roomList}

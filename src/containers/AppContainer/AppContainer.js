@@ -31,7 +31,7 @@ const AppContainer = () => {
                 <Room currentUser={currentUser} setCurrentUser={setCurrentUser}/>
               </Route>
               <Route path='/groups'>
-                <Group />
+                <Group currentUser={currentUser} setCurrentUser={setCurrentUser}/>
               </Route>
             </>
             : <>
