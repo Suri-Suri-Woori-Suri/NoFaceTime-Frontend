@@ -33,6 +33,22 @@ export const deleteGroup = async (currentUser, checkedGroup) => {
   console.log(response);
 };
 
+export const getMember = async (groupId) => {
+  //checkedGroup 은 선택한 그룹의 아이디가 담긴 배열
+
+  const { GET } = API_METHOD;
+  const response = await fetch(`http://localhost:5000/groups/${groupId}`, {
+    method: GET,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',
+    body: JSON.stringify({ groupId })
+  });
+
+  console.log(response);
+};
+
 export const createRoom = async (currentUser, roomName) => {
   const { POST } = API_METHOD;
   if (roomName.length === 0) return;

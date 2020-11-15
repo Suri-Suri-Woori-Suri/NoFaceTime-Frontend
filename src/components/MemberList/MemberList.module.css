@@ -1,0 +1,25 @@
+.Content {
+  position: relative;
+  overflow: auto;
+  width: 100%;
+}
+
+.Member {
+  margin: 10px auto;
+  line-height: 40px;
+  position: relative;
+  width: 30px;
+  height: 20px;
+}
+
+
+.Button {
+  position: fixed;
+  bottom: 70px;
+  width: 80px;
+  height: 40px;
+  border: 1px solid #c9d3dd;
+  border-radius: 8px;
+  background-color: #2196f3;
+  color: #ffffff;
+}
