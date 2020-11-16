@@ -14,7 +14,7 @@ const Modal = (props) => {
   } = props;
   const [isFetched, setIsFetched] = useState(false);
 
-  console.log(setMembers)
+  console.log(setMembers);
 
   // [ createFunction ]
   // Room Page 라면 Create Room
@@ -33,15 +33,20 @@ const Modal = (props) => {
   useEffect(() => {
     if (!isFetched) return;
 
-    createFunction(currentUser, groupOrRoomInfo, members); // post group (make group) OR post add member
-    const mockData = [
-      { id: 1, name: 'name1'},
-      { id: 2, name: 'name2'},
-      { id: 3, name: 'name3'},
-      { id: 4, name: 'name4'}
-    ];
-    setCurrentUser({...currentUser, rooms: mockData});
-    setMembers([]);
+    const roomsData = createFunction(currentUser, groupOrRoomInfo, members); // post group (make group) OR post add member
+
+    // const mockData = [
+    //   { id: 1, name: 'name1' },
+    //   { id: 2, name: 'name2' },
+    //   { id: 3, name: 'name3' },
+    //   { id: 4, name: 'name4' }
+    // ];
+    setCurrentUser({ ...currentUser, rooms: roomsData });
+
+    if (setMembers) {
+      setMembers([]);
+    }
+
     toggle();
     closeModal();
   }, [isFetched]);

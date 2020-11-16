@@ -43,8 +43,9 @@ export const createRoom = async (currentUser, roomName) => {
     credentials: 'include',
     body: JSON.stringify({ currentUser, roomName })
   });
+  const data = await response.json();
 
-  console.log(response);
+  return data.rooms;
 };
 
 export const deleteGroup = async (currentUser, selectedGroup) => {

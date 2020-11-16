@@ -14,7 +14,7 @@ const Login = ({ setIsLoggedIn, setCurrentUser }) => {
     }
 
     setIsLoggedIn(true);
-    setCurrentUser({ ...userData });
+    setCurrentUser({ ...userData[0] });
     return;
   };
 
