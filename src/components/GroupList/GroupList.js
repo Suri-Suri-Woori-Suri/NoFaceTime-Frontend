@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './GroupList.module.css';
 import { getMember } from '../../api';
 
-const GroupList = ({ groups, checkedGroup, setCheckedGroup, setgroupId, setShowMember, setExistMember }) => {
+const GroupList = ({ groups, checkedGroups, setCheckedGroups, setgroupId, setShowMember, setExistMember }) => {
   const [isFetched, setIsFetched] = useState(false);
 
   //toggle 변수명 수정??
@@ -24,16 +24,16 @@ const GroupList = ({ groups, checkedGroup, setCheckedGroup, setgroupId, setShowM
   }, [isFetched]);
 
   const onChange = groupId => {
-    const clickedGroup = checkedGroup.indexOf(groupId);
-    const currentCheckedGroup = [...checkedGroup];
+    const clickedGroup = checkedGroups.indexOf(groupId);
+    const currentCheckedGroups = [...checkedGroups];
 
     if (clickedGroup === -1) {
-      currentCheckedGroup.push(groupId);
+      currentCheckedGroups.push(groupId);
     } else {
-      currentCheckedGroup.splice(clickedGroup, 1);
+      currentCheckedGroups.splice(clickedGroup, 1);
     }
 
-    setCheckedGroup([...currentCheckedGroup]);
+    setCheckedGroups([...currentCheckedGroups]);
   };
 
   const groupList = groups ? groups.map((group, i) => {

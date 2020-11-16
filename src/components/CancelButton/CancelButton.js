@@ -1,16 +1,16 @@
 import React from 'react';
-import styles from '.CancelButton.module.css';
+import styles from './CancelButton.module.css';
 
 const CancelButton = ({
   buttonName,
   onClick
 }) => {
-  const fetchToServer = onClick;
+  const cancel = onClick;
 
   return (
     <button
-      calssName={styles.CancelButton}
-      onClick={fetchToServer}>
+      className={styles.CancelButton}
+      onClick={cancel}>
       {buttonName}
     </button>
   );

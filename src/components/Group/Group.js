@@ -1,22 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Sidebar from '../Sidebar/Sidebar';
 import Modal from '../Modal/Modal';
 import GroupContent from '../GroupContent/GroupContent';
 import styles from './Group.module.css';
-import { createGroup, createMember } from '../../api';
-import { deleteGroup, deleteMember } from '../../api/index';
+import { createGroup, addMember, deleteRoom } from '../../api';
+import { deleteGroups, deleteMember } from '../../api/index';
 import { getMember } from '../../api';
 
 const Group = ({ currentUser, setCurrentUser }) => {
   const [showModal, setShowModal] = useState(false);
-  const [groupName, setGroupName] = useState('');
-  const [memberName, setMemberName] = useState('');
-  const [members, setMembers] = useState([]);
   const [showMember, setShowMember] = useState(false);
-  const [groupId, setgroupId] = useState('');
+  const [groupName, setGroupName] = useState('');
+  const [checkedGroups, setCheckedGroups] = useState([]);
+  const [memberEmail, setMemberEmail] = useState('');
+  const [newMembers, setNewMembers] = useState([]);
   const [existMember, setExistMember] = useState([]);
   const title = showMember ? 'Member' : 'Your Groups'
-  console.log(setMembers)
+
+  const fetchTocreateGroup = () => createGroup(currentUser._id, groupName, newMembers);
+  const fetchToDeleteGroups = () => deleteGroups(currentUser._id, checkedGroups);
+  console.log(checkedGroups);
+  //const fetchToAddMember
 
   const changeGroupName = (event) => {
     event.preventDefault();
@@ -24,18 +28,18 @@ const Group = ({ currentUser, setCurrentUser }) => {
     setGroupName(value);
   };
 
-  const changeMemberName = (event) => {
+  const changeMemberEmail = (event) => {
     event.preventDefault();
     const { value } = event.target;
-    setMemberName(value);
+    setMemberEmail(value);
   }
 
   const addNewMember = (event) => {
     event.preventDefault();
-    setMembers([...members, memberName]);
+    setNewMembers([...newMembers, memberEmail]);
   };
 
-  const memberList = members.map((member, i) => {
+  const newMemberList = newMembers.map((member, i) => {
     return <div key={i} className={styles.member}>{member}</div>
   });
 
@@ -52,11 +56,11 @@ const Group = ({ currentUser, setCurrentUser }) => {
         className={`${styles.Input} ${styles.InputMember}`}
         type='text'
         placeholder='Add Member'
-        onChange={changeMemberName}
+        onChange={changeMemberEmail}
       />
       <button className={styles.AddButton} onClick={addNewMember}>+</button>
       <div className={styles.Members}> added member
-        {memberList}
+        {newMemberList}
       </div>
     </div>
   );
@@ -68,11 +72,11 @@ const Group = ({ currentUser, setCurrentUser }) => {
         className={styles.Input}
         type='text'
         placeholder='Add Member'
-        onChange={changeMemberName}
+        onChange={changeMemberEmail}
       />
       <button className={styles.AddButton} onClick={addNewMember}>+</button>
       <div className={styles.Members}> added member
-      {memberList}
+      {newMemberList}
       </div>
     </div>
   );
@@ -85,20 +89,18 @@ const Group = ({ currentUser, setCurrentUser }) => {
             currentUser={currentUser}
             setCurrentUser={setCurrentUser}
             setShowModal={setShowModal}
-            createFunction={createMember}
-            groupOrRoomInfo={groupId}
-            members={members}
-            setMembers={setMembers}
+            //fetchFunction={addMember}
+            newMembers={newMembers}
+            setNewMembers={setNewMembers}
           >{addMemberModal}
           </Modal> :
           <Modal
             currentUser={currentUser}
             setCurrentUser={setCurrentUser}
             setShowModal={setShowModal}
-            createFunction={createGroup}
-            groupOrRoomInfo={groupName}
-            members={members}
-            setMembers={setMembers}
+            fetchFunction={fetchTocreateGroup}
+            newMembers={newMembers}
+            setNewMembers={setNewMembers}
           >{createGroupModal}
           </Modal>
         )
@@ -113,22 +115,22 @@ const Group = ({ currentUser, setCurrentUser }) => {
                 title={title}
                 currentUser={currentUser}
                 setShowModal={setShowModal}
-                setgroupId={setgroupId}
                 showMember={showMember}
                 setShowMember={setShowMember}
                 existMember={existMember}
-                deleteFunction={deleteMember}
+                //fetchFunction={deleteMember}
               /> :
               <GroupContent
                 title={title}
                 currentUser={currentUser}
                 setShowModal={setShowModal}
-                setgroupId={setgroupId}
                 setExistMember={setExistMember}
                 showMember={showMember}
                 setShowMember={setShowMember}
                 existMember={existMember}
-                deleteFunction={deleteGroup}
+                fetchFunction={fetchToDeleteGroups}
+                checkedGroups={checkedGroups}
+                setCheckedGroups={setCheckedGroups}
               />}
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { API_METHOD } from '../constants';
 
-export const createGroup = async (currentUser, groupName, members) => {
+export const createGroup = async (userId, groupName, members) => {
   const { POST } = API_METHOD;
   if (groupName.length === 0) return;
 
@@ -10,14 +10,15 @@ export const createGroup = async (currentUser, groupName, members) => {
       'Content-Type': 'application/json'
     },
     credentials: 'include',
-    body: JSON.stringify({ currentUser, groupName, members })
+    body: JSON.stringify({ userId, groupName, members })
   });
 
-  console.log(response);
+  const data = await response.json();
+  return data;
 };
 
 //변수명이 오해의 소지가 있지만 addMember라는 함수가 이미 있어서 일단 post 요청이니 create로 해두었습니다.
-export const createMember = async (currentUser, groupId, members) => {
+export const addMember = async (currentUser, groupId, members) => {
   const { POST } = API_METHOD;
   const response = await fetch(`http://localhost:5000/groups/${groupId}/members`, {
     method: POST,
@@ -43,12 +44,12 @@ export const createRoom = async (currentUser, roomName) => {
     credentials: 'include',
     body: JSON.stringify({ currentUser, roomName })
   });
-  const data = await response.json();
 
-  return data.rooms;
+  const data = await response.json();
+  return data;
 };
 
-export const deleteGroup = async (currentUser, selectedGroup) => {
+export const deleteGroups = async (userId, selectedGroup) => {
   // selectedGroup 은 선택한 그룹의 아이디가 담긴 배열
   // 삭제해야할 것이 여러개인 경우..
   // groups=[1,2,3]
@@ -60,7 +61,7 @@ export const deleteGroup = async (currentUser, selectedGroup) => {
       'Content-Type': 'application/json'
     },
     credentials: 'include',
-    body: JSON.stringify({ currentUser, selectedGroup })
+    body: JSON.stringify({ userId, selectedGroup })
   });
 
   console.log(response);
@@ -110,6 +111,5 @@ export const deleteRoom = async (userId, roomId) => {
   });
 
   const data = await response.json();
-  console.log('delete Room!!', data);
-  return data.rooms;
+  return data;
 };

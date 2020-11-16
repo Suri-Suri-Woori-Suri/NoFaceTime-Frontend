@@ -1,31 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styles from './RoomContent.module.css';
 import { deleteRoom } from '../../api/index';
 
 const RoomContent = ({ currentUser, setCurrentUser, setShowModal }) => {
-  const [selectedRoom, setSelectedRoom] = useState(null);
   const popupModal = (event) => {
     event.preventDefault();
     setShowModal(true);
   };
 
-  useEffect(() => {
-    if (!selectedRoom) return;
-
-    const fetchData = async () => {
-      const roomsData = await deleteRoom(currentUser._id, selectedRoom);
-      console.log("$$$$$$$", roomsData);
-      setCurrentUser({ ...currentUser, rooms: roomsData });
-    };
-    fetchData();
-    setSelectedRoom(null);
-  }, [selectedRoom]);
+  const fetch = async(roomId) => {
+    const data = await deleteRoom(currentUser._id, roomId);
+    setCurrentUser({ ...currentUser, rooms: data.rooms });
+  };
 
   const roomList = currentUser.rooms ? currentUser.rooms.map(room => {
     const roomId = room._id;
     return (
       <div className={styles.Room} key={roomId}>{room.name}
-        <button className={styles.removeRoomButton} onClick={() => setSelectedRoom(roomId)}>Delete</button>
+        <button className={styles.removeRoomButton} onClick={() => fetch(roomId)}>Delete</button>
       </div>
     );
   }) : undefined;

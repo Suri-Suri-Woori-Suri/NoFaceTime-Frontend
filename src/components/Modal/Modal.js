@@ -1,57 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styles from './Modal.module.css';
+import CompleteButton from '../CompleteButton/CompleteButton';
+import CancelButton from '../CancelButton/CancelButton';
 
 const Modal = (props) => {
   const {
     currentUser,
     setCurrentUser,
     setShowModal,
-    members,
-    setMembers,
-    groupOrRoomInfo,
-    createFunction,
+    newMembers,//members와 setmembers는 Group쪽에서 들어옴. Room과는 관계없음.
+    setNewMembers,//members와 setmembers는 Group쪽에서 들어옴. Room과는 관계없음.
+    fetchFunction,
     children
   } = props;
-  const [isFetched, setIsFetched] = useState(false);
+
+  console.log("FUNCTOIN", fetchFunction);
 
   const closeModal = () => {
     setShowModal(false);
-    if (setMembers) setMembers([]);
+    if (setNewMembers) setNewMembers([]);
   };
-
-  const toggle = () => {
-    setIsFetched(!isFetched);
-  };
-
-  useEffect(() => {
-    if (!isFetched) return;
-
-    // [ createFunction ]
-    // Room Page 라면 Create Room
-    // Group Page의 Create Group면 Create Group function
-    // Group Page의 Member Page면 Create member 이 들어올것임
-    //const roomsData = await createFunction(currentUser, groupOrRoomInfo, members); // post group (make group) OR post add member
-
-    const fetchData = async () => {
-      const roomsData = await createFunction(currentUser, groupOrRoomInfo, members);
-      console.log("$$$$$$$", roomsData);
-      console.log("HERE", currentUser);
-      setCurrentUser({ ...currentUser, rooms: roomsData });
-    };
-    fetchData();
-
-    if (setMembers) setMembers([]);
-    toggle();
-    closeModal();
-  }, [isFetched]);
 
   return (
     <div className={styles.ModalBackground}>
       <div className={styles.Modal}>
         {children}
         <div>
-          <button className={`${styles.Button} ${styles.CloseModalButton}`} onClick={closeModal}>Cancel</button>
-          <button className={`${styles.Button} ${styles.CreateButton}`} onClick={toggle}>Create</button>
+          <CancelButton
+            buttonName={'Cancel'}
+            onClick={closeModal}/>
+          <CompleteButton
+            buttonName={'Create'}
+            fetchToServer={fetchFunction}
+            currentUser={currentUser}
+            setCurrentUser={setCurrentUser}
+            closeModal={closeModal}/>
         </div>
       </div>
     </div>
