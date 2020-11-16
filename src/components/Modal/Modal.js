@@ -32,17 +32,13 @@ const Modal = (props) => {
     // Group Page의 Member Page면 Create member 이 들어올것임
     //const roomsData = await createFunction(currentUser, groupOrRoomInfo, members); // post group (make group) OR post add member
 
-    const roomsData = createFunction(currentUser, groupOrRoomInfo, members);
-    console.log(roomsData)
-    setCurrentUser({ ...currentUser, rooms: roomsData })
-
-    // const fetchData = async () => {
-    //   const roomsData = await createFunction(currentUser, groupOrRoomInfo, members);
-    //   console.log("$$$$$$$", roomsData);
-    //   console.log("HERE", currentUser);
-    //   setCurrentUser({ ...currentUser, rooms: roomsData });
-    // };
-    // fetchData();
+    const fetchData = async () => {
+      const roomsData = await createFunction(currentUser, groupOrRoomInfo, members);
+      console.log("$$$$$$$", roomsData);
+      console.log("HERE", currentUser);
+      setCurrentUser({ ...currentUser, rooms: roomsData });
+    };
+    fetchData();
 
     if (setMembers) setMembers([]);
     toggle();

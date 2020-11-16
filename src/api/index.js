@@ -97,7 +97,7 @@ export const getMember = async (groupId) => {
   console.log(response);
 };
 
-export const deleteRoom = async (currentUser, roomId) => {
+export const deleteRoom = async (userId, roomId) => {
   const { DELETE } = API_METHOD;
 
   const response = await fetch(`http://localhost:5000/rooms/${roomId}`, {
@@ -106,8 +106,10 @@ export const deleteRoom = async (currentUser, roomId) => {
       'Content-Type': 'application/json'
     },
     credentials: 'include',
-    body: JSON.stringify({ currentUser, roomId })
+    body: JSON.stringify({ userId })
   });
 
-  console.log(response);
+  const data = await response.json();
+  console.log('delete Room!!', data);
+  return data.rooms;
 };

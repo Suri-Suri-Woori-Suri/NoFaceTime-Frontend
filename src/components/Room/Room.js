@@ -42,7 +42,10 @@ const Room = ({ currentUser, setCurrentUser }) => {
       <Sidebar />
       <div className={styles.ContentWrap}>
         <h1 className={styles.Title}>Welcome!</h1>
-        <RoomContent currentUser={currentUser} setShowModal={setShowModal} />
+        <RoomContent
+          currentUser={currentUser}
+          setCurrentUser={setCurrentUser}
+          setShowModal={setShowModal} />
       </div>
     </div>
   );
