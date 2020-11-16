@@ -28,6 +28,8 @@ const Room = ({ currentUser, setCurrentUser }) => {
     </div>
   );
 
+  const fetchToCreateRoom = () => createRoom(currentUser, roomName);
+
   return (
     <div className={styles.Body}>
       {showModal &&
@@ -35,8 +37,7 @@ const Room = ({ currentUser, setCurrentUser }) => {
           currentUser={currentUser}
           setCurrentUser={setCurrentUser}
           setShowModal={setShowModal}
-          createFunction={createRoom}
-          groupOrRoomInfo={roomName}
+          fetchFunction={fetchToCreateRoom}
         >{modalContent}
         </Modal>}
       <Sidebar />
