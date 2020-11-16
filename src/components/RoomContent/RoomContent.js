@@ -35,6 +35,7 @@ const RoomContent = ({ currentUser, setShowModal }) => {
     setSelectedRoom(null);
   }, [selectedRoom]);
 
+  console.log("#########", currentUser);
   const roomList = currentUser.rooms ? currentUser.rooms.map(room => {
     const roomId = room.id;
 
