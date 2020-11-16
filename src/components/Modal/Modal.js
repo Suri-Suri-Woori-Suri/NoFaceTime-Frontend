@@ -6,23 +6,24 @@ const Modal = (props) => {
     currentUser,
     setCurrentUser,
     setShowModal,
-    groupName,
     members,
     setMembers,
-    roomName,
+    groupOrRoomInfo,
     createFunction,
     children
   } = props;
-
-  console.log(groupName);
-  console.log(members);
-
-  //createFunction 에는 Room Page 라면 Create Room, Group Page면 Create Group function 이 들어올것임
   const [isFetched, setIsFetched] = useState(false);
-  console.log("isFetched?", isFetched);
-  console.log('currentUser', currentUser);
+
+  console.log(setMembers)
+
+  // [ createFunction ]
+  // Room Page 라면 Create Room
+  // Group Page의 Create Group면 Create Group function
+  // Group Page의 Member Page면 Create member 이 들어올것임
+
   const closeModal = () => {
     setShowModal(false);
+    if (setMembers) setMembers([]);
   };
 
   const toggle = () => {
@@ -31,8 +32,8 @@ const Modal = (props) => {
 
   useEffect(() => {
     if (!isFetched) return;
-    //createFunction(currentUser, roomName); @@@@@@@@
-    createFunction(currentUser, groupName, members); // post group (make group)
+
+    createFunction(currentUser, groupOrRoomInfo, members); // post group (make group) OR post add member
     const mockData = [
       { id: 1, name: 'name1'},
       { id: 2, name: 'name2'},
@@ -56,7 +57,6 @@ const Modal = (props) => {
       </div>
     </div>
   );
-
 };
 
 export default Modal;
