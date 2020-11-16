@@ -27,7 +27,7 @@ const RoomContent = ({ currentUser, setShowModal }) => {
   // };
 
   useEffect(() => {
-    if(!selectedRoom) return;
+    if (!selectedRoom) return;
 
     console.log('deleteRoom!!!!');
     //deleteRoom(selectedRoom, currentUser);

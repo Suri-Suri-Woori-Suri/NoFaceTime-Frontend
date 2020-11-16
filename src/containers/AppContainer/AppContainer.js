@@ -11,8 +11,12 @@ import Room from '../../components/Room/Room';
 import Group from '../../components/Group/Group';
 
 const AppContainer = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(authService.currentUser);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
+  console.log("AUTH SERVICE", authService);
+  console.log("is Anonymous", authService.isAnonymous);
+  console.log("ISLOGGEDIN", isLoggedIn);
+  console.log("currentUser", currentUser);
 
   return (
     <div>
@@ -28,10 +32,10 @@ const AppContainer = () => {
                 <Redirect to='/rooms' />
               </Route>
               <Route path='/rooms'>
-                <Room currentUser={currentUser} setCurrentUser={setCurrentUser}/>
+                <Room currentUser={currentUser} setCurrentUser={setCurrentUser} />
               </Route>
               <Route path='/groups'>
-                <Group currentUser={currentUser} setCurrentUser={setCurrentUser}/>
+                <Group currentUser={currentUser} setCurrentUser={setCurrentUser} />
               </Route>
             </>
             : <>

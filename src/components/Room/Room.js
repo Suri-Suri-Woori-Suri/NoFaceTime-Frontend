@@ -3,7 +3,8 @@ import styles from './Room.module.css';
 import Sidebar from '../Sidebar/Sidebar';
 import Modal from '../Modal/Modal';
 import RoomContent from '../RoomContent/RoomContent';
-import { createRoom } from '../../api/index';
+
+import { createRoom } from '../../api';
 
 const Room = ({ currentUser, setCurrentUser }) => {
   const [showModal, setShowModal] = useState(false);
@@ -36,7 +37,7 @@ const Room = ({ currentUser, setCurrentUser }) => {
           setShowModal={setShowModal}
           createFunction={createRoom}
           groupOrRoomInfo={roomName}
-          >{modalContent}
+        >{modalContent}
         </Modal>}
       <Sidebar />
       <div className={styles.ContentWrap}>
