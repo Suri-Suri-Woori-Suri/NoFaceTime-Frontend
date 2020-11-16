@@ -34,8 +34,8 @@ const Room = ({ currentUser, setCurrentUser }) => {
           currentUser={currentUser}
           setCurrentUser={setCurrentUser}
           setShowModal={setShowModal}
-          roomName={roomName}
           createFunction={createRoom}
+          groupOrRoomInfo={roomName}
           >{modalContent}
         </Modal>}
       <Sidebar />

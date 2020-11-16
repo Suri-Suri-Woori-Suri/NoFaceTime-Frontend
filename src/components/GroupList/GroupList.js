@@ -1,29 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import styles from './GroupList.module.css';
-// import { getMember } from '../../api';
-// import MemberList from '../MemberList/MemberList';
+import { getMember } from '../../api';
 
-const GroupList = ({ groups, checkedGroup, setCheckedGroup, setShowMember, setgroupId, setGroupIdAndFetch }) => {
-  //const [isFetched, setIsFetched] = useState(false);
-  //const [groupId, setgroupId] = useState('');
-  //const [members, setMembers] = useState(null);
+const GroupList = ({ groups, checkedGroup, setCheckedGroup, setgroupId, setShowMember, setExistMember }) => {
+  const [isFetched, setIsFetched] = useState(false);
 
-  // const setGroupIdAndFetch = (groupId) => {
-  //   console.log('Get Member Toggle');
-  //   setgroupId(groupId);
-  //   setIsFetched(!isFetched);
-  // };
+  //toggle 변수명 수정??
+  const toggle = (groupId) => {
+    console.log('Get Member Toggle');
+    setgroupId(groupId);
+    setIsFetched(!isFetched);
+  };
 
-  // useEffect(() => {
-  //   if (!isFetched) return;
-  //   console.log('Get Member!!!!');
+  useEffect(() => {
+    if (!isFetched) return;
+    console.log('Get Member!!!!');
+    //getMember(groupId);
 
-  //   //getMember(groupId);
-  //   const response = [1, 2, 3, 4, 5, 6, 6, 1, 2, 3, 4, 5, 6];
-  //   setMembers(response);
-  //   setIsFetched(false);
-  //   setShowMember(true);
-  // }, [isFetched]);
+    const response = [1, 2, 3, 4, 5, 6, 6, 1, 2, 3, 4, 5, 6];
+    setExistMember([...response]);
+    setIsFetched(false);
+    setShowMember(true);
+  }, [isFetched]);
 
   const onChange = groupId => {
     const clickedGroup = checkedGroup.indexOf(groupId);
@@ -45,7 +43,7 @@ const GroupList = ({ groups, checkedGroup, setCheckedGroup, setShowMember, setgr
           type='checkbox'
           onChange={() => onChange(group._id)}
         />
-        <button key={i} className={styles.Group} onClick={() => setGroupIdAndFetch(group._id)}>
+        <button key={i} className={styles.Group} onClick={() => toggle(group._id)}>
           {group.name}
         </button>
       </div>

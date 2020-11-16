@@ -36,12 +36,6 @@
   font-weight: lighter;
 }
 
-.Title {
-  text-align: center;
-  font-size: 25px;
-  font-weight: lighter;
-}
-
 .ModalContent {
   text-align: center;
 }
@@ -80,23 +74,4 @@
   border: 1px solid #c9d3dd;
 	background: #ffffff;
   border-radius: 5px;
-}
-
-.Button {
-  height: 25px;
-  border: 1px solid #8e8e93;
-  border-radius: 10%;
-  color: white
-}
-
-.AddGroupButton {
-  float: left;
-  margin-left: 5%;
-  background-color: #2196f3;
-}
-
-.DeleteGroupButton {
-  float: right;
-  margin-right: 5%;
-  background-color: #ff5852;
 }
