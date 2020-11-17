@@ -3,23 +3,26 @@ import Sidebar from '../Sidebar/Sidebar';
 import Modal from '../Modal/Modal';
 import GroupContent from '../GroupContent/GroupContent';
 import styles from './Group.module.css';
-import { createGroup, addMember, deleteRoom } from '../../api';
+import { createGroup, addMember } from '../../api';
 import { deleteGroups, deleteMember } from '../../api/index';
 
 const Group = ({ currentUser, setCurrentUser }) => {
   const [showModal, setShowModal] = useState(false);
   const [showMember, setShowMember] = useState(false);
   const [groupName, setGroupName] = useState('');
+  const [targetGroup, setTargetGroup] = useState(null);
   const [checkedGroups, setCheckedGroups] = useState([]);
   const [memberEmail, setMemberEmail] = useState('');
   const [newMembers, setNewMembers] = useState([]);
   const [existMember, setExistMember] = useState([]);
   const title = showMember ? 'Member' : 'Your Groups'
+  const [checkedMembers, setCheckedMembers] = useState([]);
 
+  console.log("CHEKED GROUPS", checkedMembers);
   const fetchTocreateGroup = () => createGroup(currentUser._id, groupName, newMembers);
   const fetchToDeleteGroups = () => deleteGroups(currentUser._id, checkedGroups);
-  console.log(checkedGroups);
-  //const fetchToAddMember
+  const fetchToAddMember = () => addMember(targetGroup, newMembers);
+  const fetchToDeletemembers = () => deleteMember(targetGroup, checkedMembers);
 
   const changeGroupName = (event) => {
     event.preventDefault();
@@ -88,9 +91,10 @@ const Group = ({ currentUser, setCurrentUser }) => {
             currentUser={currentUser}
             setCurrentUser={setCurrentUser}
             setShowModal={setShowModal}
-            //fetchFunction={addMember}
+            fetchFunction={fetchToAddMember}
             newMembers={newMembers}
             setNewMembers={setNewMembers}
+            setExistMember={setExistMember}
           >{addMemberModal}
           </Modal> :
           <Modal
@@ -118,7 +122,10 @@ const Group = ({ currentUser, setCurrentUser }) => {
                 showMember={showMember}
                 setShowMember={setShowMember}
                 existMember={existMember}
-                //fetchToServer={deleteMember}
+                setExistMember={setExistMember}
+                checkedMembers={checkedMembers}
+                setCheckedMembers={setCheckedMembers}
+                fetchToServer={fetchToDeletemembers}
               /> :
               <GroupContent
                 title={title}
@@ -132,6 +139,7 @@ const Group = ({ currentUser, setCurrentUser }) => {
                 fetchToServer={fetchToDeleteGroups}
                 checkedGroups={checkedGroups}
                 setCheckedGroups={setCheckedGroups}
+                setTargetGroup={setTargetGroup}
               />}
           </div>
         </div>

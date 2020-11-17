@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styles from './GroupList.module.css';
 import { getMembers } from '../../api';
 
@@ -8,17 +8,17 @@ const GroupList = (props) => {
     checkedGroups,
     setCheckedGroups,
     setShowMember,
-    setExistMember
+    setExistMember,
+    setTargetGroup
   } = props;
-  const [targetGroupId, setTargetGroupId] = useState(null);
 
-  const fetch = async () => {
+  const fetch = async (groupId) => {
     console.log('Get Member!!!!');
-    const data = await getMembers(targetGroupId);
-    console.log(data);
-    // const response = [1, 2, 3, 4, 5, 6, 6, 1, 2, 3, 4, 5, 6];
-    // setExistMember([...response]);
-    //setShowMember(true);
+    console.log(groupId);
+    const members = await getMembers(groupId);
+    setExistMember([...members]);
+    setTargetGroup(groupId);
+    setShowMember(true);
   };
 
   const onChange = groupId => {
@@ -35,13 +35,14 @@ const GroupList = (props) => {
   };
 
   const groupList = groups ? groups.map((group, i) => {
+    const groupId = group._id;
     return (
       <div key={i}>
         <input
           type='checkbox'
-          onChange={() => onChange(group._id)}
+          onChange={() => onChange(groupId)}
         />
-        <button key={i} className={styles.Group} onClick={fetch}>
+        <button key={i} className={styles.Group} onClick={() => fetch(groupId)}>
           {group.name}
         </button>
       </div>

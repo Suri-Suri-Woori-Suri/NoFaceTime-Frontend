@@ -18,19 +18,19 @@ export const createGroup = async (userId, groupName, members) => {
   return data;
 };
 
-//변수명이 오해의 소지가 있지만 addMember라는 함수가 이미 있어서 일단 post 요청이니 create로 해두었습니다.
-export const addMember = async (currentUser, groupId, members) => {
+export const addMember = async (groupId, members) => {
   const { POST } = API_METHOD;
-  const response = await fetch(`http://localhost:5000/groups/${groupId}/members`, {
+  const response = await fetch(`http://localhost:5000/groups/${groupId}/members/`, {
     method: POST,
     headers: {
       'Content-Type': 'application/json'
     },
     credentials: 'include',
-    body: JSON.stringify({ currentUser, members })
+    body: JSON.stringify({ members })
   });
 
-  console.log(response);
+  const data = await response.json();
+  return data;
 };
 
 export const createRoom = async (currentUser, roomName) => {
@@ -65,21 +65,19 @@ export const deleteGroups = async (userId, selectedGroup) => {
   return await response.json();
 };
 
-export const deleteMember = async (currentUser, groupId, selectedMember) => {
-  // members=[1,2,3]
+export const deleteMember = async (groupId, selectedMember) => {
   const { DELETE } = API_METHOD;
-  const memberIdToDelete = selectedMember.length === 1 ? selectedMember[0] : 'multipleMembers';
+  const membersEmailToDelete = queryString.stringify({ member: selectedMember });
 
-  const response = await fetch(`http://localhost:5000/groups/${groupId}/members/${memberIdToDelete}`, {
+  const response = await fetch(`http://localhost:5000/groups/${groupId}/members/${membersEmailToDelete}`, {
     method: DELETE,
     headers: {
       'Content-Type': 'application/json'
     },
-    credentials: 'include',
-    body: JSON.stringify({ currentUser, selectedMember })
+    credentials: 'include'
   });
 
-  console.log(response);
+  return await response.json();
 };
 
 export const getMembers = async (groupId) => {
@@ -89,12 +87,12 @@ export const getMembers = async (groupId) => {
     headers: {
       'Content-Type': 'application/json'
     },
-    credentials: 'include',
-    body: JSON.stringify({ groupId })
+    credentials: 'include'
   });
 
   const data = await response.json();
-  return data;
+  const { members } = data;
+  return members;
 };
 
 export const deleteRoom = async (userId, roomId) => {
