@@ -1,6 +1,7 @@
 import React from 'react';
 
-import SmallSuccessButton from '../SmallSuccessButton/SmallSuccessButton';
+import SmallLinkCopyButton from '../SmallLinkCopyButton/SmallLinkCopyButton';
+import CancelButton from '../CancelButton/CancelButton';
 import styles from './RoomContent.module.css';
 
 import { deleteRoom } from '../../api/index';
@@ -9,11 +10,6 @@ const RoomContent = ({ currentUser, setCurrentUser, setShowModal }) => {
   const popupModal = (event) => {
     event.preventDefault();
     setShowModal(true);
-  };
-
-  const fetch = async (roomId) => {
-    const data = await deleteRoom(currentUser._id, roomId);
-    setCurrentUser({ ...currentUser, rooms: data.rooms });
   };
 
   const copyRoomInvitationLink = (e) => {
@@ -35,28 +31,44 @@ const RoomContent = ({ currentUser, setCurrentUser, setShowModal }) => {
     e.target.removeChild(linkText);
   };
 
+  const fetchToDeleteRoomData = async (roomId) => {
+    const data = await deleteRoom(currentUser._id, roomId);
+    setCurrentUser({ ...currentUser, rooms: data.rooms });
+  };
 
   const roomList = currentUser.rooms ? currentUser.rooms.map(room => {
     const roomId = room._id;
     return (
-      <div className={styles.Room} key={roomId}>{room.name}
-        <SmallSuccessButton
-          buttonName="Link Copy"
-          link={room.link}
-          clickEventFunction={copyRoomInvitationLink}
-        />
-        <button className={styles.removeRoomButton} onClick={() => fetch(roomId)}>Delete</button>
+      <div className={styles.RoomEntry} key={roomId}>
+        <div className={styles.RoomName}>
+          {room.name}
+        </div>
+        <div className={styles.Buttons}>
+          <SmallLinkCopyButton
+            buttonName="Link Copy"
+            link={room.link}
+            clickEventFunction={copyRoomInvitationLink}
+          />
+          <CancelButton
+            buttonName="Delete"
+            onClick={() => fetchToDeleteRoomData(roomId)}
+          />
+        </div>
       </div>
     );
   }) : undefined;
 
   return (
     <div className={styles.Content}>
+      <div className={styles.Title}>Your Room</div>
       <div className={styles.Rooms}>
-        <label className={styles.Title}>Your Room</label>
         {roomList}
       </div>
-      <button className={styles.AddRoomButton} onClick={popupModal}>Add Room</button>
+      <button
+        className={styles.AddRoomButton}
+        onClick={popupModal}>
+        Add Room
+      </button>
     </div>
   );
 };

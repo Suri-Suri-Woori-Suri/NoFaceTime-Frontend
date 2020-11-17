@@ -1,15 +1,14 @@
 import React from 'react';
-import styles from './SmallSuccessButton.module.css';
+import styles from './SmallLinkCopyButton.module.css';
 
 const SmallButton = ({
   buttonName,
   link,
   clickEventFunction
 }) => {
-
   return (
     <button
-      className={styles.SmallSuccessButton}
+      className={styles.SmallLinkCopyButton}
       id={link}
       value={link}
       onClick={(e) => clickEventFunction(e)}>

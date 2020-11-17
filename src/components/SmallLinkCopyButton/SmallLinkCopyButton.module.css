@@ -1,5 +1,10 @@
-.SmallSuccessButton {
-  width: 150px;
+.SmallLinkCopyButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  width: 100px;
   height: 40px;
   padding: 0px 10px 0px 10px;
   background: #1180f1;
@@ -15,7 +20,7 @@
   box-shadow: 0px 5px 10px grey;
 }
 
-.SmallSuccessButton:hover {
+.SmallLinkCopyButton:hover {
   transform: translateY(0.5px);
   box-shadow: 0px 4px 5px grey;
 }
