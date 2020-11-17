@@ -9,6 +9,7 @@ import Header from '../../components/Header/Header';
 import Login from '../../components/Login/Login';
 import Room from '../../components/Room/Room';
 import Group from '../../components/Group/Group';
+import Detail from '../../components/Detail/Detail';
 
 const AppContainer = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -31,11 +32,15 @@ const AppContainer = () => {
               <Route path='/login'>
                 <Redirect to='/rooms' />
               </Route>
-              <Route path='/rooms'>
+              <Route exact path='/rooms'>
                 <Room currentUser={currentUser} setCurrentUser={setCurrentUser} />
               </Route>
               <Route path='/groups'>
                 <Group currentUser={currentUser} setCurrentUser={setCurrentUser} />
+              </Route>
+              <Route
+                path='/rooms/:id'
+                render={(props) => { <Detail {...props} />; }}>
               </Route>
             </>
             : <>
