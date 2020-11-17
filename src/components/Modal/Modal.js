@@ -11,10 +11,11 @@ const Modal = (props) => {
     newMembers,//members와 setmembers는 Group쪽에서 들어옴. Room과는 관계없음.
     setNewMembers,//members와 setmembers는 Group쪽에서 들어옴. Room과는 관계없음.
     fetchFunction,
+    setExistMember,
     children
   } = props;
 
-  console.log("FUNCTOIN", fetchFunction);
+  console.log("FUNCTOIN", fetchFunction);//fetchToAddMember
 
   const closeModal = () => {
     setShowModal(false);
@@ -34,6 +35,7 @@ const Modal = (props) => {
             fetchToServer={fetchFunction}
             currentUser={currentUser}
             setCurrentUser={setCurrentUser}
+            setExistMember={setExistMember}
             closeModal={closeModal}/>
         </div>
       </div>

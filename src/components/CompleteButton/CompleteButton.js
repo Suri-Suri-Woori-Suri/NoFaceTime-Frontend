@@ -6,14 +6,17 @@ const CompleteButton = ({
   setCurrentUser,
   buttonName,
   fetchToServer,
+  setExistMember,
   closeModal
 }) => {
 
   const fetch = async () => {
-    console.log('FETCHED!!!!!');
     const data = await fetchToServer();
+    console.log(data);
+
     if ('rooms' in data) setCurrentUser({ ...currentUser, rooms: data.rooms });
     if ('groups' in data) setCurrentUser({ ...currentUser, groups: data.groups });
+    if ('updatedMembers' in data) setExistMember([...data.updatedMembers]);
 
     closeModal();
   };

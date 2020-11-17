@@ -15,19 +15,27 @@ const GroupContent = (props) => {
     setExistMember,
     fetchToServer,
     checkedGroups,
-    setCheckedGroups
+    setCheckedGroups,
+    checkedMembers,
+    setCheckedMembers,
+    setTargetGroup
   } = props;
+  console.log(setTargetGroup)
 
 
   const groups = currentUser.groups;
 
+  console.log('###############', setCheckedMembers)
+
   const fetch = async () => {
-    console.log('delete fetch');
     const data = await fetchToServer();
-    console.log("###########", data);
 
     if ('rooms' in data) setCurrentUser({ ...currentUser, rooms: data.rooms });
     if ('groups' in data) setCurrentUser({ ...currentUser, groups: data.groups });
+    if ('updatedMembers' in data) {
+      setExistMember([ ... data.updatedMembers ]);
+      setCheckedMembers([]);
+    }
   };
 
   const popupModal = (event) => {
@@ -46,6 +54,8 @@ const GroupContent = (props) => {
         <ExistMemberList
           existMember={existMember}
           setShowMember={setShowMember}
+          checkedMembers={checkedMembers}
+          setCheckedMembers={setCheckedMembers}
         /> :
         <GroupList
           groups={groups}
@@ -53,6 +63,7 @@ const GroupContent = (props) => {
           setCheckedGroups={setCheckedGroups}
           setShowMember={setShowMember}
           setExistMember={setExistMember}
+          setTargetGroup={setTargetGroup}
         />
       }
     </>
