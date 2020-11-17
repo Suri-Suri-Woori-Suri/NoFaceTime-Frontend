@@ -5,7 +5,6 @@ import GroupContent from '../GroupContent/GroupContent';
 import styles from './Group.module.css';
 import { createGroup, addMember, deleteRoom } from '../../api';
 import { deleteGroups, deleteMember } from '../../api/index';
-import { getMember } from '../../api';
 
 const Group = ({ currentUser, setCurrentUser }) => {
   const [showModal, setShowModal] = useState(false);
@@ -114,21 +113,23 @@ const Group = ({ currentUser, setCurrentUser }) => {
               <GroupContent
                 title={title}
                 currentUser={currentUser}
+                setCurrentUser={setCurrentUser}
                 setShowModal={setShowModal}
                 showMember={showMember}
                 setShowMember={setShowMember}
                 existMember={existMember}
-                //fetchFunction={deleteMember}
+                //fetchToServer={deleteMember}
               /> :
               <GroupContent
                 title={title}
                 currentUser={currentUser}
+                setCurrentUser={setCurrentUser}
                 setShowModal={setShowModal}
-                setExistMember={setExistMember}
                 showMember={showMember}
                 setShowMember={setShowMember}
                 existMember={existMember}
-                fetchFunction={fetchToDeleteGroups}
+                setExistMember={setExistMember}
+                fetchToServer={fetchToDeleteGroups}
                 checkedGroups={checkedGroups}
                 setCheckedGroups={setCheckedGroups}
               />}

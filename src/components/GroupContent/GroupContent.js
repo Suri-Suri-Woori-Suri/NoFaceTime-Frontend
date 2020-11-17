@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styles from './GroupContent.module.css';
 import GroupList from '../GroupList/GroupList';
 import ExistMemberList from '../MemberList/MemberList';
@@ -7,13 +7,13 @@ const GroupContent = (props) => {
   const {
     title,
     currentUser,
+    setCurrentUser,
     setShowModal,
-    setgroupId,
     showMember,
     setShowMember,
     existMember,
     setExistMember,
-    fetchFunction,
+    fetchToServer,
     checkedGroups,
     setCheckedGroups
   } = props;
@@ -23,7 +23,11 @@ const GroupContent = (props) => {
 
   const fetch = async () => {
     console.log('delete fetch');
-    await fetchFunction;
+    const data = await fetchToServer();
+    console.log("###########", data);
+
+    if ('rooms' in data) setCurrentUser({ ...currentUser, rooms: data.rooms });
+    if ('groups' in data) setCurrentUser({ ...currentUser, groups: data.groups });
   };
 
   const popupModal = (event) => {
@@ -47,7 +51,6 @@ const GroupContent = (props) => {
           groups={groups}
           checkedGroups={checkedGroups}
           setCheckedGroups={setCheckedGroups}
-          setgroupId={setgroupId}
           setShowMember={setShowMember}
           setExistMember={setExistMember}
         />

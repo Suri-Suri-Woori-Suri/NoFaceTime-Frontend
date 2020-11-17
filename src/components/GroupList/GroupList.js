@@ -1,27 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import styles from './GroupList.module.css';
-import { getMember } from '../../api';
+import { getMembers } from '../../api';
 
-const GroupList = ({ groups, checkedGroups, setCheckedGroups, setgroupId, setShowMember, setExistMember }) => {
-  const [isFetched, setIsFetched] = useState(false);
+const GroupList = (props) => {
+  const {
+    groups,
+    checkedGroups,
+    setCheckedGroups,
+    setShowMember,
+    setExistMember
+  } = props;
+  const [targetGroupId, setTargetGroupId] = useState(null);
 
-  //toggle 변수명 수정??
-  const toggle = (groupId) => {
-    console.log('Get Member Toggle');
-    setgroupId(groupId);
-    setIsFetched(!isFetched);
-  };
-
-  useEffect(() => {
-    if (!isFetched) return;
+  const fetch = async () => {
     console.log('Get Member!!!!');
-    //getMember(groupId);
-
-    const response = [1, 2, 3, 4, 5, 6, 6, 1, 2, 3, 4, 5, 6];
-    setExistMember([...response]);
-    setIsFetched(false);
-    setShowMember(true);
-  }, [isFetched]);
+    const data = await getMembers(targetGroupId);
+    console.log(data);
+    // const response = [1, 2, 3, 4, 5, 6, 6, 1, 2, 3, 4, 5, 6];
+    // setExistMember([...response]);
+    //setShowMember(true);
+  };
 
   const onChange = groupId => {
     const clickedGroup = checkedGroups.indexOf(groupId);
@@ -43,7 +41,7 @@ const GroupList = ({ groups, checkedGroups, setCheckedGroups, setgroupId, setSho
           type='checkbox'
           onChange={() => onChange(group._id)}
         />
-        <button key={i} className={styles.Group} onClick={() => toggle(group._id)}>
+        <button key={i} className={styles.Group} onClick={fetch}>
           {group.name}
         </button>
       </div>

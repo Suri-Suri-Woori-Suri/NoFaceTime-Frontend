@@ -54,7 +54,7 @@ export const deleteGroups = async (userId, selectedGroup) => {
   // 삭제해야할 것이 여러개인 경우..
   // groups=[1,2,3]
   const { DELETE } = API_METHOD;
-  const groupIdToDelete = selectedGroup.length === 1 ? selectedGroup[0] : 'multipleGroups';
+  const groupIdToDelete = selectedGroup.length === 1 ? selectedGroup[0] : `groups=${selectedGroup}`;
   const response = await fetch(`http://localhost:5000/groups/${groupIdToDelete}`, {
     method: DELETE,
     headers: {
@@ -84,7 +84,7 @@ export const deleteMember = async (currentUser, groupId, selectedMember) => {
   console.log(response);
 };
 
-export const getMember = async (groupId) => {
+export const getMembers = async (groupId) => {
   const { GET } = API_METHOD;
   const response = await fetch(`http://localhost:5000/groups/${groupId}`, {
     method: GET,
@@ -95,7 +95,8 @@ export const getMember = async (groupId) => {
     body: JSON.stringify({ groupId })
   });
 
-  console.log(response);
+  const data = await response.json();
+  return data;
 };
 
 export const deleteRoom = async (userId, roomId) => {
