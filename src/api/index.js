@@ -1,4 +1,5 @@
 import { API_METHOD } from '../constants';
+import queryString from 'query-string';
 
 export const createGroup = async (userId, groupName, members) => {
   const { POST } = API_METHOD;
@@ -50,21 +51,18 @@ export const createRoom = async (currentUser, roomName) => {
 };
 
 export const deleteGroups = async (userId, selectedGroup) => {
-  // selectedGroup 은 선택한 그룹의 아이디가 담긴 배열
-  // 삭제해야할 것이 여러개인 경우..
-  // groups=[1,2,3]
   const { DELETE } = API_METHOD;
-  const groupIdToDelete = selectedGroup.length === 1 ? selectedGroup[0] : `groups=${selectedGroup}`;
+  const groupIdToDelete = queryString.stringify({ group: selectedGroup });
   const response = await fetch(`http://localhost:5000/groups/${groupIdToDelete}`, {
     method: DELETE,
     headers: {
       'Content-Type': 'application/json'
     },
     credentials: 'include',
-    body: JSON.stringify({ userId, selectedGroup })
+    body: JSON.stringify({ userId })
   });
 
-  console.log(response);
+  return await response.json();
 };
 
 export const deleteMember = async (currentUser, groupId, selectedMember) => {
