@@ -1,23 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-// import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 
-import { authService } from '../../config/firebase';
+import {
+  createActionForUserData,
+  createActionToAddRoom,
+  createActionToDeleteRoom,
+  createActionToAddGroup,
+  createActionToDeleteGroups,
+  createActionToAddMembers,
+  createActionToDeleteMembers
+} from '../../actions';
 
+import RoomContainer from '../RoomContainer/RoomContainer';
 import Home from '../../components/Home/Home';
 import Header from '../../components/Header/Header';
 import Login from '../../components/Login/Login';
-import Room from '../../components/Room/Room';
 import Group from '../../components/Group/Group';
-import Detail from '../../components/Detail/Detail';
+import Cam from '../../components/Cam/Cam';
 
-const AppContainer = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState({});
-  console.log("AUTH SERVICE", authService);
-  console.log("is Anonymous", authService.isAnonymous);
-  console.log("ISLOGGEDIN", isLoggedIn);
-  console.log("currentUser", currentUser);
+const AppContainer = ({
+  isLoggedIn,
+  currentUser,
+  setUserData,
+  setDeleteRoom,
+  setAddGroup,
+  setDeleteGroup,
+  setAddMembers,
+  setDeleteMembers
+}) => {
 
   return (
     <div>
@@ -33,14 +44,17 @@ const AppContainer = () => {
                 <Redirect to='/rooms' />
               </Route>
               <Route exact path='/rooms'>
-                <Room currentUser={currentUser} setCurrentUser={setCurrentUser} />
+                <RoomContainer
+                  currentUser={currentUser}
+                  setCurrentUser={setUserData} />
               </Route>
               <Route path='/groups'>
-                <Group currentUser={currentUser} setCurrentUser={setCurrentUser} />
+                <Group
+                  currentUser={currentUser}
+                  setCurrentUser={setUserData} />
               </Route>
-              <Route
-                path='/rooms/:id'
-                render={(props) => { <Detail {...props} />; }}>
+              <Route path='/rooms/:id'>
+                <Cam />
               </Route>
             </>
             : <>
@@ -50,10 +64,7 @@ const AppContainer = () => {
               </Route>
               <Route path='/login'>
                 <Header />
-                <Login
-                  setIsLoggedIn={setIsLoggedIn}
-                  setCurrentUser={setCurrentUser}
-                />
+                <Login setCurrentUser={setUserData} />
               </Route>
               <Route path='/rooms'>
                 <Redirect to='/login' />
@@ -68,18 +79,26 @@ const AppContainer = () => {
   );
 };
 
-// const mapStateToProps = (state) => {
-//   return {
 
-//   };
-// };
+const mapStateToProps = (state) => {
+  console.log("MAP STATE TO PROPS", state);
 
-// const mapDispatchToProps = (dispatch) => {
-//   return {
+  return {
+    currentUser: state,
+    isLoggedIn: state.isLoggedIn
+  };
+};
 
-//   };
-// };
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setUserData: (userData) => { dispatch(createActionForUserData(userData)); },
+    setAddRoom: (addedRoomData) => { dispatch(createActionToAddRoom(addedRoomData)); },
+    setDeleteRoom: (id) => { dispatch(createActionToDeleteRoom(id)); },
+    setAddGroup: (addedGroupData) => { dispatch(createActionToAddGroup(addedGroupData)); },
+    setDeleteGroup: (arrayOfId) => { dispatch(createActionToDeleteGroups(arrayOfId)); },
+    setAddMembers: (groupId, allMemberData) => { dispatch(createActionToAddMembers(groupId, allMemberData)); },
+    setDeleteMembers: (groupId, arrayOfEmail) => { dispatch(createActionToDeleteMembers(groupId, arrayOfEmail)); }
+  };
+};
 
-// export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
-
-export default AppContainer;
+export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);

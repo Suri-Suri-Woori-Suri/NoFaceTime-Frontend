@@ -1,7 +1,9 @@
 import React from 'react';
-import styles from './Modal.module.css';
+
 import CompleteButton from '../CompleteButton/CompleteButton';
 import CancelButton from '../CancelButton/CancelButton';
+
+import styles from './Modal.module.css';
 
 const Modal = (props) => {
   const {
@@ -15,10 +17,11 @@ const Modal = (props) => {
     children
   } = props;
 
-  console.log("FUNCTOIN", fetchFunction);//fetchToAddMember
+  console.log("Modal Fatch Function", fetchFunction);
 
   const closeModal = () => {
     setShowModal(false);
+
     if (setNewMembers) setNewMembers([]);
   };
 
@@ -29,14 +32,14 @@ const Modal = (props) => {
         <div>
           <CancelButton
             buttonName={'Cancel'}
-            onClick={closeModal}/>
+            onClick={closeModal} />
           <CompleteButton
             buttonName={'Create'}
             fetchToServer={fetchFunction}
             currentUser={currentUser}
             setCurrentUser={setCurrentUser}
             setExistMember={setExistMember}
-            closeModal={closeModal}/>
+            closeModal={closeModal} />
         </div>
       </div>
     </div>
