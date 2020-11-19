@@ -52,30 +52,32 @@ const userReducer = (state = initialState, action) => {
     case ADD_MEMBERS:
       const targetGroup = state.groups.filter((group) => {
         return group._id === action.payload.groupId;
-      });
+      })[0];
 
-      targetGroup.members = action.payload.allMemberData;
+      targetGroup.members.push(...action.payload.allMemberData);
 
       return {
         ...state,
-        groups: [...state.groups, targetGroup]
+        groups: [...state.groups]
       };
 
     case DELETE_MEMBERS:
-      const targetGroupToDeleteMembers = state.groups.filter((group) => {
+      const target = state.groups.filter((group) => {
         return group._id === action.payload.groupId;
-      });
+      })[0];
 
       const safeGroup = state.groups.filter((group) => {
         return group._id !== action.payload.groupId;
       });
 
-      const afterDelete = targetGroupToDeleteMembers.members.filter((email) => {
-        return !action.payload.inclues(email);
+      const afterDelete = target.members.filter((email) => {
+        return !action.payload.arrayOfEmail.includes(email);
       });
+      target.members = afterDelete;
+
       return {
         ...state,
-        groups: [...safeGroup, afterDelete]
+        groups: [...safeGroup, target]
       };
 
     default:

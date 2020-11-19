@@ -1,34 +1,26 @@
 import React from 'react';
 import styles from './MemberList.module.css';
 
-const ExistMemberList = (props) => {
+const MemberList = (props) => {
   const {
-    existMember,
+    currentUser,
+    targetGroupId,
     setShowMember,
-    checkedMembers,
-    setCheckedMembers,
+    handleCheckbox
   } = props;
 
-  const onChange = memberEmail => {
-    const selected = checkedMembers.indexOf(memberEmail);
-    const currentChecked = [...checkedMembers];
+  const targetGroup = currentUser.groups.filter(group => group._id === targetGroupId)[0];
+  console.log(targetGroupId);
+  console.log(targetGroup);
+  const targetMember = targetGroup.members
 
-    if (selected === -1) {
-      currentChecked.push(memberEmail);
-    } else {
-      currentChecked.splice(selected, 1);
-    }
-    setCheckedMembers([...currentChecked]);
-  };
-
-  console.log('existMember!!!!!', existMember);
-  const existMemberList = existMember.map((memberEmail, i) => {
+  const existMemberList = targetMember.map((memberEmail, i) => {
     return (
       <div key={i}>
         <input
           type='checkbox'
           className={styles.Member}
-          onChange={() => onChange(memberEmail)}
+          onChange={() => handleCheckbox(memberEmail)}
         />{memberEmail}
       </div>
     );
@@ -46,4 +38,4 @@ const ExistMemberList = (props) => {
   );
 };
 
-export default ExistMemberList;
+export default MemberList;

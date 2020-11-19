@@ -50,7 +50,7 @@ export const createRoom = async (currentUser, roomName) => {
   return data;
 };
 
-export const deleteGroups = async (userId, selectedGroup) => {
+export const deleteGroup = async (userId, selectedGroup) => {
   const { DELETE } = API_METHOD;
   const groupIdToDelete = queryString.stringify({ group: selectedGroup });
   const response = await fetch(`http://localhost:5000/groups/${groupIdToDelete}`, {
@@ -80,21 +80,6 @@ export const deleteMember = async (groupId, selectedMember) => {
   return await response.json();
 };
 
-export const getMembers = async (groupId) => {
-  const { GET } = API_METHOD;
-  const response = await fetch(`http://localhost:5000/groups/${groupId}`, {
-    method: GET,
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    credentials: 'include'
-  });
-
-  const data = await response.json();
-  const { members } = data;
-  return members;
-};
-
 export const deleteRoom = async (userId, roomId) => {
   const { DELETE } = API_METHOD;
 
@@ -110,3 +95,18 @@ export const deleteRoom = async (userId, roomId) => {
   const data = await response.json();
   return data;
 };
+
+// export const getMember = async (groupId) => {
+//   const { GET } = API_METHOD;
+//   const response = await fetch(`http://localhost:5000/groups/${groupId}`, {
+//     method: GET,
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     credentials: 'include'
+//   });
+
+//   const data = await response.json();
+//   const { members } = data;
+//   return members;
+// };

@@ -6,6 +6,7 @@ const CancelButton = ({
   onClick
 }) => {
   const cancel = onClick;
+  console.log("$$$$$$$", cancel);
 
   return (
     <button
