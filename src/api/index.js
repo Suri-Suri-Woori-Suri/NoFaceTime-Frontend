@@ -5,7 +5,7 @@ export const createGroup = async (userId, groupName, members) => {
   const { POST } = API_METHOD;
   if (groupName.length === 0) return;
 
-  const response = await fetch('http://localhost:5000/groups', {
+  const response = await fetch('https://localhost:5000/groups', {
     method: POST,
     headers: {
       'Content-Type': 'application/json'
@@ -20,7 +20,7 @@ export const createGroup = async (userId, groupName, members) => {
 
 export const addMember = async (groupId, members) => {
   const { POST } = API_METHOD;
-  const response = await fetch(`http://localhost:5000/groups/${groupId}/members/`, {
+  const response = await fetch(`https://localhost:5000/groups/${groupId}/members/`, {
     method: POST,
     headers: {
       'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ export const createRoom = async (currentUser, roomName) => {
   const { POST } = API_METHOD;
   if (roomName.length === 0) return;
 
-  const response = await fetch('http://localhost:5000/rooms', {
+  const response = await fetch('https://localhost:5000/rooms', {
     method: POST,
     headers: {
       'Content-Type': 'application/json'
@@ -53,7 +53,7 @@ export const createRoom = async (currentUser, roomName) => {
 export const deleteGroup = async (userId, selectedGroup) => {
   const { DELETE } = API_METHOD;
   const groupIdToDelete = queryString.stringify({ group: selectedGroup });
-  const response = await fetch(`http://localhost:5000/groups/${groupIdToDelete}`, {
+  const response = await fetch(`https://localhost:5000/groups/${groupIdToDelete}`, {
     method: DELETE,
     headers: {
       'Content-Type': 'application/json'
@@ -69,7 +69,7 @@ export const deleteMember = async (groupId, selectedMember) => {
   const { DELETE } = API_METHOD;
   const membersEmailToDelete = queryString.stringify({ member: selectedMember });
 
-  const response = await fetch(`http://localhost:5000/groups/${groupId}/members/${membersEmailToDelete}`, {
+  const response = await fetch(`https://localhost:5000/groups/${groupId}/members/${membersEmailToDelete}`, {
     method: DELETE,
     headers: {
       'Content-Type': 'application/json'
@@ -83,7 +83,7 @@ export const deleteMember = async (groupId, selectedMember) => {
 export const deleteRoom = async (userId, roomId) => {
   const { DELETE } = API_METHOD;
 
-  const response = await fetch(`http://localhost:5000/rooms/${roomId}`, {
+  const response = await fetch(`https://localhost:5000/rooms/${roomId}`, {
     method: DELETE,
     headers: {
       'Content-Type': 'application/json'
