@@ -1,21 +1,17 @@
 import React from 'react';
-
 import CompleteButton from '../../components/CompleteButton/CompleteButton';
 import CancelButton from '../../components/CancelButton/CancelButton';
-
 import styles from './ModalContainer.module.css';
 
 const ModalContainer = ({
-  currentUser,
-  setCurrentUser,
-  setShowModal,
-  newMembers, // members와 setmembers는 Group쪽에서 들어옴. Room과는 관계없음.
+  currentUser,//공통
+  addAndUpdateUserState,//공통
+  setShowModal,//공통
+  fetchToCreate,
   setNewMembers, // members와 setmembers는 Group쪽에서 들어옴. Room과는 관계없음.
-  fetchFunction,
-  setExistMember,
+  setExistMember,// members와 setmembers는 Group쪽에서 들어옴. Room과는 관계없음. showMember = true 일 때
   children
 }) => {
-  console.log("Modal Fatch Function", fetchFunction);
 
   const closeModal = () => {
     setShowModal(false);
@@ -24,12 +20,11 @@ const ModalContainer = ({
   };
 
   const handleClickButton = async () => {
-    const data = await fetchFunction();
-    console.log("FETCH DATA", data);
-
-    if ('rooms' in data) setCurrentUser({ ...currentUser, rooms: data.rooms });
-    if ('groups' in data) setCurrentUser({ ...currentUser, groups: data.groups });
-    if ('updatedMembers' in data) setExistMember([...data.updatedMembers]);
+    const data = await fetchToCreate();
+    console.log("FETCH DATA To Create ", data);
+    if ('rooms' in data) addAndUpdateUserState(data.rooms);
+    if ('groups' in data) addAndUpdateUserState(data.groups);
+    if ('members' in data) addAndUpdateUserState(data.groupId, data.members);
 
     closeModal();
   };
@@ -45,9 +40,6 @@ const ModalContainer = ({
           <CompleteButton
             buttonName={'Create'}
             onClick={handleClickButton}
-          // currentUser={currentUser}
-          // setCurrentUser={setCurrentUser}
-          // setExistMember={setExistMember}
           />
         </div>
       </div>

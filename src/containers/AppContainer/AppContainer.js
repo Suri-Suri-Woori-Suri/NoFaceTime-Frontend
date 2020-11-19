@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-
 import {
   createActionForUserData,
   createActionToAddRoom,
@@ -13,23 +12,25 @@ import {
 } from '../../actions';
 
 import RoomContainer from '../RoomContainer/RoomContainer';
+import GroupContainer from '../GroupContainer/GroupContainer';
 import Home from '../../components/Home/Home';
 import Header from '../../components/Header/Header';
 import Login from '../../components/Login/Login';
-import Group from '../../components/Group/Group';
 import Cam from '../../components/Cam/Cam';
 
 const AppContainer = ({
   isLoggedIn,
   currentUser,
-  setUserData,
-  setDeleteRoom,
-  setAddGroup,
-  setDeleteGroup,
-  setAddMembers,
-  setDeleteMembers
+  updateUserData,
+  addRooms,
+  deleteRooms,
+  addGroups,
+  deleteGroups,
+  addMembers,
+  deleteMembers
 }) => {
-
+  console.log('ISLOGGED IN???', isLoggedIn);
+  console.log('CURRENT USER STATE', currentUser);
   return (
     <div>
       <Switch>
@@ -46,12 +47,18 @@ const AppContainer = ({
               <Route exact path='/rooms'>
                 <RoomContainer
                   currentUser={currentUser}
-                  setCurrentUser={setUserData} />
+                  addRooms={addRooms}
+                  deleteRooms={deleteRooms}
+                   />
               </Route>
               <Route path='/groups'>
-                <Group
+                <GroupContainer
                   currentUser={currentUser}
-                  setCurrentUser={setUserData} />
+                  addGroups={addGroups}
+                  deleteGroups={deleteGroups}
+                  addMembers={addMembers}
+                  deleteMembers={deleteMembers}
+                   />
               </Route>
               <Route path='/rooms/:id'>
                 <Cam />
@@ -64,7 +71,7 @@ const AppContainer = ({
               </Route>
               <Route path='/login'>
                 <Header />
-                <Login setCurrentUser={setUserData} />
+                <Login updateUserData={updateUserData} />
               </Route>
               <Route path='/rooms'>
                 <Redirect to='/login' />
@@ -90,14 +97,15 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
+
   return {
-    setUserData: (userData) => { dispatch(createActionForUserData(userData)); },
-    setAddRoom: (addedRoomData) => { dispatch(createActionToAddRoom(addedRoomData)); },
-    setDeleteRoom: (id) => { dispatch(createActionToDeleteRoom(id)); },
-    setAddGroup: (addedGroupData) => { dispatch(createActionToAddGroup(addedGroupData)); },
-    setDeleteGroup: (arrayOfId) => { dispatch(createActionToDeleteGroups(arrayOfId)); },
-    setAddMembers: (groupId, allMemberData) => { dispatch(createActionToAddMembers(groupId, allMemberData)); },
-    setDeleteMembers: (groupId, arrayOfEmail) => { dispatch(createActionToDeleteMembers(groupId, arrayOfEmail)); }
+    updateUserData: (userData) => { dispatch(createActionForUserData(userData)); },
+    addRooms: (addedRoomData) => { dispatch(createActionToAddRoom(addedRoomData)); },
+    deleteRooms: (id) => { dispatch(createActionToDeleteRoom(id)); },
+    addGroups: (addedGroupData) => { dispatch(createActionToAddGroup(addedGroupData)); },
+    deleteGroups: (arrayOfId) => { dispatch(createActionToDeleteGroups(arrayOfId)); },
+    addMembers: (groupId, allMemberData) => { dispatch(createActionToAddMembers(groupId, allMemberData)); },
+    deleteMembers: (groupId, arrayOfEmail) => { dispatch(createActionToDeleteMembers(groupId, arrayOfEmail)); }
   };
 };
 

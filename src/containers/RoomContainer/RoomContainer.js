@@ -10,7 +10,8 @@ import styles from './RoomContainer.module.css';
 
 const RoomContainer = ({
   currentUser,
-  setCurrentUser
+  addRooms,
+  deleteRooms
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [roomName, setRoomName] = useState('');
@@ -45,9 +46,8 @@ const RoomContainer = ({
   };
 
   const fetchToDeleteRoomData = async (roomId) => {
-    console.log("CLICK", roomId);
-    const data = await deleteRoom(currentUser._id, roomId);
-    setCurrentUser({ ...currentUser, rooms: data.rooms });
+    deleteRooms(roomId);
+    await deleteRoom(currentUser._id, roomId);
   };
 
   const popupModal = (event) => {
@@ -71,9 +71,9 @@ const RoomContainer = ({
             showModal &&
             <ModalContainer
               currentUser={currentUser}
-              setCurrentUser={setCurrentUser}
+              addAndUpdateUserState={addRooms}
               setShowModal={setShowModal}
-              fetchFunction={fetchToCreateRoom}>
+              fetchToCreate={fetchToCreateRoom}>
               {modalContent}
             </ModalContainer>
           }

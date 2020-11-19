@@ -5,7 +5,7 @@ export const signInWithGoogle = () => {
   googleProvider.addScope('email');
 
   return authService.signInWithPopup(googleProvider)
-    .then(async (userInfo) => {
+    .then((userInfo) => {
       const { POST } = API_METHOD;
       const postData = {
         email: userInfo.additionalUserInfo.profile.email,

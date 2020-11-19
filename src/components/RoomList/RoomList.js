@@ -12,9 +12,8 @@ const RoomList = ({
   fetchToDeleteRoomData
 }) => {
   return (
-    currentUser.rooms
+    Array.isArray(currentUser.rooms)
       ? currentUser.rooms.map((room) => {
-        console.log("ROOMROOM", room);
         return (
           <div
             className={styles.RoomEntry}
@@ -35,7 +34,7 @@ const RoomList = ({
           </div>
         );
       })
-      : <></>
+    : <>{currentUser.rooms}</>
   );
 };
 

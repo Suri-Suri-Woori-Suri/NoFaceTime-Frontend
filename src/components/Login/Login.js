@@ -3,19 +3,19 @@ import React from 'react';
 import { signInWithGoogle } from '../../utils/firebase';
 import styles from './Login.module.css';
 
-const Login = ({
-  setCurrentUser
-}) => {
+const Login = ({ updateUserData }) => {
   const showPopUpToSignIn = async () => {
-    const userData = await signInWithGoogle();
 
-    if (!userData) {
-      alert('로그인에 실패하였습니다.');
-      return;
+    try {
+      const userData = await signInWithGoogle();
+      console.log(userData)//최초가입시 배열이 아니다.
+      const { loginUserData } = userData;
+
+      updateUserData({ ...loginUserData });
+    } catch (err) {
+      console.log(err)
+      alert('로그인에 실패했습니다.');
     }
-
-    setCurrentUser(userData[0]);
-    return;
   };
 
   return (
