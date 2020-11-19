@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as faceapi from 'face-api.js';
 
-function Video() {
+function Video({ socket, location }) {
   console.log('VIDEO!!!!!')
+   //window.history.back(); -> 이거 누르면 뒤로 가지 않을까용??? 나중에 핵심기능 구현하구 고민해보기...
+  const roomLinkId = location.pathname.split('/').pop();//'/room/여기'
+
   const videoHeight = 500;
   const videoWidth = 500;
   const [initializing, setInitializing] = useState(false);
@@ -31,7 +34,7 @@ function Video() {
       videoRef.current.srcObject = result
     }
     catch(err) {
-      console.err(err);
+      console.log(err);
     }
   };
 
@@ -45,7 +48,6 @@ function Video() {
     disgusted: '🤢',
     surprised: '😳'
   };
-  console.log(emojis.default)
 
   const handleVideoPlay = () => {
     console.log('dho..!!!!');
@@ -94,16 +96,31 @@ function Video() {
     }, 100);
   };
 
+  const [socketOn, setSocketOn] = useState(false);
+
+  useEffect(()=> {
+    if (!socketOn) return;
+
+    const socketClient = socket;
+    socketClient.emit('join-room', { name:'woori', roomLinkId });
+    //socketClient.emit('join', { name:'woori', roomLinkId });
+
+    return () => {
+      socket.emit('disconnect');
+      socket.off();
+    };
+  }, [socketOn]);
+
 
   return (
     <div className="App">
-      <div>app</div>
+      <div>Video</div>
       <span>{initializing ? 'initializing' : 'Ready'}</span>
       <div className='faceShape center'>
         <video ref={videoRef} autoPlay muted height={videoHeight} width={videoWidth} onPlay={handleVideoPlay}/>
         <canvas className='canvas' ref={canvasRef}/>
-        <p>🔥</p>
       </div>
+      <button onClick={() => setSocketOn(true)}>Join</button>
     </div>
   );
 }

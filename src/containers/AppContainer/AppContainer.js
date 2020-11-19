@@ -11,12 +11,14 @@ import {
   createActionToDeleteMembers
 } from '../../actions';
 
+import io from 'socket.io-client';
+
 import RoomContainer from '../RoomContainer/RoomContainer';
 import GroupContainer from '../GroupContainer/GroupContainer';
 import Home from '../../components/Home/Home';
 import Header from '../../components/Header/Header';
 import Login from '../../components/Login/Login';
-import Cam from '../../components/Cam/Cam';
+import Video from '../../components/Video/Video';
 
 const AppContainer = ({
   isLoggedIn,
@@ -31,6 +33,8 @@ const AppContainer = ({
 }) => {
   console.log('ISLOGGED IN???', isLoggedIn);
   console.log('CURRENT USER STATE', currentUser);
+  //localhost:5000 127.0.0.1:5000
+  const socket = io('localhost:5000');
   return (
     <div>
       <Switch>
@@ -60,9 +64,7 @@ const AppContainer = ({
                   deleteMembers={deleteMembers}
                    />
               </Route>
-              <Route path='/rooms/:id'>
-                <Cam />
-              </Route>
+              <Route path='/rooms/:id' render={(props) => <Video socket={socket} location={props.location}/>}/>
             </>
             : <>
               <Route exact path='/'>

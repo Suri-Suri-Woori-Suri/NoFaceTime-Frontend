@@ -12,7 +12,7 @@ export const signInWithGoogle = () => {
         nickname: userInfo.additionalUserInfo.profile.name,
       };
 
-      const userData = fetch('http://localhost:5000/login', {
+      const userData = fetch('https://localhost:5000/login', {
         method: POST,
         headers: {
           'Content-Type': 'application/json'
