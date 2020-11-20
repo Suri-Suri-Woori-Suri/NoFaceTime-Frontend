@@ -1,9 +1,26 @@
-import { API_METHOD } from '../constants';
 import queryString from 'query-string';
+import { API_METHOD } from '../constants';
+
+export const getUser = async (userId) => {
+  const { GET } = API_METHOD;
+
+  const response = await fetch(`https://localhost:5000/users/${userId}`, {
+    method: GET,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',
+  });
+
+  const data = response.json();
+
+  return data;
+};
 
 export const createGroup = async (userId, groupName, members) => {
   const { POST } = API_METHOD;
-  if (groupName.length === 0) return;
+
+  if (!groupName.length) return;
 
   const response = await fetch('https://localhost:5000/groups', {
     method: POST,
@@ -15,11 +32,13 @@ export const createGroup = async (userId, groupName, members) => {
   });
 
   const data = await response.json();
+
   return data;
 };
 
 export const addMember = async (groupId, members) => {
   const { POST } = API_METHOD;
+
   const response = await fetch(`https://localhost:5000/groups/${groupId}/members/`, {
     method: POST,
     headers: {
@@ -30,12 +49,14 @@ export const addMember = async (groupId, members) => {
   });
 
   const data = await response.json();
+
   return data;
 };
 
 export const createRoom = async (currentUser, roomName) => {
   const { POST } = API_METHOD;
-  if (roomName.length === 0) return;
+
+  if (!roomName.length) return;
 
   const response = await fetch('https://localhost:5000/rooms', {
     method: POST,
@@ -47,12 +68,14 @@ export const createRoom = async (currentUser, roomName) => {
   });
 
   const data = await response.json();
+
   return data;
 };
 
 export const deleteGroup = async (userId, selectedGroup) => {
   const { DELETE } = API_METHOD;
   const groupIdToDelete = queryString.stringify({ group: selectedGroup });
+
   const response = await fetch(`https://localhost:5000/groups/${groupIdToDelete}`, {
     method: DELETE,
     headers: {
@@ -93,7 +116,27 @@ export const deleteRoom = async (userId, roomId) => {
   });
 
   const data = await response.json();
+
   return data;
+};
+
+export const getRoomHost = async (roomUUID) => {
+  const { GET } = API_METHOD;
+
+  const serverRoute = 'https://localhost:5000/rooms/' + roomUUID;
+
+  const response = await fetch(serverRoute, {
+    method: GET,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include'
+  });
+
+  const roomData = await response.json();
+  const roomHost = roomData[0].host;
+
+  return roomHost;
 };
 
 // export const getMember = async (groupId) => {
