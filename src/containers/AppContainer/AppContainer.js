@@ -1,6 +1,8 @@
 import React from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect, useRouteMatch } from 'react-router-dom';
 import { connect } from 'react-redux';
+import io from 'socket.io-client';
+
 import {
   createActionForUserData,
   createActionToAddRoom,
@@ -10,8 +12,6 @@ import {
   createActionToAddMembers,
   createActionToDeleteMembers
 } from '../../actions';
-
-import io from 'socket.io-client';
 
 import RoomContainer from '../RoomContainer/RoomContainer';
 import GroupContainer from '../GroupContainer/GroupContainer';
@@ -31,10 +31,16 @@ const AppContainer = ({
   addMembers,
   deleteMembers
 }) => {
-  console.log('ISLOGGED IN???', isLoggedIn);
-  console.log('CURRENT USER STATE', currentUser);
-  //localhost:5000 127.0.0.1:5000
   const socket = io('localhost:5000');
+  const roomLink = useRouteMatch("/rooms/:roomId");
+
+  const checkRoomInvitationLink = () => {
+    if (!roomLink) return;
+
+    localStorage.roomLink = roomLink.url;
+    localStorage.roomUUID = roomLink.params.roomId;
+  };
+
   return (
     <div>
       <Switch>
@@ -53,7 +59,7 @@ const AppContainer = ({
                   currentUser={currentUser}
                   addRooms={addRooms}
                   deleteRooms={deleteRooms}
-                   />
+                />
               </Route>
               <Route path='/groups'>
                 <GroupContainer
@@ -62,9 +68,14 @@ const AppContainer = ({
                   deleteGroups={deleteGroups}
                   addMembers={addMembers}
                   deleteMembers={deleteMembers}
-                   />
+                />
               </Route>
-              <Route path='/rooms/:id' render={(props) => <Video socket={socket} location={props.location}/>}/>
+              <Route
+                path='/rooms/:id'
+                render={(props) =>
+                  <Video
+                    socket={socket}
+                    location={props.location} />} />
             </>
             : <>
               <Route exact path='/'>
@@ -73,9 +84,14 @@ const AppContainer = ({
               </Route>
               <Route path='/login'>
                 <Header />
-                <Login updateUserData={updateUserData} />
+                <Login
+                  updateUserData={updateUserData}
+                  currentUser={currentUser} />
               </Route>
               <Route path='/rooms'>
+                {
+                  checkRoomInvitationLink()
+                }
                 <Redirect to='/login' />
               </Route>
               <Route path='/groups'>
@@ -88,10 +104,7 @@ const AppContainer = ({
   );
 };
 
-
 const mapStateToProps = (state) => {
-  console.log("MAP STATE TO PROPS", state);
-
   return {
     currentUser: state,
     isLoggedIn: state.isLoggedIn
@@ -99,7 +112,6 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-
   return {
     updateUserData: (userData) => { dispatch(createActionForUserData(userData)); },
     addRooms: (addedRoomData) => { dispatch(createActionToAddRoom(addedRoomData)); },

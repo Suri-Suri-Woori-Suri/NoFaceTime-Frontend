@@ -33,8 +33,6 @@ const GroupContainer = ({ currentUser, addGroups, deleteGroups, addMembers, dele
   const fetchToDeletemembers = () => deleteMember(targetGroupId, checkedMembers);
 
   const fetch = async () => {
-    console.log('CHECKED GROUPS', checkedGroups);
-    console.log('CHECKED MEBMERS', checkedMembers);
     if (showMember) {
       deleteMembers(targetGroupId, checkedMembers);
       setCheckedMembers([]);
@@ -116,7 +114,7 @@ const GroupContainer = ({ currentUser, addGroups, deleteGroups, addMembers, dele
     setShowMember(true);
   };
 
-  const title = showMember ? 'Member' : 'Your Groups'
+  const title = showMember ? 'Member' : 'Your Groups';
   const fetchToDelete = showMember ? fetchToDeletemembers : fetchToDeleteGroups;
   const fetchToCreate = showMember ? fetchToAddMember : fetchTocreateGroup;
   const modalContent = showMember ? addMemberModal : createGroupModal;

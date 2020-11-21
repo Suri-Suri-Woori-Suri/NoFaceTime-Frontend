@@ -8,12 +8,8 @@ const MemberList = (props) => {
     setShowMember,
     handleCheckbox
   } = props;
-
   const targetGroup = currentUser.groups.filter(group => group._id === targetGroupId)[0];
-  console.log(targetGroupId);
-  console.log(targetGroup);
-  const targetMember = targetGroup.members
-
+  const targetMember = targetGroup.members;
   const existMemberList = targetMember.map((memberEmail, i) => {
     return (
       <div key={i}>

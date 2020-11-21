@@ -17,8 +17,6 @@ const Modal = (props) => {
     children
   } = props;
 
-  console.log("Modal Fatch Function", fetchFunction);
-
   const closeModal = () => {
     setShowModal(false);
 

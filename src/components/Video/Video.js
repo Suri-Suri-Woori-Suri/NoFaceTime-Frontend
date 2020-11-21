@@ -1,18 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as faceapi from 'face-api.js';
+import styles from './Video.module.css';
 
-function Video({ socket, location }) {
-  console.log('VIDEO!!!!!')
-   //window.history.back(); -> 이거 누르면 뒤로 가지 않을까용??? 나중에 핵심기능 구현하구 고민해보기...
-  const roomLinkId = location.pathname.split('/').pop();//'/room/여기'
-
-  const videoHeight = 500;
-  const videoWidth = 500;
+const Video = ({
+  socket,
+  location }) => {
+  console.log('VIDEO!!!!!');
+  //window.history.back(); -> 이거 누르면 뒤로 가지 않을까용??? 나중에 핵심기능 구현하구 고민해보기...
+  const [socketOn, setSocketOn] = useState(false);
   const [initializing, setInitializing] = useState(false);
   const videoRef = useRef();
   const canvasRef = useRef();
 
-  console.log(process.env.PUBLIC_URL)// empty
+  const videoHeight = 500;
+  const videoWidth = 500;
+  const roomLinkId = location.pathname.split('/').pop();//'/room/여기'
+
+  console.log(process.env.PUBLIC_URL);// empty
 
   useEffect(() => {
     const loadModels = async () => {
@@ -24,16 +28,30 @@ function Video({ socket, location }) {
         faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
         faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
       ]).then(startVideo());
-    }
+    };
     loadModels();
   }, []);
+
+
+  useEffect(() => {
+    if (!socketOn) return;
+
+    const socketClient = socket;
+    socketClient.emit('join-room', { name: 'woori', roomLinkId });
+    //socketClient.emit('join', { name:'woori', roomLinkId });
+
+    return () => {
+      socket.emit('disconnect');
+      socket.off();
+    };
+  }, [socketOn]);
 
   const startVideo = async () => {
     try {
       const result = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-      videoRef.current.srcObject = result
+      videoRef.current.srcObject = result;
     }
-    catch(err) {
+    catch (err) {
       console.log(err);
     }
   };
@@ -71,7 +89,6 @@ function Video({ socket, location }) {
       faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
       faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
       faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
-      //console.log(detections);
 
       if (detections.length > 0) {
         detections.forEach(element => {
@@ -91,38 +108,32 @@ function Video({ socket, location }) {
           //canvasRef.current.innerHTML = statusIcons.default;
         });
       } else {
-        console.log("No Faces")
+        console.log("No Faces");
       }
     }, 100);
   };
 
-  const [socketOn, setSocketOn] = useState(false);
-
-  useEffect(()=> {
-    if (!socketOn) return;
-
-    const socketClient = socket;
-    socketClient.emit('join-room', { name:'woori', roomLinkId });
-    //socketClient.emit('join', { name:'woori', roomLinkId });
-
-    return () => {
-      socket.emit('disconnect');
-      socket.off();
-    };
-  }, [socketOn]);
-
-
   return (
-    <div className="App">
+    <div className='App'>
       <div>Video</div>
       <span>{initializing ? 'initializing' : 'Ready'}</span>
       <div className='faceShape center'>
-        <video ref={videoRef} autoPlay muted height={videoHeight} width={videoWidth} onPlay={handleVideoPlay}/>
-        <canvas className='canvas' ref={canvasRef}/>
+        <video
+          ref={videoRef}
+          width={videoWidth}
+          height={videoHeight}
+          onPlay={handleVideoPlay}
+          autoPlay
+          muted />
+        <canvas
+          className='canvas'
+          ref={canvasRef} />
       </div>
-      <button onClick={() => setSocketOn(true)}>Join</button>
+      <button onClick={() => setSocketOn(true)}>
+        Join
+      </button>
     </div>
   );
-}
+};
 
 export default Video;
