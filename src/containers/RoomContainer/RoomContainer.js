@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import ModalContainer from '../ModalContainer/ModalContainer';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import Room from '../../components/Room/Room';
+import MyRoom from '../../components/MyRoom/MyRoom';
 
 import { createRoom, deleteRoom } from '../../api';
 import styles from './RoomContainer.module.css';
@@ -63,7 +63,7 @@ const RoomContainer = ({
         <Sidebar />
         <div className={styles.ContentWrap}>
           <h1 className={styles.Title}> Welcome! </h1>
-          <Room
+          <MyRoom
             currentUser={currentUser}
             enterRoom={enterRoom}
             popupModal={popupModal}

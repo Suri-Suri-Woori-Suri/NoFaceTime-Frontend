@@ -9,7 +9,7 @@ const ConfigureModal = () => {
 
     window.onload = async function () {
       console.log("??!");
-      const video = document.getElementById('configureCam');
+      const videoWrap = document.getElementById('configureCam');
 
 
       const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });

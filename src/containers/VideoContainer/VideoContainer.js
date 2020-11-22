@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as faceapi from 'face-api.js';
-import styles from './Video.module.css';
 
-const Video = ({
+import Logo from '../../components/Logo/Logo';
+import MenuBar from '../../components/MenuBar/MenuBar';
+import styles from './VideoContainer.module.css';
+
+const VideoContainer = ({
   socket,
   location }) => {
   console.log('VIDEO!!!!!');
@@ -11,9 +14,10 @@ const Video = ({
   const [initializing, setInitializing] = useState(false);
   const videoRef = useRef();
   const canvasRef = useRef();
+  const emojiRef = useRef();
 
-  const videoHeight = 500;
-  const videoWidth = 500;
+  const videoWidth = 1000;
+  const videoHeight = 550;
   const roomLinkId = location.pathname.split('/').pop();//'/room/여기'
 
   console.log(process.env.PUBLIC_URL);// empty
@@ -68,7 +72,7 @@ const Video = ({
   };
 
   const handleVideoPlay = () => {
-    console.log('dho..!!!!');
+    console.log('handle video Play!!!!');
 
     setInterval(async () => {
       if (initializing) {
@@ -81,10 +85,12 @@ const Video = ({
         width: videoWidth,
         height: videoHeight
       };
+
       faceapi.matchDimensions(canvasRef.current, displaySize);
 
       const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
       const resizedDetections = faceapi.resizeResults(detections, displaySize);
+      console.log("SIZE SIZE", resizedDetections);
       canvasRef.current.getContext('2d').clearRect(0, 0, videoWidth, videoHeight);
       faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
       faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
@@ -104,36 +110,72 @@ const Video = ({
             }
           }
 
-          canvasRef.current.fillTex = emojis.default;
-          //canvasRef.current.innerHTML = statusIcons.default;
+
+          //canvasRef.current.fillTex = emojis.default;
+          //anvasRef.current.innerHTML = emojis.default;
+
+
         });
+        const context = canvasRef.current.getContext('2d');
+        const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
+        console.log("RESIZED", resizedDetections);
+
+        if (context) {
+          context.font = "300px";
+          context.fillText('😎', _x, _y, _width);
+        }
+
+
       } else {
         console.log("No Faces");
+        console.log("canvasRef", canvasRef);
+        const context = canvasRef.current.getContext('2d');
+
+        //const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
       }
-    }, 100);
+    }, 1000);
   };
 
   return (
-    <div className='App'>
-      <div>Video</div>
-      <span>{initializing ? 'initializing' : 'Ready'}</span>
-      <div className='faceShape center'>
-        <video
-          ref={videoRef}
-          width={videoWidth}
-          height={videoHeight}
-          onPlay={handleVideoPlay}
-          autoPlay
-          muted />
-        <canvas
-          className='canvas'
-          ref={canvasRef} />
+
+    <div className={styles.Video}>
+      <div className={styles.LogoWrapper}>
+        <Logo />
       </div>
-      <button onClick={() => setSocketOn(true)}>
-        Join
-      </button>
+      <div className={styles.Content}>
+        <div className={styles.LeftSide}>
+          <div className={styles.CanvasOnVideo}>
+            <video
+              ref={videoRef}
+              width={videoWidth}
+              height={videoHeight}
+              onPlay={handleVideoPlay}
+              autoPlay
+              muted />
+            <canvas
+              ref={canvasRef}
+              className='canvas'
+              width={videoWidth}
+              height={videoHeight} />
+            <canvas
+              ref={emojiRef}
+              id='emoji'
+              width={videoWidth}
+              height={videoHeight} />
+
+          </div>
+          <div className={styles.MenuBar}>
+            <MenuBar />
+          </div>
+        </div>
+        <div className={styles.RightSide}></div>
+
+        {/* <button onClick={() => setSocketOn(true)}>
+          Join
+        </button> */}
+      </div>
     </div>
   );
 };
 
-export default Video;
+export default VideoContainer;
