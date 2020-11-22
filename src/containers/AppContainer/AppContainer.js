@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Route, Switch, Redirect, useRouteMatch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
@@ -10,7 +10,9 @@ import {
   createActionToAddGroup,
   createActionToDeleteGroups,
   createActionToAddMembers,
-  createActionToDeleteMembers
+  createActionToDeleteMembers,
+  createActionToJoinMembersInRoom,
+  createActionToDeleteMembersInRoom
 } from '../../actions';
 
 import RoomContainer from '../RoomContainer/RoomContainer';
@@ -18,7 +20,8 @@ import GroupContainer from '../GroupContainer/GroupContainer';
 import Home from '../../components/Home/Home';
 import Header from '../../components/Header/Header';
 import Login from '../../components/Login/Login';
-import Video from '../../components/Video/Video';
+import Setting from '../../components/Setting/Setting';
+import Room2 from '../../components/Room2/Room2';
 
 const AppContainer = ({
   isLoggedIn,
@@ -29,7 +32,10 @@ const AppContainer = ({
   addGroups,
   deleteGroups,
   addMembers,
-  deleteMembers
+  deleteMembers,
+  memberInRoom,
+  joinMember,
+  deleteLeavingMember
 }) => {
   const socket = io('localhost:5000');
   const roomLink = useRouteMatch("/rooms/:roomId");
@@ -41,12 +47,33 @@ const AppContainer = ({
     localStorage.roomUUID = roomLink.params.roomId;
   };
 
+  console.log('ISLOGGED IN???', isLoggedIn);
+  console.log('CURRENT USER STATE', currentUser);
+  const [joinedRoom, setJoinedRoom] = useState(false);
+  const [ishost, setIshost] = useState(false);
+  console.log('ishost?', ishost);
+
   return (
     <div>
       <Switch>
         {
-          isLoggedIn
+          !isLoggedIn
             ? <>
+              {currentUser.nickname === 'Han우리우리' ? <Redirect to='/rooms' /> : <Redirect to='/rooms/8466b8ac-4391-4366-9ed6-8de4d3002b7e' />}
+              {joinedRoom
+                ? <Route path='/rooms/:id'
+                  render={(props) =>
+                  <Room2
+                    location={props.location}
+                    currentUser={currentUser}
+                    setJoinedRoom={setJoinedRoom}
+                    ishost={ishost}
+                    memberInRoom={memberInRoom}
+                    joinMember={joinMember}
+                    deleteLeavingMember={deleteLeavingMember}
+                    />} />
+                : <Route path='/rooms/:id' render={(props) => <Setting location={props.location} setJoinedRoom={setJoinedRoom} />} />
+              }
               <Route exact path='/'>
                 <Header />
                 <Home />
@@ -59,6 +86,7 @@ const AppContainer = ({
                   currentUser={currentUser}
                   addRooms={addRooms}
                   deleteRooms={deleteRooms}
+                  setIshost={setIshost}
                 />
               </Route>
               <Route path='/groups'>
@@ -105,9 +133,12 @@ const AppContainer = ({
 };
 
 const mapStateToProps = (state) => {
+  const { userReducer, memberInRoomReducer } = state;
+
   return {
-    currentUser: state,
-    isLoggedIn: state.isLoggedIn
+    currentUser: userReducer,
+    isLoggedIn: userReducer.isLoggedIn,
+    memberInRoom: memberInRoomReducer
   };
 };
 
@@ -119,7 +150,9 @@ const mapDispatchToProps = (dispatch) => {
     addGroups: (addedGroupData) => { dispatch(createActionToAddGroup(addedGroupData)); },
     deleteGroups: (arrayOfId) => { dispatch(createActionToDeleteGroups(arrayOfId)); },
     addMembers: (groupId, allMemberData) => { dispatch(createActionToAddMembers(groupId, allMemberData)); },
-    deleteMembers: (groupId, arrayOfEmail) => { dispatch(createActionToDeleteMembers(groupId, arrayOfEmail)); }
+    deleteMembers: (groupId, arrayOfEmail) => { dispatch(createActionToDeleteMembers(groupId, arrayOfEmail)); },
+    joinMember: (socketId) => { dispatch(createActionToJoinMembersInRoom(socketId)); },
+    deleteLeavingMember: (socketId) => { dispatch(createActionToDeleteMembersInRoom(socketId)); }
   };
 };
 

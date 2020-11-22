@@ -5,14 +5,16 @@ import {
   ADD_GROUP,
   DELETE_GROUPS,
   ADD_MEMBERS,
-  DELETE_MEMBERS
+  DELETE_MEMBERS,
+  JOIN_ROOM,
+  LEAVE_ROOM
 } from '../constants/actionTypes';
 
 const initialState = {
   isLoggedIn: false
 };
 
-const userReducer = (state = initialState, action) => {
+export const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case GET_USER_DATA_FROM_DB:
       return {
@@ -85,4 +87,19 @@ const userReducer = (state = initialState, action) => {
   }
 };
 
-export default userReducer;
+export const memberInRoomReducer = (state = {}, action) => {
+  switch (action.type) {
+    case JOIN_ROOM:
+      console.log("REDUX", state);
+      console.log("REDUX", action.payload);
+      return { ...state, ...action.payload };
+
+    case LEAVE_ROOM:
+      return state.filter((socketId) => {
+        return socketId !== action.payload;
+      });
+
+    default:
+      return state;
+  }
+}
