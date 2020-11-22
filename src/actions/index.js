@@ -5,7 +5,9 @@ import {
   ADD_GROUP,
   DELETE_GROUPS,
   ADD_MEMBERS,
-  DELETE_MEMBERS
+  DELETE_MEMBERS,
+  JOIN_ROOM,
+  LEAVE_ROOM
 } from '../constants/actionTypes';
 
 export const createActionForUserData = (userData) => {
@@ -55,5 +57,19 @@ export const createActionToDeleteMembers = (groupId, arrayOfEmail) => { // ì–´ëŠ
   return {
     type: DELETE_MEMBERS,
     payload: { groupId, arrayOfEmail }
+  };
+};
+
+export const createActionToJoinMembersInRoom = (obj) => {
+  return {
+    type: JOIN_ROOM,
+    payload: obj
+  };
+};
+
+export const createActionToDeleteMembersInRoom = (members) => {
+  return {
+    type: LEAVE_ROOM,
+    payload: members
   };
 };

@@ -11,7 +11,8 @@ import styles from './RoomContainer.module.css';
 const RoomContainer = ({
   currentUser,
   addRooms,
-  deleteRooms
+  deleteRooms,
+  setIshost
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [roomName, setRoomName] = useState('');
@@ -41,6 +42,7 @@ const RoomContainer = ({
       const sliceIndex = roomLink.indexOf('/rooms');
       const roomIdURL = roomLink.slice(sliceIndex);
 
+      setIshost(true);
       history.push(roomIdURL);
     }
   };
