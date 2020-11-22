@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Route, Switch, Redirect, useRouteMatch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
@@ -17,11 +17,13 @@ import {
 
 import RoomContainer from '../RoomContainer/RoomContainer';
 import GroupContainer from '../GroupContainer/GroupContainer';
+import VideoContainer from '../VideoContainer/VideoContainer';
 import Home from '../../components/Home/Home';
 import Header from '../../components/Header/Header';
 import Login from '../../components/Login/Login';
 import Setting from '../../components/Setting/Setting';
-import Room2 from '../../components/Room2/Room2';
+import VideoConferenceRoom from '../../components/VideoConferenceRoom/VideoConferenceRoom';
+import Video from '../../components/Video/Video';
 
 const AppContainer = ({
   isLoggedIn,
@@ -57,20 +59,19 @@ const AppContainer = ({
     <div>
       <Switch>
         {
-          !isLoggedIn
+          isLoggedIn
             ? <>
-              {currentUser.nickname === 'Han우리우리' ? <Redirect to='/rooms' /> : <Redirect to='/rooms/8466b8ac-4391-4366-9ed6-8de4d3002b7e' />}
               {joinedRoom
                 ? <Route path='/rooms/:id'
                   render={(props) =>
-                  <Room2
-                    location={props.location}
-                    currentUser={currentUser}
-                    setJoinedRoom={setJoinedRoom}
-                    ishost={ishost}
-                    memberInRoom={memberInRoom}
-                    joinMember={joinMember}
-                    deleteLeavingMember={deleteLeavingMember}
+                    <VideoConferenceRoom
+                      location={props.location}
+                      currentUser={currentUser}
+                      setJoinedRoom={setJoinedRoom}
+                      ishost={ishost}
+                      memberInRoom={memberInRoom}
+                      joinMember={joinMember}
+                      deleteLeavingMember={deleteLeavingMember}
                     />} />
                 : <Route path='/rooms/:id' render={(props) => <Setting location={props.location} setJoinedRoom={setJoinedRoom} />} />
               }
@@ -101,7 +102,7 @@ const AppContainer = ({
               <Route
                 path='/rooms/:id'
                 render={(props) =>
-                  <Video
+                  <VideoContainer
                     socket={socket}
                     location={props.location} />} />
             </>

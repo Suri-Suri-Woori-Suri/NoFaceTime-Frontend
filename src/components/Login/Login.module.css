@@ -24,7 +24,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 210px;
+  width: 80%;
+  min-width: 100px;
   height: 40px;
   padding: 0px 10px 0px 10px;
   background: #1180f1;

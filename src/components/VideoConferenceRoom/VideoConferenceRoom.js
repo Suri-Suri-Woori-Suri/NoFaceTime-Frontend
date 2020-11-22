@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Peer from "simple-peer";
 import { socket } from '../../utils/socket';
-import styles from './Room2.module.css';
 import * as faceapi from 'face-api.js';
 import PeerVideo from '../PeerVideo/PeerVideo';
-//streamRef
+import styles from './VideoConferenceRoom.module.css';
 
-const Room2 = ({ location, currentUser, ishost, memberInRoom, joinMember, deleteLeavingMember }) => {
+const VideoConferenceRoom = ({ location, currentUser, ishost, memberInRoom, joinMember, deleteLeavingMember }) => {
   const videoRef = useRef();
   console.log(location.pathname);
   const ROOM_ID = location.pathname.split('/').pop();//'/room/여기'
@@ -32,7 +31,7 @@ const Room2 = ({ location, currentUser, ishost, memberInRoom, joinMember, delete
 
 
     socket.on('user left', ({ socketId }) => {
-      console.log(socketId)
+      console.log(socketId);
       console.log('user left');
       //if (peers[socketId]) peers[userId].close()
     });
@@ -71,7 +70,7 @@ const Room2 = ({ location, currentUser, ishost, memberInRoom, joinMember, delete
       });
 
       peers.push(peer);
-      console.log("dlrp ehla???", peers)
+      console.log("dlrp ehla???", peers);
 
       peer.on('signal', signal => {
         socket.emit('send signal', { signal, to: memberInRoom[key] });
@@ -107,8 +106,8 @@ const Room2 = ({ location, currentUser, ishost, memberInRoom, joinMember, delete
 
         socket.emit('respond signal', { signal, to: initiator });
       });
-      console.log('여기서 새로운 사람이 조인했을 때 반응하고 peer에 추가해야한다.')
-      console.log(peersRef.current, "initiator === ", peer)
+      console.log('여기서 새로운 사람이 조인했을 때 반응하고 peer에 추가해야한다.');
+      console.log(peersRef.current, "initiator === ", peer);
       console.log('기존 peers', peers);
       setPeers(users => [...users, peer]);
     });
@@ -155,10 +154,10 @@ const Room2 = ({ location, currentUser, ishost, memberInRoom, joinMember, delete
     <div>This is main video room
       <video ref={videoRef} autoPlay muted height={videoHeight} width={videoWidth} onPlay={console.log('handleVideoPlay')} />
       {peers.map((peer, index) => {
-        return <PeerVideo key={index} peer={peer} />
+        return <PeerVideo key={index} peer={peer} />;
       })}
     </div>
   );
-}
+};
 
-export default Room2;
+export default VideoConferenceRoom;

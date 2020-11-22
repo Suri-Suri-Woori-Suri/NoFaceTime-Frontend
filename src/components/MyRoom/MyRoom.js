@@ -1,17 +1,16 @@
 import React from 'react';
 
 import RoomList from '../RoomList/RoomList';
-import styles from './Room.module.css';
+import styles from './MyRoom.module.css';
 
-const Room = ({
+const MyRoom = ({
   currentUser,
   enterRoom,
   popupModal,
   fetchToDeleteRoomData
 }) => {
-
   return (
-    <div className={styles.Content}>
+    <div className={styles.MyRoom}>
       <div className={styles.Title}>Your Room</div>
       <div className={styles.Rooms}>
         <RoomList
@@ -29,4 +28,4 @@ const Room = ({
   );
 };
 
-export default Room;
+export default MyRoom;
