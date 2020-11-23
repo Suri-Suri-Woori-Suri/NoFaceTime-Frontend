@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import ModalContainer from '../ModalContainer/ModalContainer';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import Header from '../../components/Header/Header';
 import MyRoom from '../../components/MyRoom/MyRoom';
 
+import {
+  createActionForUserData,
+  createActionToAddRoom,
+  createActionToDeleteRoom,
+  createActionToAddGroup,
+  createActionToDeleteGroups,
+  createActionToAddMembers,
+  createActionToDeleteMembers,
+  createActionToJoinMembersInRoom,
+  createActionToDeleteMembersInRoom
+} from '../../actions';
 import { createRoom, deleteRoom } from '../../api';
 import styles from './RoomContainer.module.css';
 
@@ -12,7 +25,8 @@ const RoomContainer = ({
   currentUser,
   addRooms,
   deleteRooms,
-  setIshost
+  setIshost,
+  setIsJoinedRoom
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [roomName, setRoomName] = useState('');
@@ -42,7 +56,6 @@ const RoomContainer = ({
       const sliceIndex = roomLink.indexOf('/rooms');
       const roomIdURL = roomLink.slice(sliceIndex);
 
-      setIshost(true);
       history.push(roomIdURL);
     }
   };
@@ -59,16 +72,16 @@ const RoomContainer = ({
 
   return (
     <>
-      <div className={styles.Body}>
+      <Header />
+      <div className={styles.RoomContainer}>
         <Sidebar />
         <div className={styles.ContentWrap}>
-          <h1 className={styles.Title}> Welcome! </h1>
+          <h1 className={styles.Title}> Your Rooms </h1>
           <MyRoom
             currentUser={currentUser}
             enterRoom={enterRoom}
             popupModal={popupModal}
-            fetchToDeleteRoomData={fetchToDeleteRoomData}
-          />
+            fetchToDeleteRoomData={fetchToDeleteRoomData} />
           {
             showModal &&
             <ModalContainer
@@ -85,4 +98,28 @@ const RoomContainer = ({
   );
 };
 
-export default RoomContainer;
+const mapStateToProps = (state) => {
+  const { userReducer, memberInRoomReducer } = state;
+
+  return {
+    currentUser: userReducer,
+    isLoggedIn: userReducer.isLoggedIn,
+    memberInRoom: memberInRoomReducer
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateUserData: (userData) => { dispatch(createActionForUserData(userData)); },
+    addRooms: (addedRoomData) => { dispatch(createActionToAddRoom(addedRoomData)); },
+    deleteRooms: (id) => { dispatch(createActionToDeleteRoom(id)); },
+    addGroups: (addedGroupData) => { dispatch(createActionToAddGroup(addedGroupData)); },
+    deleteGroups: (arrayOfId) => { dispatch(createActionToDeleteGroups(arrayOfId)); },
+    addMembers: (groupId, allMemberData) => { dispatch(createActionToAddMembers(groupId, allMemberData)); },
+    deleteMembers: (groupId, arrayOfEmail) => { dispatch(createActionToDeleteMembers(groupId, arrayOfEmail)); },
+    joinMember: (socketId) => { dispatch(createActionToJoinMembersInRoom(socketId)); },
+    deleteLeavingMember: (socketId) => { dispatch(createActionToDeleteMembersInRoom(socketId)); }
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(RoomContainer);

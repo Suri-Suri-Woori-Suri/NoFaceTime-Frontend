@@ -1,18 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as faceapi from 'face-api.js';
-import Canvas from '../Canvas/Canvas';
-import styles from './Setting.module.css';
-import CompleteButton from '../CompleteButton/CompleteButton';
 
-const Setting = ({ location, setJoinedRoom }) => {
+import Canvas from '../Canvas/Canvas';
+import CompleteButton from '../CompleteButton/CompleteButton';
+import styles from './SettingModal.module.css';
+
+const SettingModal = ({
+  location,
+  setIsJoinedRoom
+}) => {
   //const ROOM_ID = location.pathname.split('/').pop();//'/room/여기'
   const videoHeight = 500;
   const videoWidth = 500;
   const videoRef = useRef();
   //const canvasRef = useRef();
-  const [initialized, setinitialized] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
-  console.log(process.env.PUBLIC_URL)// empty
+  console.log(process.env.PUBLIC_URL);// empty
 
   useEffect(() => {
     const loadModels = async () => {
@@ -25,7 +29,7 @@ const Setting = ({ location, setJoinedRoom }) => {
         faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
       ]);
       startVideo();
-    }
+    };
     loadModels();
   }, []);
 
@@ -33,23 +37,37 @@ const Setting = ({ location, setJoinedRoom }) => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
       videoRef.current.srcObject = stream;
-      setinitialized(true);
+      setInitialized(true);
     }
     catch (err) {
       console.log(err);
     }
   };
 
+  console.log("checkbox");
+
   return (
-    <div className={styles.Setting}>
-      <div>Video 니 얼굴..</div>
-      <div className={styles.Video}>
-        <video ref={videoRef} autoPlay muted height={videoHeight} width={videoWidth} onPlay={console.log('handleVideoPlay')} />
-        {/* import Canvas */}
+    <div className={styles.SettingModalBackground}>
+      <div className={styles.SettingModal}>
+        <div className={styles.VideoWrapper}>
+          <video
+            ref={videoRef}
+            width={videoWidth}
+            height={videoHeight}
+            onPlay={console.log('handleVideoPlay')}
+            autoPlay
+            muted />
+        </div>
+        <div className={styles.Mute}>
+          <label>
+            <input type='checkbox' name='mute' value='muted' />
+            Mute
+          </label>
+        </div>
+        <CompleteButton buttonName='Join' onClick={() => setIsJoinedRoom(true)} />
       </div>
-      <CompleteButton buttonName='Join' onClick={() => setJoinedRoom(true)}/>
     </div>
   );
-}
+};
 
-export default Setting;
+export default SettingModal;

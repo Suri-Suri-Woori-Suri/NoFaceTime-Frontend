@@ -1,18 +1,28 @@
-.Groups {
-  margin-top: 25px;
+.GroupList {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  height: 60%;
+  border: 10px solid yellow;
+  box-sizing: border-box;
 }
 
-.Group {
-  margin: 10px auto;
-	width: 60%;
-  line-height: 40px;
+.GroupEntry {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  width: 90%;
+  height: 10%;
+  overflow: auto;
   border: 1px solid #c9d3dd;
   border-radius: 10px;
-  text-align: center;
   background: rgb(255, 245, 188);
 }
 
-.Group:hover {
+.GroupEntry:hover {
   background: rgb(243, 213, 43);
 }
-

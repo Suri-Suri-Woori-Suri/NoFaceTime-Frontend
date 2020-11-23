@@ -1,5 +1,6 @@
-// //import * as faceapi from 'face-api.js';
 // import React, { useRef } from 'react';
+// import * as faceapi from 'face-api.js';
+
 // import styles from './Canvas.module.css';
 
 // const loadModels = async () => {
@@ -13,48 +14,49 @@
 //       faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
 //     ]);
 //     startVideo();
-//   } catch(err) {
+//   } catch (err) {
 //     console.log(err);
 //     startVideo();
 //   }
-// }
+// };
 
-// // const emojis = {
-// //   default: '😎',
-// //   neutral: '🙂',
-// //   happy: '😀',
-// //   sad: '😥',
-// //   angry: '😠',
-// //   fearful: '😨',
-// //   disgusted: '🤢',
-// //   surprised: '😳'
-// // };
+// const emojis = {
+//   default: '😎',
+//   neutral: '🙂',
+//   happy: '😀',
+//   sad: '😥',
+//   angry: '😠',
+//   fearful: '😨',
+//   disgusted: '🤢',
+//   surprised: '😳'
+// };
 
-// // const handleVideoPlay = () => {
-// //   console.log('dho..!!!!');
-// //   console.log(canvasRef);
-// //   analyzeFace(faceapi, videoRef, canvasRef);
-// // };
+// const handleVideoPlay = () => {
+//   console.log('dho..!!!!');
+//   console.log(canvasRef);
+//   analyzeFace(faceapi, videoRef, canvasRef);
+// };
 
-// // const useInterval = (callback) => {
-// //   const savedCallback = useRef();
+// const useInterval = (callback) => {
+//   const savedCallback = useRef();
 
-// //   useEffect(() => {
-// //     savedCallback.current = callback;
-// //     const analyzeEmotion = () => savedCallback.current();
+//   useEffect(() => {
+//     savedCallback.current = callback;
+//     const analyzeEmotion = () => savedCallback.current();
 
-// //     const realTimeAnalizaingEmotion = setInterval(analyzeEmotion, 1000);
-// //     return () => clearInterval(realTimeAnalizaingEmotion);
-// //   }, []);
-// // };
+//     const realTimeAnalizaingEmotion = setInterval(analyzeEmotion, 1000);
+//     return () => clearInterval(realTimeAnalizaingEmotion);
+//   }, []);
+// };
 // // useInterval(analyzeFace);
 
-// const Canvas = async() => {
+// const Canvas = async () => {
 //   //emojis.default;
 
 //   //async(faceapi, videoRef, canvasRef)
 
-//   console.log(canvasRef)
+//   const canvasRef = useRef;
+//   console.log(canvasRef);
 
 //   canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
 //   const displaySize = {
@@ -84,13 +86,13 @@
 //         }
 //       }
 
-//       return <canvas className={styles.Canvas} ref={canvasRef} />
+//       return <canvas className={styles.Canvas} ref={canvasRef} />;
 
 //       //canvasRef.current.fillTex = emojis.default;
 //       //canvasRef.current.innerHTML = statusIcons.default;
 //     });
 //   } else {
-//     console.log("No Faces")
+//     console.log("No Faces");
 //   }
 // };
 

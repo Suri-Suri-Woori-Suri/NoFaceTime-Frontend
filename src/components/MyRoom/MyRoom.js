@@ -11,7 +11,6 @@ const MyRoom = ({
 }) => {
   return (
     <div className={styles.MyRoom}>
-      <div className={styles.Title}>Your Room</div>
       <div className={styles.Rooms}>
         <RoomList
           currentUser={currentUser}

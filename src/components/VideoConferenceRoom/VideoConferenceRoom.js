@@ -1,24 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Peer from "simple-peer";
-import { socket } from '../../utils/socket';
 import * as faceapi from 'face-api.js';
+
+import Logo from '../Logo/Logo';
+import MenuBar from '../MenuBar/MenuBar';
 import PeerVideo from '../PeerVideo/PeerVideo';
+
+import { socket } from '../../utils/socket';
 import styles from './VideoConferenceRoom.module.css';
 
-const VideoConferenceRoom = ({ location, currentUser, ishost, memberInRoom, joinMember, deleteLeavingMember }) => {
+const VideoConferenceRoom = ({
+  location,
+  currentUser,
+  memberInRoom,
+  joinMember,
+}) => {
+  console.log("CURRENT USER", currentUser);
   const videoRef = useRef();
-  console.log(location.pathname);
-  const ROOM_ID = location.pathname.split('/').pop();//'/room/여기'
-  const videoHeight = 500;
-  const videoWidth = 500;
-  const { _id, nickname } = currentUser;
+  const canvasRef = useRef();
+
   const streamRef = useRef();
-  const [initialized, setInitialized] = useState(false);
   const peersRef = useRef([]);
+  const ROOM_ID = location.pathname.split('/').pop();//'/room/여기'
+
+  const videoWidth = 700;
+  const videoHeight = 500;
+
+  const { _id, nickname } = currentUser;
+  const [initialized, setInitialized] = useState(false);
   const [peers, setPeers] = useState([]);//체크
 
   useEffect(() => {
-
     socket.emit('join-room', { roomId: ROOM_ID, userId: _id, nickname });//나중에 꼭 host 데이터 추가하기 host: true 아니면 호스트 아이디?
 
     socket.on('joined', ({ members, newMember }) => {
@@ -29,13 +41,11 @@ const VideoConferenceRoom = ({ location, currentUser, ishost, memberInRoom, join
       //joinMember(members);
     });
 
-
     socket.on('user left', ({ socketId }) => {
       console.log(socketId);
       console.log('user left');
       //if (peers[socketId]) peers[userId].close()
     });
-
 
     const startVideo = async () => {
       try {
@@ -151,12 +161,35 @@ const VideoConferenceRoom = ({ location, currentUser, ishost, memberInRoom, join
   // }
 
   return (
-    <div>This is main video room
-      <video ref={videoRef} autoPlay muted height={videoHeight} width={videoWidth} onPlay={console.log('handleVideoPlay')} />
-      {peers.map((peer, index) => {
-        return <PeerVideo key={index} peer={peer} />;
-      })}
-    </div>
+    <>
+      <div className={styles.Video}>
+        <div className={styles.LogoWrapper}>
+          <Logo />
+        </div>
+        <div className={styles.Content}>
+          <div className={styles.LeftSide}>
+            <div className={styles.CanvasOnVideo}>
+              <video id={styles.MyVideo} ref={videoRef} autoPlay muted height={videoHeight} width={videoWidth} onPlay={console.log('handleVideoPlay')} />
+              <canvas
+                ref={canvasRef}
+                className='canvas'
+                width={videoWidth}
+                height={videoHeight} />
+            </div>
+            <div className={styles.MenuBar}>
+              <MenuBar />
+            </div>
+          </div>
+          <div className={styles.RightSide}>
+            {
+              peers.map((peer, index) => {
+                return <PeerVideo key={index} peer={peer} />;
+              })
+            }
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 
