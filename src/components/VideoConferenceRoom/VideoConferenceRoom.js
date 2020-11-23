@@ -8,6 +8,7 @@ import PeerVideo from '../PeerVideo/PeerVideo';
 
 import { socket } from '../../utils/socket';
 import styles from './VideoConferenceRoom.module.css';
+import { deleteGroup } from '../../api';
 
 const VideoConferenceRoom = ({
   location,
@@ -44,6 +45,16 @@ const VideoConferenceRoom = ({
     socket.on('user left', ({ socketId }) => {
       console.log(socketId);
       console.log('user left');
+      deleteLeavingMember(socketId);
+
+      setPeers(peers => {//확실하지 않음...
+        const targetPeer = peers.filter(peer => peer.socketId === socketId);
+        const rest = peers.filter(peer => peer.socketId !== socketId);
+        if (targetPeer) targetPeer.destroy();
+        return [ ...rest];
+      });
+
+      //if (peers[socketId]) peers[] //확실하지 않음. 나중에 확인
       //if (peers[socketId]) peers[userId].close()
     });
 
@@ -60,6 +71,11 @@ const VideoConferenceRoom = ({
       }
     };
     startVideo();
+
+    return () => { //unmountung
+      socket.emit('disconnect');
+      socket.off();
+    }
   }, []);
 
   useEffect(() => {
@@ -86,7 +102,7 @@ const VideoConferenceRoom = ({
         socket.emit('send signal', { signal, to: memberInRoom[key] });
       });
 
-      setPeers(prev => ([...prev, peer]));
+      setPeers(users => ([...users, peer]));
     }
     //console.log("CHECK PEERS", peers);
     //setPeers(peers); ///체크

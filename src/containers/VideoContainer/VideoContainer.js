@@ -77,20 +77,6 @@ const VideoContainer = ({
     loadModels();
   }, []);
 
-
-  useEffect(() => {
-    if (!socketOn) return;
-
-    const socketClient = socket;
-    socketClient.emit('join-room', { name: 'woori', roomLinkId });
-    //socketClient.emit('join', { name:'woori', roomLinkId });
-
-    return () => {
-      socket.emit('disconnect');
-      socket.off();
-    };
-  }, [socketOn, socket, roomLinkId]);
-
   const startVideo = async () => {
     try {
       const result = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
