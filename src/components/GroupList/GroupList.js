@@ -12,7 +12,7 @@ const GroupList = (props) => {
   const groupList = groups ? groups.map((group, i) => {
     const groupId = group._id;
     return (
-      <div key={i}>
+      <div className={styles.GroupEntry} key={i}>
         <input
           type='checkbox'
           onChange={() => handleCheckbox(groupId)}
@@ -25,7 +25,11 @@ const GroupList = (props) => {
     );
   }) : undefined;
 
-return <div className={styles.Groups}>{groupList}</div>
+  return (
+    <div className={styles.GroupList}>
+      {groupList}
+    </div>
+  );
 };
 
 export default GroupList;

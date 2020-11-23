@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
-import styles from './GroupContainer.module.css';
-import { createGroup, addMember } from '../../api';
-import { deleteGroup, deleteMember } from '../../api';
+
 import ModalContainer from '../ModalContainer/ModalContainer';
+import Header from '../../components/Header/Header';
 import Group from '../../components/Group/Group';
 import Sidebar from '../../components/Sidebar/Sidebar';
 
-const GroupContainer = ({ currentUser, addGroups, deleteGroups, addMembers, deleteMembers }) => {
+import { createGroup, addMember } from '../../api';
+import { deleteGroup, deleteMember } from '../../api';
+import styles from './GroupContainer.module.css';
+
+const GroupContainer = ({
+  currentUser,
+  addGroups,
+  deleteGroups,
+  addMembers,
+  deleteMembers
+}) => {
   const [showModal, setShowModal] = useState(false);
   const [showMember, setShowMember] = useState(false);
   const [groupName, setGroupName] = useState('');
@@ -125,24 +134,24 @@ const GroupContainer = ({ currentUser, addGroups, deleteGroups, addMembers, dele
   const addAndUpdateUserState = showMember ? addMembers : addGroups;
 
   return (
-    <div className={styles.Body}>
-      {showModal &&
-        <ModalContainer
-          currentUser={currentUser}
-          addAndUpdateUserState={addAndUpdateUserState}////////  REDUX DISPATCH ADD ROOM
-          setShowModal={setShowModal}
-          fetchToCreate={fetchToCreate}
-          setNewMembers={setNewMembers}
-        >{modalContent}
-        </ModalContainer>
-      }
-      <Sidebar />
-      <div className={styles.ContentWrap}>
-        <h1 className={styles.Hello}>Welcome!</h1>
-        <div className={styles.Content}>
+    <>
+      <Header />
+      <div className={styles.GroupContainer}>
+        {showModal &&
+          <ModalContainer
+            currentUser={currentUser}
+            addAndUpdateUserState={addAndUpdateUserState}////////  REDUX DISPATCH ADD ROOM
+            setShowModal={setShowModal}
+            fetchToCreate={fetchToCreate}
+            setNewMembers={setNewMembers}
+          >{modalContent}
+          </ModalContainer>
+        }
+        <Sidebar />
+        <div className={styles.ContentWrapper}>
+          <h1 className={styles.Title}>{title}</h1>
           <div className={styles.Group}>
-            <label className={styles.Title}>{title}</label>
-            <div>
+            <div className={styles.ButtonWrapper}>
               <button className={`${styles.Button} ${styles.AddButton}`} onClick={popupModal}>Add</button>
               <button className={`${styles.Button} ${styles.DeleteButton}`} onClick={fetch}>Delete</button>
             </div>
@@ -156,8 +165,9 @@ const GroupContainer = ({ currentUser, addGroups, deleteGroups, addMembers, dele
             />
           </div>
         </div>
+
       </div>
-    </div>
+    </>
   );
 };
 

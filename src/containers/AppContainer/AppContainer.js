@@ -21,7 +21,7 @@ import VideoContainer from '../VideoContainer/VideoContainer';
 import Home from '../../components/Home/Home';
 import Header from '../../components/Header/Header';
 import Login from '../../components/Login/Login';
-import Setting from '../../components/Setting/Setting';
+import SettingModal from '../../components/SettingModal/SettingModal';
 import VideoConferenceRoom from '../../components/VideoConferenceRoom/VideoConferenceRoom';
 import Video from '../../components/Video/Video';
 
@@ -51,9 +51,9 @@ const AppContainer = ({
 
   console.log('ISLOGGED IN???', isLoggedIn);
   console.log('CURRENT USER STATE', currentUser);
-  const [joinedRoom, setJoinedRoom] = useState(false);
-  const [ishost, setIshost] = useState(false);
-  console.log('ishost?', ishost);
+  const [isJoinedRoom, setIsJoinedRoom] = useState(false);
+  const [isHost, setIshost] = useState(false);
+  console.log('isHost?', isHost);
 
   return (
     <div>
@@ -61,19 +61,21 @@ const AppContainer = ({
         {
           isLoggedIn
             ? <>
-              {joinedRoom
-                ? <Route path='/rooms/:id'
-                  render={(props) =>
-                    <VideoConferenceRoom
-                      location={props.location}
-                      currentUser={currentUser}
-                      setJoinedRoom={setJoinedRoom}
-                      ishost={ishost}
-                      memberInRoom={memberInRoom}
-                      joinMember={joinMember}
-                      deleteLeavingMember={deleteLeavingMember}
-                    />} />
-                : <Route path='/rooms/:id' render={(props) => <Setting location={props.location} setJoinedRoom={setJoinedRoom} />} />
+              {
+                /* {isJoinedRoom
+                  ? <Route path='/rooms/:id'
+                    render={(props) =>
+                      <VideoConferenceRoom
+                        location={props.location}
+                        currentUser={currentUser}
+                        setJoinedRoom={setIsJoinedRoom}
+                        isHost={isHost}
+                        memberInRoom={memberInRoom}
+                        joinMember={joinMember}
+                        deleteLeavingMember={deleteLeavingMember}
+                      />} />
+                  : <Route path='/rooms/:id' render={(props) => <SettingModal location={props.location} setJoinedRoom={setIsJoinedRoom} />} />
+                } */
               }
               <Route exact path='/'>
                 <Header />
@@ -84,11 +86,8 @@ const AppContainer = ({
               </Route>
               <Route exact path='/rooms'>
                 <RoomContainer
-                  currentUser={currentUser}
-                  addRooms={addRooms}
-                  deleteRooms={deleteRooms}
                   setIshost={setIshost}
-                />
+                  setIsJoinedRoom={setIsJoinedRoom} />
               </Route>
               <Route path='/groups'>
                 <GroupContainer
@@ -96,8 +95,7 @@ const AppContainer = ({
                   addGroups={addGroups}
                   deleteGroups={deleteGroups}
                   addMembers={addMembers}
-                  deleteMembers={deleteMembers}
-                />
+                  deleteMembers={deleteMembers} />
               </Route>
               <Route
                 path='/rooms/:id'
@@ -114,8 +112,8 @@ const AppContainer = ({
               <Route path='/login'>
                 <Header />
                 <Login
-                  updateUserData={updateUserData}
-                  currentUser={currentUser} />
+                  currentUser={currentUser}
+                  updateUserData={updateUserData} />
               </Route>
               <Route path='/rooms'>
                 {

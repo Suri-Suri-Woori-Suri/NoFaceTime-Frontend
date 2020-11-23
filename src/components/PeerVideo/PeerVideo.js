@@ -1,20 +1,22 @@
 import React, { useEffect, useRef } from 'react';
+import styles from './PeerVideo.module.css';
 
-const PeerVideo = (props) => {
+const PeerVideo = ({ peer }) => {
   const ref = useRef();
 
-  console.log(props.index)
-  console.log(props.peer)
-
   useEffect(() => {
-    props.peer.on("stream", stream => {
+    peer.on("stream", stream => {
       ref.current.srcObject = stream;
-    })
+    });
   }, []);
 
   return (
-    <video playsInline autoPlay ref={ref} />
+    <video
+      className={styles.PeerVideo}
+      ref={ref}
+      autoPlay
+      playsInline />
   );
-}
+};
 
 export default PeerVideo;

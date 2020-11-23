@@ -1,20 +1,61 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { connect } from 'react-redux';
 import * as faceapi from 'face-api.js';
 
 import Logo from '../../components/Logo/Logo';
 import MenuBar from '../../components/MenuBar/MenuBar';
+import SettingModal from '../../components/SettingModal/SettingModal';
+import VideoConferenceRoom from '../../components/VideoConferenceRoom/VideoConferenceRoom';
+import Video from '../../components/Video/Video';
+
+import {
+  createActionForUserData,
+  createActionToAddRoom,
+  createActionToDeleteRoom,
+  createActionToAddGroup,
+  createActionToDeleteGroups,
+  createActionToAddMembers,
+  createActionToDeleteMembers,
+  createActionToJoinMembersInRoom,
+  createActionToDeleteMembersInRoom
+} from '../../actions';
 import styles from './VideoContainer.module.css';
 
 const VideoContainer = ({
   socket,
-  location }) => {
+  location,
+  currentUser,
+  memberInRoom,
+  joinMember
+}) => {
+  const [isMuted, setIsMuted] = useState(false);
+  const [isJoinedRoom, setIsJoinedRoom] = useState(false);
+  console.log("isJoinedRoom?", isJoinedRoom);
+
+  return (
+    !isJoinedRoom
+      ? < SettingModal
+        setIsJoinedRoom={setIsJoinedRoom} />
+      : <VideoConferenceRoom
+        location={location}
+        currentUser={currentUser}
+        memberInRoom={memberInRoom}
+        joinMember={joinMember}
+      />
+  );
+};
+
+
+
+/*
+
+{
   console.log('VIDEO!!!!!');
   //window.history.back(); -> 이거 누르면 뒤로 가지 않을까용??? 나중에 핵심기능 구현하구 고민해보기...
   const [socketOn, setSocketOn] = useState(false);
   const [initializing, setInitializing] = useState(false);
   const videoRef = useRef();
   const canvasRef = useRef();
-  const emojiRef = useRef();
 
   const videoWidth = 1000;
   const videoHeight = 550;
@@ -102,7 +143,7 @@ const VideoContainer = ({
           let status = "";
           let valueStatus = 0.0;
           for (const [key, value] of Object.entries(element.expressions)) {
-            console.log(element.expressions, '##', key, value, status);
+            // console.log(element.expressions, '##', key, value, status);
 
             if (value > valueStatus) {
               status = key;
@@ -157,12 +198,6 @@ const VideoContainer = ({
               className='canvas'
               width={videoWidth}
               height={videoHeight} />
-            <canvas
-              ref={emojiRef}
-              id='emoji'
-              width={videoWidth}
-              height={videoHeight} />
-
           </div>
           <div className={styles.MenuBar}>
             <MenuBar />
@@ -170,12 +205,37 @@ const VideoContainer = ({
         </div>
         <div className={styles.RightSide}></div>
 
-        {/* <button onClick={() => setSocketOn(true)}>
+        { <button onClick={() => setSocketOn(true)}>
           Join
-        </button> */}
-      </div>
-    </div>
-  );
+        </button> }
+        </div>
+        </div>
+      );
+    };
+*/
+
+const mapStateToProps = (state) => {
+  const { userReducer, memberInRoomReducer } = state;
+
+  return {
+    currentUser: userReducer,
+    isLoggedIn: userReducer.isLoggedIn,
+    memberInRoom: memberInRoomReducer
+  };
 };
 
-export default VideoContainer;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateUserData: (userData) => { dispatch(createActionForUserData(userData)); },
+    addRooms: (addedRoomData) => { dispatch(createActionToAddRoom(addedRoomData)); },
+    deleteRooms: (id) => { dispatch(createActionToDeleteRoom(id)); },
+    addGroups: (addedGroupData) => { dispatch(createActionToAddGroup(addedGroupData)); },
+    deleteGroups: (arrayOfId) => { dispatch(createActionToDeleteGroups(arrayOfId)); },
+    addMembers: (groupId, allMemberData) => { dispatch(createActionToAddMembers(groupId, allMemberData)); },
+    deleteMembers: (groupId, arrayOfEmail) => { dispatch(createActionToDeleteMembers(groupId, arrayOfEmail)); },
+    joinMember: (socketId) => { dispatch(createActionToJoinMembersInRoom(socketId)); },
+    deleteLeavingMember: (socketId) => { dispatch(createActionToDeleteMembersInRoom(socketId)); }
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(VideoContainer);

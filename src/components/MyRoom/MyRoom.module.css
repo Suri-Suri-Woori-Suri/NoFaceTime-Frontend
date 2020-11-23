@@ -22,7 +22,7 @@
   font-weight: 250;
   background-color: whitesmoke;
   box-sizing: border-box;
-  overflow: auto;
+  overflow: scroll;
   padding-top: 50px;
 }
 
