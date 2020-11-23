@@ -90,14 +90,13 @@ export const userReducer = (state = initialState, action) => {
 export const memberInRoomReducer = (state = {}, action) => {
   switch (action.type) {
     case JOIN_ROOM:
-      console.log("REDUX", state);
-      console.log("REDUX", action.payload);
       return { ...state, ...action.payload };
 
     case LEAVE_ROOM:
-      return state.filter((socketId) => {
-        return socketId !== action.payload;
-      });
+      console.log("REDUX", state);
+      console.log("REDUX", action.payload);
+      delete state[action.payload];
+      return state;
 
     default:
       return state;

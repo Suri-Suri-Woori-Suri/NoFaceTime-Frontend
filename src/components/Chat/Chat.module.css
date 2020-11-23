@@ -1,0 +1,29 @@
+.Chat {
+  text-align: center;
+}
+
+.ChatBox {
+  width: 500px;
+  height: 500px;
+  background-color: rgb(193, 214, 231);
+}
+
+.ChatHistory {
+  width: 500px;
+  height: 400px;
+  background-color: rgb(255, 244, 208);
+}
+
+.MessageBox {
+  margin: 20px auto;
+  height: 40px;
+  width: 300px;
+}
+
+.MyMessage {
+  background-color: rgb(49, 179, 255);
+}
+
+.Message {
+  background-color: rgb(170, 170, 170);
+}

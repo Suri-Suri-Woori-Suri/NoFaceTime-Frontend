@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Route, Switch, Redirect, useRouteMatch } from 'react-router-dom';
 import { connect } from 'react-redux';
-import io from 'socket.io-client';
 
 import {
   createActionForUserData,
@@ -24,6 +23,7 @@ import Login from '../../components/Login/Login';
 import SettingModal from '../../components/SettingModal/SettingModal';
 import VideoConferenceRoom from '../../components/VideoConferenceRoom/VideoConferenceRoom';
 import Video from '../../components/Video/Video';
+import Chat from '../../components/Chat/Chat';
 
 const AppContainer = ({
   isLoggedIn,
@@ -39,7 +39,6 @@ const AppContainer = ({
   joinMember,
   deleteLeavingMember
 }) => {
-  const socket = io('localhost:5000');
   const roomLink = useRouteMatch("/rooms/:roomId");
 
   const checkRoomInvitationLink = () => {
@@ -101,7 +100,6 @@ const AppContainer = ({
                 path='/rooms/:id'
                 render={(props) =>
                   <VideoContainer
-                    socket={socket}
                     location={props.location} />} />
             </>
             : <>
