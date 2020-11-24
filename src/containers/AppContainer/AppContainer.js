@@ -11,7 +11,9 @@ import {
   createActionToAddMembers,
   createActionToDeleteMembers,
   createActionToJoinMembersInRoom,
-  createActionToDeleteMembersInRoom
+  createActionToDeleteMembersInRoom,
+  createActionToAddMessage,
+  createActionToSecretMessage
 } from '../../actions';
 
 import RoomContainer from '../RoomContainer/RoomContainer';
@@ -20,10 +22,6 @@ import VideoContainer from '../VideoContainer/VideoContainer';
 import Home from '../../components/Home/Home';
 import Header from '../../components/Header/Header';
 import Login from '../../components/Login/Login';
-import SettingModal from '../../components/SettingModal/SettingModal';
-import VideoConferenceRoom from '../../components/VideoConferenceRoom/VideoConferenceRoom';
-import Video from '../../components/Video/Video';
-import Chat from '../../components/Chat/Chat';
 
 const AppContainer = ({
   isLoggedIn,
@@ -51,8 +49,6 @@ const AppContainer = ({
   console.log('ISLOGGED IN???', isLoggedIn);
   console.log('CURRENT USER STATE', currentUser);
   const [isJoinedRoom, setIsJoinedRoom] = useState(false);
-  const [isHost, setIshost] = useState(false);
-  console.log('isHost?', isHost);
 
   return (
     <div>
@@ -85,7 +81,6 @@ const AppContainer = ({
               </Route>
               <Route exact path='/rooms'>
                 <RoomContainer
-                  setIshost={setIshost}
                   setIsJoinedRoom={setIsJoinedRoom} />
               </Route>
               <Route path='/groups'>
@@ -100,7 +95,13 @@ const AppContainer = ({
                 path='/rooms/:id'
                 render={(props) =>
                   <VideoContainer
-                    location={props.location} />} />
+                    location={props.location}
+                    currentUser={currentUser}
+                    memberInRoom={memberInRoom}
+                    joinMember={joinMember}
+                    deleteLeavingMember={deleteLeavingMember}
+                  />}
+              />
             </>
             : <>
               <Route exact path='/'>
@@ -130,12 +131,14 @@ const AppContainer = ({
 };
 
 const mapStateToProps = (state) => {
-  const { userReducer, memberInRoomReducer } = state;
+  const { userReducer, memberInRoomReducer, messageListReducer } = state;
 
   return {
     currentUser: userReducer,
     isLoggedIn: userReducer.isLoggedIn,
-    memberInRoom: memberInRoomReducer
+    memberInRoom: memberInRoomReducer,
+    messageList: messageListReducer.public,
+    secretMessageList: messageListReducer.secret
   };
 };
 
@@ -149,7 +152,9 @@ const mapDispatchToProps = (dispatch) => {
     addMembers: (groupId, allMemberData) => { dispatch(createActionToAddMembers(groupId, allMemberData)); },
     deleteMembers: (groupId, arrayOfEmail) => { dispatch(createActionToDeleteMembers(groupId, arrayOfEmail)); },
     joinMember: (socketId) => { dispatch(createActionToJoinMembersInRoom(socketId)); },
-    deleteLeavingMember: (socketId) => { dispatch(createActionToDeleteMembersInRoom(socketId)); }
+    deleteLeavingMember: (socketId) => { dispatch(createActionToDeleteMembersInRoom(socketId)); },
+    addMessage: (message) => {dispatch(createActionToAddMessage(message)); },
+    addSecretMessage: (message) => {dispatch(createActionToSecretMessage(message)); }
   };
 };
 

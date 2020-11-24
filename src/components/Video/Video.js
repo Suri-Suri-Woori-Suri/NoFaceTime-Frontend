@@ -3,11 +3,9 @@ import * as faceapi from 'face-api.js';
 import styles from './Video.module.css';
 
 const Video = ({
-  socket,
   location }) => {
   console.log('VIDEO!!!!!');
   //window.history.back(); -> 이거 누르면 뒤로 가지 않을까용??? 나중에 핵심기능 구현하구 고민해보기...
-  const [socketOn, setSocketOn] = useState(false);
   const [initializing, setInitializing] = useState(false);
   const videoRef = useRef();
   const canvasRef = useRef();
@@ -31,20 +29,6 @@ const Video = ({
     };
     loadModels();
   }, []);
-
-
-  useEffect(() => {
-    if (!socketOn) return;
-
-    const socketClient = socket;
-    socketClient.emit('join-room', { name: 'woori', roomLinkId });
-    //socketClient.emit('join', { name:'woori', roomLinkId });
-
-    return () => {
-      socket.emit('disconnect');
-      socket.off();
-    };
-  }, [socketOn, socket, roomLinkId]);
 
   const startVideo = async () => {
     try {
@@ -129,7 +113,7 @@ const Video = ({
           className='canvas'
           ref={canvasRef} />
       </div>
-      <button onClick={() => setSocketOn(true)}>
+      <button onClick={() => console.log('과거의 setSocketOn..')}>
         Join
       </button>
     </div>

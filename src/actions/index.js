@@ -7,7 +7,9 @@ import {
   ADD_MEMBERS,
   DELETE_MEMBERS,
   JOIN_ROOM,
-  LEAVE_ROOM
+  LEAVE_ROOM,
+  ADD_MESSAGE,
+  ADD_SECRET_MESSAGE
 } from '../constants/actionTypes';
 
 export const createActionForUserData = (userData) => {
@@ -73,3 +75,17 @@ export const createActionToDeleteMembersInRoom = (members) => {
     payload: members
   };
 };
+
+export const createActionToAddMessage = (message) => {
+  return {
+    type: ADD_MESSAGE,
+    payload: message
+  };
+}
+
+export const createActionToSecretMessage = (message) => {
+  return {
+    type: ADD_SECRET_MESSAGE,
+    payload: message
+  };
+}

@@ -19,8 +19,8 @@ const Login = ({ updateUserData }) => {
       if (isUserFromMailInvitation) {
         const roomLink = localStorage.roomLink;
         /* 여기에 초대 받은 사람이 들어오려는 건지 인증 절차가 들어가야 함! 아직 구현 안됨  */
-        const hostId = await getRoomHost(localStorage.roomUUID);
-        await getUser(hostId);
+        // const hostId = await getRoomHost(localStorage.roomUUID);
+        // await getUser(hostId);
 
         localStorage.removeItem("roomLink");
         localStorage.removeItem("roomUUID");

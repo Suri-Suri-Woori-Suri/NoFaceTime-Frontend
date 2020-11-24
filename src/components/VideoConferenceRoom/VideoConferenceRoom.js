@@ -5,24 +5,36 @@ import * as faceapi from 'face-api.js';
 import Logo from '../Logo/Logo';
 import MenuBar from '../MenuBar/MenuBar';
 import PeerVideo from '../PeerVideo/PeerVideo';
+import Chat from '../../components/Chat/Chat';
+import HostVideo from '../../components/HostVideo/HostVideo';
 
 import { socket } from '../../utils/socket';
 import styles from './VideoConferenceRoom.module.css';
-import { deleteGroup } from '../../api';
 
 const VideoConferenceRoom = ({
   location,
   currentUser,
+  isHost,
   memberInRoom,
   joinMember,
+  deleteLeavingMember,
+  messageList,
+  secretMessageList,
+  addMessage,
+  addSecretMessage
 }) => {
-  console.log("CURRENT USER", currentUser);
+  console.log("ISHOST???", isHost);
+  console.log(messageList)
+  console.log(secretMessageList);
+
   const videoRef = useRef();
   const canvasRef = useRef();
 
   const streamRef = useRef();
-  const peersRef = useRef([]);
-  const ROOM_ID = location.pathname.split('/').pop();//'/room/여기'
+  let peersRef = useRef([]);
+
+  const myPeer = useRef();//share
+  const [streamForShare, setstreamForShare] = useState();
 
   const videoWidth = 700;
   const videoHeight = 500;
@@ -30,32 +42,40 @@ const VideoConferenceRoom = ({
   const { _id, nickname } = currentUser;
   const [initialized, setInitialized] = useState(false);
   const [peers, setPeers] = useState([]);//체크
+  const [mode, setMode] = useState('Emoji');
+  const ROOM_ID = location.pathname.split('/').pop();
+  console.log("MEMBERIN ROOM", memberInRoom);
 
   useEffect(() => {
-    socket.emit('join-room', { roomId: ROOM_ID, userId: _id, nickname });//나중에 꼭 host 데이터 추가하기 host: true 아니면 호스트 아이디?
-
-    socket.on('joined', ({ members, newMember }) => {
+    socket.emit('join-room', { roomId: ROOM_ID, userId: _id, nickname, isHost });//isHost : socket
+    socket.on('joined', ({ members, host }) => {//host : socketId
       console.log('원래 있던 맴버!!!!', members);
-      console.log('새로운 맴버', newMember);
-      if (newMember) joinMember(newMember);
-      if (members) joinMember(members);
-      //joinMember(members);
+      joinMember(members);
+      console.log('socket Id of host', host);
     });
+
+
+    socket.on('joined-newMember', newMember => {
+      console.log('새로운 맴버', newMember);
+      joinMember(newMember);
+    });
+
 
     socket.on('user left', ({ socketId }) => {
       console.log(socketId);
       console.log('user left');
       deleteLeavingMember(socketId);
 
-      setPeers(peers => {//확실하지 않음...
-        const targetPeer = peers.filter(peer => peer.socketId === socketId);
-        const rest = peers.filter(peer => peer.socketId !== socketId);
-        if (targetPeer) targetPeer.destroy();
-        return [ ...rest];
-      });
+      console.log("PEER REF", peersRef);
+      peersRef = peersRef.current.filter(peer => peer.peerId !== socketId);
 
-      //if (peers[socketId]) peers[] //확실하지 않음. 나중에 확인
-      //if (peers[socketId]) peers[userId].close()
+      setPeers(peers => {
+        const targetPeer = peers.filter(peer => peer.peerId === socketId)[0];
+        const rest = peers.filter(peer => peer.peerId !== socketId);
+
+        if (targetPeer) targetPeer.peer.destroy();
+        return [...rest];
+      });
     });
 
     const startVideo = async () => {
@@ -63,6 +83,9 @@ const VideoConferenceRoom = ({
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
+
+        setstreamForShare(stream);//share
+
         setInitialized(true);
       }
       catch (err) {
@@ -73,7 +96,7 @@ const VideoConferenceRoom = ({
     startVideo();
 
     return () => { //unmountung
-      socket.emit('disconnect');
+      socket.emit('leave');
       socket.off();
     }
   }, []);
@@ -81,8 +104,9 @@ const VideoConferenceRoom = ({
   useEffect(() => {
     if (!initialized) return;
     console.log("원래 있던 맴버를 돈다. 처음에 딱 한 번만 시행돼야한다.");
-    const peers = [];
+
     for (let key in memberInRoom) {
+      console.log(key);
 
       const peer = new Peer({
         initiator: true,
@@ -90,27 +114,26 @@ const VideoConferenceRoom = ({
         stream: streamRef.current
       });
 
+      myPeer.current = peer;//share
+
       peersRef.current.push({
-        peerID: key,
+        peerId: key,
         peer,
       });
 
-      peers.push(peer);
-      console.log("dlrp ehla???", peers);
+      //peers.push(peer); ****
 
       peer.on('signal', signal => {
         socket.emit('send signal', { signal, to: memberInRoom[key] });
       });
 
-      setPeers(users => ([...users, peer]));
+      //setPeers(users => ([...users, peer])); ****
+      setPeers(users => ([...users, { peerId: key, peer }])); //soketId
     }
-    //console.log("CHECK PEERS", peers);
-    //setPeers(peers); ///체크
 
     ////////////////////////// Reciever
 
     socket.on('return signal', ({ signal, from }) => {
-      console.log('get signal from server');
       const initiator = from;
       console.log("INITIATOR", initiator);
       console.log("RECIVER", socket.id);
@@ -121,60 +144,145 @@ const VideoConferenceRoom = ({
         stream: streamRef.current,
       });
 
+      myPeer.current = peer;//share
+
       peersRef.current.push({
-        peerID: from.socketId,
+        peerId: from.socketId,
         peer,
       });
 
       peer.signal(signal);
 
       peer.on('signal', signal => {
-
         socket.emit('respond signal', { signal, to: initiator });
       });
+
       console.log('여기서 새로운 사람이 조인했을 때 반응하고 peer에 추가해야한다.');
       console.log(peersRef.current, "initiator === ", peer);
       console.log('기존 peers', peers);
-      setPeers(users => [...users, peer]);
+      //setPeers(users => [...users, peer]); ****
+      setPeers(users => ([...users, { peerId: from.socketId, peer }]));
     });
 
     socket.on('respond signal', ({ signal, from }) => {
-      const targetPeer = peersRef.current.find(p => p.peerID === from.socketId);
+      console.log("HERE", peers)
+      const targetPeer = peersRef.current.find(p => p.peerId === from.socketId);
       console.log(targetPeer, ' === RECIVER');
       console.log(targetPeer.peer);
       targetPeer.peer.signal(signal);
+      // const targetPeer = peers.find(p => p.peerId === from.socketId);
+      // console.log(targetPeer, ' === RECIVER');
+      // console.log(targetPeer.peer);
+      // targetPeer.peer.signal(signal);
     });
 
     return () => socket.off();
 
   }, [initialized]);
 
-  //socket.emit('leave') -> leave 버튼
+  const shareScreen = () => {
+    navigator.mediaDevices.getDisplayMedia({ cursor: true })
+      .then(screenStream => {
+        peersRef.current.map(item => {
+          item.peer.replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare)
+          videoRef.current.srcObject = screenStream
+          screenStream.getTracks()[0].onended = () => {
+            item.peer.replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare)
+            videoRef.current.srcObject = streamForShare
+          }
+        })
 
-  // const Video = (props) => {
-  //   const ref = useRef();
-  //   const { targetPeer } = props;
+        // peersRef.current.replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare)
+        // videoRef.current.srcObject = screenStream // Cannot set property 'srcObject' of undefined
+        // screenStream.getTracks()[0].onended = () => {
+        //   peersRef.current.replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare)
+        //   videoRef.current.srcObject = streamForShare
+        // }
 
-  //   useEffect(() => {
-  //     console.log("2@@@@@@", targetPeer);
-  //     if (!targetPeer) return;
+        // myPeer.current.replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare)
+        // userVideo.current.srcObject = screenStream // Cannot set property 'srcObject' of undefined
+        // screenStream.getTracks()[0].onended = () => {
+        //   myPeer.current.replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare)
+        //   userVideo.current.srcObject = streamForShare
+        // }
+      })
+  };
 
-  //     targetPeer.peer.on("stream", stream => {
-  //       ref.current.srcObject = stream;
-  //     });
-  //   }, []);
+  /////////////////////////////////////////////////////////////////// CHAT
+  const [message, setMessage] = useState('');
+  const targetMessage = mode === 'PublicChat' ? messageList : secretMessageList;
+  const [sendTo, setSendTo] = useState('');
+  console.log("MODE", mode);
+  console.log("PUBLIC MESSAGE", messageList)
+  console.log("SECRET MESSAGE", secretMessageList)
 
-  //   return (
-  //     <video muted playsInline autoPlay ref={ref} />
-  //   );
-  // }
+  useEffect(() => {
 
-  // const peervideoList = for (let key in memberInRoom) {
-  //   const targetPeer =  peersRef.current.filter(peer => peer.peerID === key)[0];
-  //   return (
-  //     <Video key={index} targetPeer={targetPeer} />
-  //   );
-  // }
+    socket.on('message-public', message => {//from -> user's nickname, text
+      console.log("@@@@@@@,", message); // ex) { from: "woori", text: "sasaasasassss" }
+
+      addMessage(message);
+    });
+
+    socket.on('message-secret', message => {
+      console.log("HERE!!!!", message);
+      const { from } = message;
+      if (from !== nickname) addSecretMessage(message);
+    });
+
+    return () => {
+      socket.off('message-public');
+      socket.off('message-secret');
+    };
+
+  }, [messageList, secretMessageList]);
+
+  const sendMessagePublic = (event) => {
+    event.preventDefault();
+    if (!message) return;
+
+    const data = { text: message, from: nickname };
+
+    socket.emit('message-public', data, () => {
+      setMessage('');
+      addMessage(data);
+    });
+    // socket.off('message-public');
+  }
+
+  const sendMessageSecretly = (event) => {
+    event.preventDefault();
+    if (!message) return;
+
+    const data = { text: message, from: nickname, to: sendTo };
+    console.log(data)
+    setMessage('');
+    addSecretMessage(data);
+    socket.emit('message-secret', data);
+    // socket.off('message-secret');
+    //console.log('!!!!!!!secret message data', data);//socket io의 callbak 문제....
+  };
+
+  const sendMessage = mode === 'PublicChat' ? sendMessagePublic : sendMessageSecretly;
+
+  const myVideo = (<video
+    id={styles.HostVideo}
+    ref={videoRef} autoPlay//videoRef => user's
+    muted
+    height={videoHeight}
+    width={videoWidth}
+    onPlay={console.log('handleVideoPlay')}
+  />);
+
+  const [audioMuted, setAudioMuted] = useState(false);
+  function toggleAudio() {
+    if (streamRef.current) {
+      streamRef.current
+        .getAudioTracks()
+        .forEach(track => track.enabled = audioMuted)
+    }
+    setAudioMuted(!audioMuted);
+  }
 
   return (
     <>
@@ -185,22 +293,45 @@ const VideoConferenceRoom = ({
         <div className={styles.Content}>
           <div className={styles.LeftSide}>
             <div className={styles.CanvasOnVideo}>
-              <video id={styles.MyVideo} ref={videoRef} autoPlay muted height={videoHeight} width={videoWidth} onPlay={console.log('handleVideoPlay')} />
+              {isHost ?
+                myVideo :
+                peers.length && <HostVideo peer={peers} />
+              }
               <canvas
                 ref={canvasRef}
-                className='canvas'
+                className={styles.Canvas}
                 width={videoWidth}
                 height={videoHeight} />
             </div>
             <div className={styles.MenuBar}>
-              <MenuBar />
+              <MenuBar setMode={setMode} toggleAudio={toggleAudio} />
+              <button onClick={() => shareScreen()}> SHARE </button>
             </div>
           </div>
           <div className={styles.RightSide}>
-            {
-              peers.map((peer, index) => {
-                return <PeerVideo key={index} peer={peer} />;
-              })
+            {mode === 'Emoji' && (
+              <>{isHost ?
+                peers.map((peer, index) => {
+                  return <PeerVideo key={index} peer={peer} />
+                }) :
+                <>
+                  {myVideo}
+                  {peers.slice(1).map((peer, index) => {
+                    return <PeerVideo key={index} peer={peer} />
+                  })}
+                </>
+              }</>
+            )}
+            {(mode === 'PublicChat' || mode === 'QuestionChat') &&
+              <Chat
+                mode={mode}
+                message={message}
+                setMessage={setMessage}
+                sendMessage={sendMessage}
+                targetMessage={targetMessage}
+                nickname={nickname}
+                setSendTo={setSendTo}
+              />
             }
           </div>
         </div>

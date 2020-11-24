@@ -45,6 +45,7 @@ const SettingModal = ({
   };
 
   console.log("checkbox");
+  const [checked, setChecked] = useState(true);
 
   return (
     <div className={styles.SettingModalBackground}>
@@ -60,7 +61,11 @@ const SettingModal = ({
         </div>
         <div className={styles.Mute}>
           <label>
-            <input type='checkbox' name='mute' value='muted' />
+            {/* <input type='checkbox' name='mute' value='muted' /> */}
+            <input type="checkbox"
+              name='mute'
+              onChange={() => setChecked(!checked)}
+            />
             Mute
           </label>
         </div>

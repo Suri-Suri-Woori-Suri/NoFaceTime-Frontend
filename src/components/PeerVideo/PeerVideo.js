@@ -3,9 +3,9 @@ import styles from './PeerVideo.module.css';
 
 const PeerVideo = ({ peer }) => {
   const ref = useRef();
-
+  console.log("새로운 형태", peer);
   useEffect(() => {
-    peer.on("stream", stream => {
+    peer.peer.on("stream", stream => {
       ref.current.srcObject = stream;
     });
   }, []);
