@@ -10,13 +10,13 @@
   text-align: center;
 }
 
-.Rooms {
+.RoomsContainer {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   width: 95%;
-  height: 400px;
+  height: 80%;
   border: 1px solid #8e8e93;
   border-radius: 5px;
   font-weight: 250;

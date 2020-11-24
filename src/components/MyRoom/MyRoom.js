@@ -11,7 +11,7 @@ const MyRoom = ({
 }) => {
   return (
     <div className={styles.MyRoom}>
-      <div className={styles.Rooms}>
+      <div className={styles.RoomsContainer}>
         <RoomList
           currentUser={currentUser}
           enterRoom={enterRoom}

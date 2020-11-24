@@ -1,25 +1,35 @@
 import React from 'react';
 import styles from './GroupList.module.css';
 
-const GroupList = (props) => {
-  const {
-    currentUser,
-    getMemberData,
-    handleCheckbox,
-  } = props;
-
-  const groups = currentUser.groups;
-  const groupList = groups ? groups.map((group, i) => {
+const GroupList = ({
+  //currentUser,
+  //getMemberData, //onGroupItemClick
+  //handleCheckbox
+  groups,
+  onGroupItemClick,
+  onGroupNameClick,
+  handleCheckbox
+}) => {
+  console.log("GROUPLIST groups", groups);
+  const groupList = groups ? groups.map((group, index) => {
     const groupId = group._id;
+
     return (
-      <div className={styles.GroupEntry} key={i}>
+      <div
+        key={index}
+        className={styles.GroupEntry}>
         <input
           type='checkbox'
-          onChange={() => handleCheckbox(groupId)}
-        />
-        <button key={i} className={styles.Group} onClick={() => getMemberData(groupId)}>
+          onChange={() => handleCheckbox(groupId)} />
+        <div
+          key={index}
+          className={styles.GroupName}
+          onClick={() => {
+            onGroupItemClick(groupId);
+            onGroupNameClick(groupId);
+          }}>
           {group.name}
-        </button>
+        </div>
       </div>
 
     );

@@ -5,18 +5,14 @@ import {
   ADD_GROUP,
   DELETE_GROUPS,
   ADD_MEMBERS,
-  DELETE_MEMBERS,
-  JOIN_ROOM,
-  LEAVE_ROOM,
-  ADD_MESSAGE,
-  ADD_SECRET_MESSAGE
+  DELETE_MEMBERS
 } from '../constants/actionTypes';
 
 const initialState = {
   isLoggedIn: false
 };
 
-export const userReducer = (state = initialState, action) => {
+const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case GET_USER_DATA_FROM_DB:
       return {
@@ -89,30 +85,4 @@ export const userReducer = (state = initialState, action) => {
   }
 };
 
-export const memberInRoomReducer = (state = {}, action) => {
-  switch (action.type) {
-    case JOIN_ROOM:
-      return { ...state, ...action.payload };
-
-    case LEAVE_ROOM:
-      console.log("REDUX", state);
-      console.log("REDUX", action.payload);
-      delete state[action.payload];
-      return state;
-
-    default:
-      return state;
-  }
-};
-
-export const messageListReducer = (state = { public: [], secret: [] }, action) => {
-  console.log('reducer,, Add Message');
-  switch (action.type) {
-    case ADD_MESSAGE:
-      return {...state, public: [...state.public, action.payload]}
-    case ADD_SECRET_MESSAGE:
-      return {...state, secret: [...state.secret, action.payload]}
-    default:
-      return state;
-  }
-};
+export default userReducer;

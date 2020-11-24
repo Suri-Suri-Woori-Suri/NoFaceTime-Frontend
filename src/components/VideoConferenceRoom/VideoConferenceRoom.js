@@ -7,6 +7,10 @@ import MenuBar from '../MenuBar/MenuBar';
 import PeerVideo from '../PeerVideo/PeerVideo';
 import Chat from '../../components/Chat/Chat';
 import HostVideo from '../../components/HostVideo/HostVideo';
+import GroupContainer from '../../containers/GroupContainer/GroupContainer';
+import Group from '../../components/Group/Group';
+import GroupList from '../../components/GroupList/GroupList';
+import GroupListInVideoRoom from '../GroupListInVideoRoom/GroupListInVideoRoom';
 
 import { socket } from '../../utils/socket';
 import styles from './VideoConferenceRoom.module.css';
@@ -21,22 +25,31 @@ const VideoConferenceRoom = ({
   messageList,
   secretMessageList,
   addMessage,
-  addSecretMessage
+  addSecretMessage,
+  setMuted,
+  setIsClickedEmoji,
+  isClickedInvite,
+  setIsClickedInvite,
+  setIsClickedPublicChat,
+  setIsClickedQuestionChat
 }) => {
   console.log("ISHOST???", isHost);
-  console.log(messageList)
+  console.log(messageList);
   console.log(secretMessageList);
+
+  console.log("CURRENT Video USER", currentUser);
+  console.log("INVITE CLick??", isClickedInvite);
 
   const videoRef = useRef();
   const canvasRef = useRef();
-
   const streamRef = useRef();
+
   let peersRef = useRef([]);
 
   const myPeer = useRef();//share
   const [streamForShare, setstreamForShare] = useState();
 
-  const videoWidth = 700;
+  const videoWidth = 500;
   const videoHeight = 500;
 
   const { _id, nickname } = currentUser;
@@ -93,16 +106,18 @@ const VideoConferenceRoom = ({
         alert('현재 비디오를 사용하실 수 없습니다.');
       }
     };
+
     startVideo();
 
     return () => { //unmountung
       socket.emit('leave');
       socket.off();
-    }
+    };
   }, []);
 
   useEffect(() => {
     if (!initialized) return;
+
     console.log("원래 있던 맴버를 돈다. 처음에 딱 한 번만 시행돼야한다.");
 
     for (let key in memberInRoom) {
@@ -165,7 +180,7 @@ const VideoConferenceRoom = ({
     });
 
     socket.on('respond signal', ({ signal, from }) => {
-      console.log("HERE", peers)
+      console.log("HERE", peers);
       const targetPeer = peersRef.current.find(p => p.peerId === from.socketId);
       console.log(targetPeer, ' === RECIVER');
       console.log(targetPeer.peer);
@@ -184,13 +199,13 @@ const VideoConferenceRoom = ({
     navigator.mediaDevices.getDisplayMedia({ cursor: true })
       .then(screenStream => {
         peersRef.current.map(item => {
-          item.peer.replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare)
-          videoRef.current.srcObject = screenStream
+          item.peer.replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare);
+          videoRef.current.srcObject = screenStream;
           screenStream.getTracks()[0].onended = () => {
-            item.peer.replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare)
-            videoRef.current.srcObject = streamForShare
-          }
-        })
+            item.peer.replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare);
+            videoRef.current.srcObject = streamForShare;
+          };
+        });
 
         // peersRef.current.replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare)
         // videoRef.current.srcObject = screenStream // Cannot set property 'srcObject' of undefined
@@ -205,7 +220,7 @@ const VideoConferenceRoom = ({
         //   myPeer.current.replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare)
         //   userVideo.current.srcObject = streamForShare
         // }
-      })
+      });
   };
 
   /////////////////////////////////////////////////////////////////// CHAT
@@ -213,8 +228,8 @@ const VideoConferenceRoom = ({
   const targetMessage = mode === 'PublicChat' ? messageList : secretMessageList;
   const [sendTo, setSendTo] = useState('');
   console.log("MODE", mode);
-  console.log("PUBLIC MESSAGE", messageList)
-  console.log("SECRET MESSAGE", secretMessageList)
+  console.log("PUBLIC MESSAGE", messageList);
+  console.log("SECRET MESSAGE", secretMessageList);
 
   useEffect(() => {
 
@@ -248,14 +263,14 @@ const VideoConferenceRoom = ({
       addMessage(data);
     });
     // socket.off('message-public');
-  }
+  };
 
   const sendMessageSecretly = (event) => {
     event.preventDefault();
     if (!message) return;
 
     const data = { text: message, from: nickname, to: sendTo };
-    console.log(data)
+    console.log(data);
     setMessage('');
     addSecretMessage(data);
     socket.emit('message-secret', data);
@@ -279,14 +294,14 @@ const VideoConferenceRoom = ({
     if (streamRef.current) {
       streamRef.current
         .getAudioTracks()
-        .forEach(track => track.enabled = audioMuted)
+        .forEach(track => track.enabled = audioMuted);
     }
     setAudioMuted(!audioMuted);
   }
 
   return (
     <>
-      <div className={styles.Video}>
+      <div className={styles.VideoConferenceRoom}>
         <div className={styles.LogoWrapper}>
           <Logo />
         </div>
@@ -312,12 +327,12 @@ const VideoConferenceRoom = ({
             {mode === 'Emoji' && (
               <>{isHost ?
                 peers.map((peer, index) => {
-                  return <PeerVideo key={index} peer={peer} />
+                  return <PeerVideo key={index} peer={peer} />;
                 }) :
                 <>
                   {myVideo}
                   {peers.slice(1).map((peer, index) => {
-                    return <PeerVideo key={index} peer={peer} />
+                    return <PeerVideo key={index} peer={peer} />;
                   })}
                 </>
               }</>
@@ -333,6 +348,16 @@ const VideoConferenceRoom = ({
                 setSendTo={setSendTo}
               />
             }
+            {
+              isClickedInvite
+                ? <>
+                  <GroupListInVideoRoom
+                    id={styles.Invite}
+                    groups={currentUser.groups}
+                    host={currentUser.email} />
+                </>
+                : <></>
+            }
           </div>
         </div>
       </div>
@@ -341,3 +366,29 @@ const VideoConferenceRoom = ({
 };
 
 export default VideoConferenceRoom;
+  //socket.emit('leave') -> leave 버튼
+
+  // const Video = (props) => {
+  //   const ref = useRef();
+  //   const { targetPeer } = props;
+
+  //   useEffect(() => {
+  //     console.log("2@@@@@@", targetPeer);
+  //     if (!targetPeer) return;
+
+  //     targetPeer.peer.on("stream", stream => {
+  //       ref.current.srcObject = stream;
+  //     });
+  //   }, []);
+
+  //   return (
+  //     <video muted playsInline autoPlay ref={ref} />
+  //   );
+  // }
+
+  // const peervideoList = for (let key in memberInRoom) {
+  //   const targetPeer =  peersRef.current.filter(peer => peer.peerID === key)[0];
+  //   return (
+  //     <Video key={index} targetPeer={targetPeer} />
+  //   );
+  // }

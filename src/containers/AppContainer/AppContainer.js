@@ -27,12 +27,6 @@ const AppContainer = ({
   isLoggedIn,
   currentUser,
   updateUserData,
-  addRooms,
-  deleteRooms,
-  addGroups,
-  deleteGroups,
-  addMembers,
-  deleteMembers,
   memberInRoom,
   joinMember,
   deleteLeavingMember
@@ -56,22 +50,6 @@ const AppContainer = ({
         {
           isLoggedIn
             ? <>
-              {
-                /* {isJoinedRoom
-                  ? <Route path='/rooms/:id'
-                    render={(props) =>
-                      <VideoConferenceRoom
-                        location={props.location}
-                        currentUser={currentUser}
-                        setJoinedRoom={setIsJoinedRoom}
-                        isHost={isHost}
-                        memberInRoom={memberInRoom}
-                        joinMember={joinMember}
-                        deleteLeavingMember={deleteLeavingMember}
-                      />} />
-                  : <Route path='/rooms/:id' render={(props) => <SettingModal location={props.location} setJoinedRoom={setIsJoinedRoom} />} />
-                } */
-              }
               <Route exact path='/'>
                 <Header />
                 <Home />
@@ -84,12 +62,8 @@ const AppContainer = ({
                   setIsJoinedRoom={setIsJoinedRoom} />
               </Route>
               <Route path='/groups'>
-                <GroupContainer
-                  currentUser={currentUser}
-                  addGroups={addGroups}
-                  deleteGroups={deleteGroups}
-                  addMembers={addMembers}
-                  deleteMembers={deleteMembers} />
+                <Header />
+                <GroupContainer />
               </Route>
               <Route
                 path='/rooms/:id'
@@ -153,8 +127,8 @@ const mapDispatchToProps = (dispatch) => {
     deleteMembers: (groupId, arrayOfEmail) => { dispatch(createActionToDeleteMembers(groupId, arrayOfEmail)); },
     joinMember: (socketId) => { dispatch(createActionToJoinMembersInRoom(socketId)); },
     deleteLeavingMember: (socketId) => { dispatch(createActionToDeleteMembersInRoom(socketId)); },
-    addMessage: (message) => {dispatch(createActionToAddMessage(message)); },
-    addSecretMessage: (message) => {dispatch(createActionToSecretMessage(message)); }
+    addMessage: (message) => { dispatch(createActionToAddMessage(message)); },
+    addSecretMessage: (message) => { dispatch(createActionToSecretMessage(message)); }
   };
 };
 

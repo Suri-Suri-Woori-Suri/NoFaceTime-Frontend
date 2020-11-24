@@ -1,18 +1,19 @@
-
 import React from 'react';
-import styles from './Group.module.css';
+
 import GroupList from '../GroupList/GroupList';
 import MemberList from '../MemberList/MemberList';
 
-const Group = (props) => {
-  const {
-    currentUser,
-    showMember,
-    setShowMember,
-    getMemberData,
-    handleCheckbox,
-    targetGroupId
-  } = props;
+import styles from './Group.module.css';
+
+const Group = ({
+  currentUser,
+  showMember,
+  setShowMember,
+  getMemberData,
+  handleCheckbox,
+  targetGroupId,
+  saveTargetGroupId
+}) => {
 
   return (
     <>
@@ -21,13 +22,13 @@ const Group = (props) => {
           currentUser={currentUser}
           targetGroupId={targetGroupId}
           setShowMember={setShowMember}
-          handleCheckbox={handleCheckbox}
-        /> :
+          handleCheckbox={handleCheckbox} />
+        :
         <GroupList
-          currentUser={currentUser}
-          getMemberData={getMemberData}
-          handleCheckbox={handleCheckbox}
-        />
+          groups={currentUser.groups}
+          onGroupItemClick={getMemberData}
+          onGroupNameClick={saveTargetGroupId}
+          handleCheckbox={handleCheckbox} />
       }
     </>
   );

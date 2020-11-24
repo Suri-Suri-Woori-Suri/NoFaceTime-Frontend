@@ -9,7 +9,8 @@ import {
   JOIN_ROOM,
   LEAVE_ROOM,
   ADD_MESSAGE,
-  ADD_SECRET_MESSAGE
+  ADD_SECRET_MESSAGE,
+  SAVE_TARGET_GROUP_ID
 } from '../constants/actionTypes';
 
 export const createActionForUserData = (userData) => {
@@ -81,11 +82,18 @@ export const createActionToAddMessage = (message) => {
     type: ADD_MESSAGE,
     payload: message
   };
-}
+};
 
 export const createActionToSecretMessage = (message) => {
   return {
     type: ADD_SECRET_MESSAGE,
     payload: message
   };
-}
+};
+
+export const createActionToSaveTargetGroupId = (groupId) => {
+  return {
+    type: SAVE_TARGET_GROUP_ID,
+    payload: groupId
+  };
+};
