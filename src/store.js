@@ -1,14 +1,8 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createLogger } from 'redux-logger';
 
-import { userReducer, memberInRoomReducer, messageListReducer } from './reducers/userReducer';
-
-const rootReducer = combineReducers({
-  userReducer,
-  memberInRoomReducer,
-  messageListReducer
-});
+import rootReducer from './reducers/rootReducer';
 
 const middleware = [];
 

@@ -9,3 +9,4 @@ export const JOIN_ROOM = "JOIN_ROOM";
 export const LEAVE_ROOM = "LEAVE_ROOM";
 export const ADD_MESSAGE = "ADD_MESSAGE";
 export const ADD_SECRET_MESSAGE = "ADD_SECRET_MESSAGE";
+export const SAVE_TARGET_GROUP_ID = "SAVE_TARGET_GROUP_ID";

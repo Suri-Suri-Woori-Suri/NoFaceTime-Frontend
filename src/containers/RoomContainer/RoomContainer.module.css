@@ -43,7 +43,16 @@
 }
 
 .Title {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   font-size: 50px;
   font-weight: lighter;
+  width: 95%;
+  height: 80%;
+  background-color: whitesmoke;
+  border: 1px solid #8e8e93;
+  border-radius: 10px;
 }

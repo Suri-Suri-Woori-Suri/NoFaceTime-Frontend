@@ -5,7 +5,9 @@ import styles from './FaceDetectionCanvas.module.css';
 
 const FaceDetectionCanvas = async ({
   videoRef,
-  setInitialized
+  startVideo,
+  videoWidth,
+  videoHeight
 }) => {
   const loadModels = async () => {
     const MODEL_URL = process.env.PUBLIC_URL + '/faceApiModels';
@@ -17,11 +19,10 @@ const FaceDetectionCanvas = async ({
         faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
         faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
       ]);
-
-      //startVideo();
+      startVideo();
     } catch (err) {
       console.log(err);
-      // startVideo();
+      startVideo();
     }
   };
 
@@ -36,29 +37,25 @@ const FaceDetectionCanvas = async ({
     surprised: '😳'
   };
 
-  const handleVideoPlay = () => {
-    console.log('dho..!!!!');
-    console.log(canvasRef);
-    // analyzeFace(faceapi, videoRef, canvasRef);
+
+  const useInterval = (callback) => {
+    const savedCallback = useRef();
+
+    useEffect(() => {
+      savedCallback.current = callback;
+      const analyzeEmotion = () => savedCallback.current();
+
+      const realTimeAnalizaingEmotion = setInterval(analyzeEmotion, 1000);
+      return () => clearInterval(realTimeAnalizaingEmotion);
+    }, []);
   };
-
-  // const useInterval = (callback) => {
-  //   const savedCallback = useRef();
-
-  //   useEffect(() => {
-  //     savedCallback.current = callback;
-  //     const analyzeEmotion = () => savedCallback.current();
-
-  //     const realTimeAnalizaingEmotion = setInterval(analyzeEmotion, 1000);
-  //     return () => clearInterval(realTimeAnalizaingEmotion);
-  //   }, []);
-  // };
 
   // useInterval(analyzeFace);
 
   const canvasRef = useRef();
 
   canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
+
   const displaySize = {
     width: 400,
     height: 400

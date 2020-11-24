@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 import * as faceapi from 'face-api.js';
 
 import Logo from '../../components/Logo/Logo';
+import Video from '../../components/Video/Video';
 import MenuBar from '../../components/MenuBar/MenuBar';
+import GroupList from '../../components/GroupList/GroupList';
 import SettingModal from '../../components/SettingModal/SettingModal';
 import VideoConferenceRoom from '../../components/VideoConferenceRoom/VideoConferenceRoom';
-import Video from '../../components/Video/Video';
 
 import {
   createActionForUserData,
@@ -18,11 +19,13 @@ import {
   createActionToDeleteMembers,
   createActionToJoinMembersInRoom,
   createActionToDeleteMembersInRoom,
+  createActionToSaveTargetGroupId,
   createActionToAddMessage,
   createActionToSecretMessage
 } from '../../actions';
-import styles from './VideoContainer.module.css';
+
 import { getRoomHost } from '../../api';
+import styles from './VideoContainer.module.css';
 
 const VideoContainer = ({
   location,
@@ -39,6 +42,22 @@ const VideoContainer = ({
   const [isJoinedRoom, setIsJoinedRoom] = useState(false);
   const [isHost, setIsHost] = useState(false);
   console.log("isJoinedRoom?", isJoinedRoom);
+  const [isFinishedInterval, setIsFinishedInterval] = useState(false);
+  const [muted, setMuted] = useState(false); // isMuted === true -> 음소거!
+  const [isClickedPublicChat, setIsClickedPublicChat] = useState(false);
+  const [isClickedQuestionChat, setIsClickedQuestionChat] = useState(false);
+  const [isClickedNote, setIsClickedNote] = useState(false);
+  const [isClickedEmoji, setIsClickedEmoji] = useState(false);
+  const [isClickedInvite, setIsClickedInvite] = useState(true);
+  let timeId;
+
+  console.log("isJoinedRoom?!!!!!!", isJoinedRoom);
+
+  const onInviteButtonClick = (groups) => {
+    if (!groups.length) return;
+
+    setIsClickedInvite(true);
+  };
 
   const ROOM_ID = location.pathname.split('/').pop();//'/room/여기'
 
@@ -46,7 +65,7 @@ const VideoContainer = ({
     const fetch = async () => {
       const hostId = await getRoomHost(ROOM_ID);
       if (currentUser._id === hostId) setIsHost(true);
-    }
+    };
     fetch();
   }, []);
 
@@ -56,17 +75,25 @@ const VideoContainer = ({
         setIsJoinedRoom={setIsJoinedRoom} />
       : <VideoConferenceRoom
         location={location}
-        currentUser={currentUser}
-        isHost={isHost}
-        memberInRoom={memberInRoom}
         joinMember={joinMember}
+        currentUser={currentUser}
+        memberInRoom={memberInRoom}
+        setMuted={setMuted}
+        isHost={isHost}
         deleteLeavingMember={deleteLeavingMember}
         messageList={messageList}
         secretMessageList={secretMessageList}
         addMessage={addMessage}
         addSecretMessage={addSecretMessage}
+        setIsClickedNote={setIsClickedNote}
+        setIsClickedEmoji={setIsClickedEmoji}
+        isClickedInvite={isClickedInvite}
+        setIsClickedInvite={setIsClickedInvite}
+        setIsClickedPublicChat={setIsClickedPublicChat}
+        setIsClickedQuestionChat={setIsClickedQuestionChat}
       />
   );
+
 };
 
 
@@ -100,6 +127,20 @@ const VideoContainer = ({
     };
     loadModels();
   }, []);
+
+
+  useEffect(() => {
+    if (!socketOn) return;
+
+    const socketClient = socket;
+    socketClient.emit('join-room', { name: 'woori', roomLinkId });
+    //socketClient.emit('join', { name:'woori', roomLinkId });
+
+    return () => {
+      socket.emit('disconnect');
+      socket.off();
+    };
+  }, [socketOn, socket, roomLinkId]);
 
   const startVideo = async () => {
     try {
@@ -247,8 +288,10 @@ const mapDispatchToProps = (dispatch) => {
     deleteMembers: (groupId, arrayOfEmail) => { dispatch(createActionToDeleteMembers(groupId, arrayOfEmail)); },
     joinMember: (socketId) => { dispatch(createActionToJoinMembersInRoom(socketId)); },
     deleteLeavingMember: (socketId) => { dispatch(createActionToDeleteMembersInRoom(socketId)); },
-    addMessage: (message) => {dispatch(createActionToAddMessage(message)); },
-    addSecretMessage: (message) => {dispatch(createActionToSecretMessage(message)); }
+    addMessage: (message) => { dispatch(createActionToAddMessage(message)); },
+    addSecretMessage: (message) => { dispatch(createActionToSecretMessage(message)); },
+    saveTargetGroupId: (groupId) => { dispatch(createActionToSaveTargetGroupId(groupId)); }
+
   };
 };
 

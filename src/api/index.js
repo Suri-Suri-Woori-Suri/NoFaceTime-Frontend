@@ -141,6 +141,29 @@ export const getRoomHost = async (roomUUID) => {
   return roomHost;
 };
 
+export const sendMailToMembers = async (sender, receiver, roomLink, groupId) => {
+  const { POST } = API_METHOD;
+
+  const serverRoute = `https://localhost:5000/groups/${groupId}/members/mail`;
+
+  const response = await fetch(serverRoute, {
+    method: POST,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',
+    body: JSON.stringify({ sender, receiver, roomLink, groupId })
+  });
+
+  const result = await response.json();
+
+  if (result.message === 'ok') {
+    alert('초대 메일을 보냈습니다!');
+  }
+
+  return result;
+};;
+
 // export const getMember = async (groupId) => {
 //   const { GET } = API_METHOD;
 //   const response = await fetch(`http://localhost:5000/groups/${groupId}`, {

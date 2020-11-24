@@ -10,12 +10,13 @@ const MemberList = (props) => {
   } = props;
   const targetGroup = currentUser.groups.filter(group => group._id === targetGroupId)[0];
   const targetMember = targetGroup.members;
-  const existMemberList = targetMember.map((memberEmail, i) => {
+  const existMemberList = targetMember.map((memberEmail, index) => {
     return (
-      <div key={i}>
+      <div
+        key={index}
+        className={styles.MemberEntry}>
         <input
           type='checkbox'
-          className={styles.Member}
           onChange={() => handleCheckbox(memberEmail)}
         />{memberEmail}
       </div>
@@ -23,14 +24,17 @@ const MemberList = (props) => {
   });
 
   return (
-    <div className={styles.Content}>{existMemberList}
+    <>
+      <div className={styles.MemberList}>
+        {existMemberList}
+      </div>
       <button
-        className={styles.Button}
+        className={styles.BackButton}
         onClick={() => {
           setShowMember(false);
         }}>Go Back
       </button>
-    </div>
+    </>
   );
 };
 
