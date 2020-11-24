@@ -25,7 +25,6 @@ const RoomContainer = ({
   currentUser,
   addRooms,
   deleteRooms,
-  setIshost,
   setIsJoinedRoom
 }) => {
   const [showModal, setShowModal] = useState(false);

@@ -17,20 +17,38 @@ import {
   createActionToAddMembers,
   createActionToDeleteMembers,
   createActionToJoinMembersInRoom,
-  createActionToDeleteMembersInRoom
+  createActionToDeleteMembersInRoom,
+  createActionToAddMessage,
+  createActionToSecretMessage
 } from '../../actions';
 import styles from './VideoContainer.module.css';
+import { getRoomHost } from '../../api';
 
 const VideoContainer = ({
-  socket,
   location,
   currentUser,
   memberInRoom,
-  joinMember
+  joinMember,
+  deleteLeavingMember,
+  messageList,
+  secretMessageList,
+  addMessage,
+  addSecretMessage
 }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isJoinedRoom, setIsJoinedRoom] = useState(false);
+  const [isHost, setIsHost] = useState(false);
   console.log("isJoinedRoom?", isJoinedRoom);
+
+  const ROOM_ID = location.pathname.split('/').pop();//'/room/여기'
+
+  useEffect(() => {
+    const fetch = async () => {
+      const hostId = await getRoomHost(ROOM_ID);
+      if (currentUser._id === hostId) setIsHost(true);
+    }
+    fetch();
+  }, []);
 
   return (
     !isJoinedRoom
@@ -39,8 +57,14 @@ const VideoContainer = ({
       : <VideoConferenceRoom
         location={location}
         currentUser={currentUser}
+        isHost={isHost}
         memberInRoom={memberInRoom}
         joinMember={joinMember}
+        deleteLeavingMember={deleteLeavingMember}
+        messageList={messageList}
+        secretMessageList={secretMessageList}
+        addMessage={addMessage}
+        addSecretMessage={addSecretMessage}
       />
   );
 };
@@ -201,12 +225,14 @@ const VideoContainer = ({
 */
 
 const mapStateToProps = (state) => {
-  const { userReducer, memberInRoomReducer } = state;
+  const { userReducer, memberInRoomReducer, messageListReducer } = state;
 
   return {
     currentUser: userReducer,
     isLoggedIn: userReducer.isLoggedIn,
-    memberInRoom: memberInRoomReducer
+    memberInRoom: memberInRoomReducer,
+    messageList: messageListReducer.public,
+    secretMessageList: messageListReducer.secret
   };
 };
 
@@ -220,7 +246,9 @@ const mapDispatchToProps = (dispatch) => {
     addMembers: (groupId, allMemberData) => { dispatch(createActionToAddMembers(groupId, allMemberData)); },
     deleteMembers: (groupId, arrayOfEmail) => { dispatch(createActionToDeleteMembers(groupId, arrayOfEmail)); },
     joinMember: (socketId) => { dispatch(createActionToJoinMembersInRoom(socketId)); },
-    deleteLeavingMember: (socketId) => { dispatch(createActionToDeleteMembersInRoom(socketId)); }
+    deleteLeavingMember: (socketId) => { dispatch(createActionToDeleteMembersInRoom(socketId)); },
+    addMessage: (message) => {dispatch(createActionToAddMessage(message)); },
+    addSecretMessage: (message) => {dispatch(createActionToSecretMessage(message)); }
   };
 };
 

@@ -133,7 +133,9 @@ export const getRoomHost = async (roomUUID) => {
     credentials: 'include'
   });
 
-  const roomData = await response.json();
+  const data = await response.json();
+  const { roomData } = data;
+  console.log("$$$$$$$", roomData);
   const roomHost = roomData[0].host;
 
   return roomHost;

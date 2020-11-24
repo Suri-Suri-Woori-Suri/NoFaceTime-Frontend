@@ -115,7 +115,7 @@
   border: 10px solid greenyellow;
 }
 
-#MyVideo {
+.HostVideo {
   position: absolute;
   display: fixed;
   transform: translate(-50%, -50%);
@@ -126,10 +126,10 @@
   -moz-transform: rotateY(180deg);
 }
 
-canvas {
+/* .Canvas {
   border: 10px solid purple;
   box-sizing: border-box;
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
   -moz-transform: rotateY(180deg);
-}
+} */

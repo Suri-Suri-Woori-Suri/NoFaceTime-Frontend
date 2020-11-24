@@ -7,7 +7,9 @@ import {
   ADD_MEMBERS,
   DELETE_MEMBERS,
   JOIN_ROOM,
-  LEAVE_ROOM
+  LEAVE_ROOM,
+  ADD_MESSAGE,
+  ADD_SECRET_MESSAGE
 } from '../constants/actionTypes';
 
 const initialState = {
@@ -101,4 +103,16 @@ export const memberInRoomReducer = (state = {}, action) => {
     default:
       return state;
   }
-}
+};
+
+export const messageListReducer = (state = { public: [], secret: [] }, action) => {
+  console.log('reducer,, Add Message');
+  switch (action.type) {
+    case ADD_MESSAGE:
+      return {...state, public: [...state.public, action.payload]}
+    case ADD_SECRET_MESSAGE:
+      return {...state, secret: [...state.secret, action.payload]}
+    default:
+      return state;
+  }
+};

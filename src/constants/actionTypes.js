@@ -6,4 +6,6 @@ export const DELETE_GROUPS = "DELETE_GROUPS";
 export const ADD_MEMBERS = "ADD_MEMBERS";
 export const DELETE_MEMBERS = "DELETE_MEMBERS";
 export const JOIN_ROOM = "JOIN_ROOM";
-export const LEAVE_ROOM = " LEAVE_ROOM";
+export const LEAVE_ROOM = "LEAVE_ROOM";
+export const ADD_MESSAGE = "ADD_MESSAGE";
+export const ADD_SECRET_MESSAGE = "ADD_SECRET_MESSAGE";
