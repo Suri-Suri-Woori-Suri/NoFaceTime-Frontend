@@ -4,7 +4,6 @@ import styles from './Video.module.css';
 
 const Video = ({
   location }) => {
-  console.log('VIDEO!!!!!');
   //window.history.back(); -> 이거 누르면 뒤로 가지 않을까용??? 나중에 핵심기능 구현하구 고민해보기...
   const [initializing, setInitializing] = useState(false);
   const videoRef = useRef();
@@ -14,11 +13,9 @@ const Video = ({
   const videoWidth = 500;
   const roomLinkId = location.pathname.split('/').pop();//'/room/여기'
 
-  console.log(process.env.PUBLIC_URL);// empty
-
   useEffect(() => {
     const loadModels = async () => {
-      const MODEL_URL = process.env.PUBLIC_URL + '/faceApiModels'; //process.env.PUBLIC_URL +
+      const MODEL_URL = process.env.PUBLIC_URL + '/faceApiModels';
       setInitializing(true);
       Promise.all([
         faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),

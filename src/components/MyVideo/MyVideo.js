@@ -5,30 +5,34 @@ import styles from './MyVideo.module.css';
 
 const MyVideo = ({
   mode,
+  MyVideo,
+  isHost,
   videoRef,
-  startDetectionOnCanvas
+  audioMuted,
+  handleVideoPlay,
+  // canvasRef
+  // startDetectionOnCanvas
 }) => {
   const { HOST } = MY_VIDEO_MODE;
+  console.log('MY VIDEO');
 
-  switch (mode) {
-    case HOST:
-      return (
-        <video
-          className={styles.Host}
-          ref={videoRef}
-          onPlay={startDetectionOnCanvas}
-          autoPlay /> //videoRef => user's
-      );
-
-    default:
-      return (
-        <video
-          className={styles.Peer}
-          ref={videoRef}
-          onPlay={startDetectionOnCanvas}
-          autoPlay /> //videoRef => user's
-      );
+  if (isHost) {
+    return (
+      <video
+        className={styles.Host}
+        ref={videoRef}
+        mute={audioMuted.toString()}
+        onPlay={handleVideoPlay}
+        autoPlay />
+    );
   }
+
+  return <video
+    className={styles.Peer}
+    ref={videoRef}
+    // onPlay={() => handleVideoPlay(videoRef)}
+    // onPlay={startDetectionOnCanvas}
+    autoPlay />
 };
 
 export default MyVideo;

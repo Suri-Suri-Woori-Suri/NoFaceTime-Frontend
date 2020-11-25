@@ -3,66 +3,80 @@ import * as faceapi from 'face-api.js';
 
 import Canvas from '../Canvas/Canvas';
 import HostVideo from '../HostVideo/HostVideo';
-import FaceDetectionCanvas from '../FaceDetectionCanvas/FaceDetectionCanvas';
+//import FaceDetectionCanvas from '../FaceDetectionCanvas/FaceDetectionCanvas';
 import CompleteButton from '../CompleteButton/CompleteButton';
 import styles from './SettingModal.module.css';
+import MyVideo from '../MyVideo/MyVideo';
 
 const SettingModal = ({
-  isMuted,
-  setIsMuted,
-  setIsJoinedRoom
+  setIsJoinedRoom,
+  videoRef,
+  toggleAudio,
+  isHost,
+  audioMuted
 }) => {
-  const [initializing, setInitializing] = useState(false);
-  const [isStartCanvas, setIsStartCanvas] = useState(false);
+  // const [isStartCanvas, setIsStartCanvas] = useState(false);
+  // const canvasRef = useRef();
 
-  const videoRef = useRef();
-  const canvasRef = useRef();
+  // const [audioMuted, setAudioMuted] = useState(false);
+  // const videoRef = useRef();
+  // const streamRef = useRef();
 
-  useEffect(() => {
-    const loadModels = async () => {
-      const MODEL_URL = process.env.PUBLIC_URL + '/faceApiModels'; //process.env.PUBLIC_URL +
+  // const toggleAudio = () => {
+  //   if (streamRef.current) {
+  //     streamRef.current
+  //       .getAudioTracks()
+  //       .forEach(track => track.enabled = audioMuted);
+  //   }
 
-      await Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
-      ]).then(startVideo(isMuted));
-    };
-    loadModels();
-  }, []);
+  //   setAudioMuted(!audioMuted);
+  // };
 
-  const startVideo = async () => {
-    try {
-      const media = await navigator.mediaDevices.getUserMedia({ audio: !isMuted, video: true });
-      videoRef.current.srcObject = media;
-      //setIsStartCanvas(true);
-    }
-    catch (err) {
-      console.error(err);
-    }
+  // useEffect(() => {
+  //   const startVideo = async () => {
+  //     try {
+  //       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+  //       videoRef.current.srcObject = stream;
+  //       streamRef.current = stream;
+  //     }
+  //     catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
+  //   startVideo();
 
-  };
+  // }, []);
+
+  const videoHeight = 200;
+  const videoWidth = 200;
+
+  // const myVideo = (<video
+  //   ref={videoRef} autoPlay
+  //   height={videoHeight}
+  //   width={videoWidth}
+  //   onPlay={console.log('handleVideoPlay')}
+  // />);
 
 
   return (
     <div className={styles.SettingModalBackground}>
       <div className={styles.SettingModal}>
         <div className={styles.VideoWrapper}>
-          <video
+          <MyVideo isHost={isHost} videoRef={videoRef} audioMuted={audioMuted}/>
+          {/* <video
             className={styles.MyVideo}
             ref={videoRef}
             // onPlay={han}
-            autoPlay />
-          {
+            autoPlay /> */}
+          {/* {
             isStartCanvas
             &&
-            // <Canvas
-            //   videoRef={videoRef}
-            //   canvasRef={canvasRef}
-            //   startVideo={startVideo} />
-            <FaceDetectionCanvas />
-          }
+            <Canvas
+              videoRef={videoRef}
+              canvasRef={canvasRef}
+              startVideo={startVideo} /> */}
+          {/* <FaceDetectionCanvas /> */}
+          {/* } */}
           {/* <canvas
             className={styles.MyVideo}
             ref={canvasRef} /> */}
@@ -71,7 +85,7 @@ const SettingModal = ({
           <label>
             <input
               type="checkbox"
-              onChange={() => setIsMuted(!isMuted)} />
+              onChange={toggleAudio} />
             Mute
           </label>
         </div>
@@ -79,8 +93,6 @@ const SettingModal = ({
       </div>
     </div>
   );
-
-
 };
 
 export default SettingModal;

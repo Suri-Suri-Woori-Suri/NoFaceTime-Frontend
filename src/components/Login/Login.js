@@ -12,11 +12,9 @@ const Login = ({ updateUserData }) => {
   const showPopUpToSignIn = async () => {
     try {
       const userData = await signInWithGoogle();
-      console.log(1, userData);
       const { loginUserData } = userData;
 
       updateUserData({ ...loginUserData });
-      console.log(2);
       if (isUserFromMailInvitation) {
         const roomLink = localStorage.roomLink;
         /* 여기에 초대 받은 사람이 들어오려는 건지 인증 절차가 들어가야 함! 아직 구현 안됨  */

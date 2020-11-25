@@ -5,7 +5,8 @@ import { MENU_MODE } from '../../constants/index';
 import styles from './MenuBar.module.css';
 
 const MenuBar = ({
-  isMuted,
+  audioMuted,
+  toggleAudio,
   setMode
 }) => {
   const {
@@ -21,8 +22,6 @@ const MenuBar = ({
     const targetName = e.currentTarget.name;
 
     switch (targetName) {
-      case MIC:
-        return setMode(MIC);
 
       case PUBLIC_CHAT:
         return setMode(PUBLIC_CHAT);
@@ -46,15 +45,15 @@ const MenuBar = ({
 
   return (
     <div className={styles.MenuBar}>
-      <button className={styles.MenuButton} name={MIC} onClick={(e) => handleClick(e)}>
+      <button className={styles.MenuButton} name={MIC} onClick={toggleAudio}>
         {
-          isMuted
+          !audioMuted
             ? <>
-              <i class="fas fa-microphone"></i>
+              <i className="fas fa-microphone"></i>
               <p className={styles.MenuTitle}>Mic</p>
             </>
             : <>
-              <i class="fas fa-microphone-slash"></i>
+              <i className="fas fa-microphone-slash"></i>
               <p className={styles.MenuTitle}>Mute</p>
             </>
         }

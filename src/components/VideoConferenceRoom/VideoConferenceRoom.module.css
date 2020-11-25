@@ -39,7 +39,7 @@
   box-sizing: border-box;
 }
 .RightSide {
-  display: flex;
+  display: grid;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
@@ -47,6 +47,8 @@
   height: 100%;
   border: 10px solid pink;
   box-sizing: border-box;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .RightSide #Invite {
@@ -68,9 +70,9 @@
   height: 100%;
   border: 10px solid pink;
   box-sizing: border-box;
-  display: grid;
-  grid-template-rows: repeat(4, 1fr);
-  grid-template-columns: repeat(2, 1fr);
+  /* display: grid; */
+  /* grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr); */
   grid-template-areas:
     "1 2"
     "3 4"
@@ -163,7 +165,7 @@
   -moz-transform: rotateY(180deg);
 }
 
-video {
+/* video {
   border: 10px solid orange;
   box-sizing: border-box;
-}
+} */
