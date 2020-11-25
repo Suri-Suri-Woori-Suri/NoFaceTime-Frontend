@@ -8,6 +8,8 @@ const Canvas = async ({
   canvasRef,
   startVideo
 }) => {
+  console.log("CANVAS 들어옴!");
+
   const loadModels = async () => {
     const MODEL_URL = process.env.PUBLIC_URL + '/faceApiModels';
 
@@ -18,9 +20,10 @@ const Canvas = async ({
         faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
         faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
       ]);
+
       startVideo();
     } catch (err) {
-      console.log(err);
+      console.error(err);
       startVideo();
     }
   };
@@ -80,7 +83,6 @@ const Canvas = async ({
           valueStatus = value;
         }
       }
-
 
       // canvasRef.current.fillTex = emojis.default;
       // canvasRef.current.innerHTML = statusIcons.default;

@@ -2,10 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import * as faceapi from 'face-api.js';
 
-import Logo from '../../components/Logo/Logo';
-import Video from '../../components/Video/Video';
-import MenuBar from '../../components/MenuBar/MenuBar';
-import GroupList from '../../components/GroupList/GroupList';
 import SettingModal from '../../components/SettingModal/SettingModal';
 import VideoConferenceRoom from '../../components/VideoConferenceRoom/VideoConferenceRoom';
 
@@ -23,9 +19,7 @@ import {
   createActionToAddMessage,
   createActionToSecretMessage
 } from '../../actions';
-
 import { getRoomHost } from '../../api';
-import styles from './VideoContainer.module.css';
 
 const VideoContainer = ({
   location,
@@ -38,68 +32,48 @@ const VideoContainer = ({
   addMessage,
   addSecretMessage
 }) => {
+  const [isHost, setIsHost] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isJoinedRoom, setIsJoinedRoom] = useState(false);
-  const [isHost, setIsHost] = useState(false);
-  console.log("isJoinedRoom?", isJoinedRoom);
-  const [isFinishedInterval, setIsFinishedInterval] = useState(false);
-  const [muted, setMuted] = useState(false); // isMuted === true -> 음소거!
-  const [isClickedPublicChat, setIsClickedPublicChat] = useState(false);
-  const [isClickedQuestionChat, setIsClickedQuestionChat] = useState(false);
-  const [isClickedNote, setIsClickedNote] = useState(false);
-  const [isClickedEmoji, setIsClickedEmoji] = useState(false);
-  const [isClickedInvite, setIsClickedInvite] = useState(true);
-  let timeId;
-
-  console.log("isJoinedRoom?!!!!!!", isJoinedRoom);
-
-  const onInviteButtonClick = (groups) => {
-    if (!groups.length) return;
-
-    setIsClickedInvite(true);
-  };
 
   const ROOM_ID = location.pathname.split('/').pop();//'/room/여기'
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchToGetRoomHostData = async () => {
       const hostId = await getRoomHost(ROOM_ID);
-      if (currentUser._id === hostId) setIsHost(true);
+
+      if (currentUser._id === hostId) {
+        setIsHost(true);
+      }
     };
-    fetch();
+
+    fetchToGetRoomHostData();
   }, []);
 
   return (
     !isJoinedRoom
       ? < SettingModal
+        isMuted={isMuted}
+        setIsMuted={setIsMuted}
         setIsJoinedRoom={setIsJoinedRoom} />
       : <VideoConferenceRoom
         location={location}
         joinMember={joinMember}
         currentUser={currentUser}
         memberInRoom={memberInRoom}
-        setMuted={setMuted}
         isHost={isHost}
-        deleteLeavingMember={deleteLeavingMember}
-        messageList={messageList}
-        secretMessageList={secretMessageList}
+        isMuted={isMuted}
+        setIsMuted={setIsMuted}
         addMessage={addMessage}
+        messageList={messageList}
         addSecretMessage={addSecretMessage}
-        setIsClickedNote={setIsClickedNote}
-        setIsClickedEmoji={setIsClickedEmoji}
-        isClickedInvite={isClickedInvite}
-        setIsClickedInvite={setIsClickedInvite}
-        setIsClickedPublicChat={setIsClickedPublicChat}
-        setIsClickedQuestionChat={setIsClickedQuestionChat}
+        secretMessageList={secretMessageList}
+        deleteLeavingMember={deleteLeavingMember}
       />
   );
-
 };
 
-
-
 /*
-
 {
   console.log('VIDEO!!!!!');
   //window.history.back(); -> 이거 누르면 뒤로 가지 않을까용??? 나중에 핵심기능 구현하구 고민해보기...

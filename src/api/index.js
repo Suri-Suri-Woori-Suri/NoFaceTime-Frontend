@@ -1,10 +1,11 @@
 import queryString from 'query-string';
 import { API_METHOD } from '../constants';
+import { SERVER_URL } from '../config/index';
 
 export const getUser = async (userId) => {
   const { GET } = API_METHOD;
 
-  const response = await fetch(`https://localhost:5000/users/${userId}`, {
+  const response = await fetch(`${SERVER_URL}/users/${userId}`, {
     method: GET,
     headers: {
       'Content-Type': 'application/json'
@@ -22,7 +23,7 @@ export const createGroup = async (userId, groupName, members) => {
 
   if (!groupName.length) return;
 
-  const response = await fetch('https://localhost:5000/groups', {
+  const response = await fetch(`${SERVER_URL}/groups`, {
     method: POST,
     headers: {
       'Content-Type': 'application/json'
@@ -39,7 +40,7 @@ export const createGroup = async (userId, groupName, members) => {
 export const addMember = async (groupId, members) => {
   const { POST } = API_METHOD;
 
-  const response = await fetch(`https://localhost:5000/groups/${groupId}/members/`, {
+  const response = await fetch(`${SERVER_URL}/groups/${groupId}/members/`, {
     method: POST,
     headers: {
       'Content-Type': 'application/json'
@@ -58,7 +59,7 @@ export const createRoom = async (currentUser, roomName) => {
 
   if (!roomName.length) return;
 
-  const response = await fetch('https://localhost:5000/rooms', {
+  const response = await fetch(`${SERVER_URL}/rooms`, {
     method: POST,
     headers: {
       'Content-Type': 'application/json'
@@ -76,7 +77,7 @@ export const deleteGroup = async (userId, selectedGroup) => {
   const { DELETE } = API_METHOD;
   const groupIdToDelete = queryString.stringify({ group: selectedGroup });
 
-  const response = await fetch(`https://localhost:5000/groups/${groupIdToDelete}`, {
+  const response = await fetch(`${SERVER_URL}/groups/${groupIdToDelete}`, {
     method: DELETE,
     headers: {
       'Content-Type': 'application/json'
@@ -92,7 +93,7 @@ export const deleteMember = async (groupId, selectedMember) => {
   const { DELETE } = API_METHOD;
   const membersEmailToDelete = queryString.stringify({ member: selectedMember });
 
-  const response = await fetch(`https://localhost:5000/groups/${groupId}/members/${membersEmailToDelete}`, {
+  const response = await fetch(`${SERVER_URL}/groups/${groupId}/members/${membersEmailToDelete}`, {
     method: DELETE,
     headers: {
       'Content-Type': 'application/json'
@@ -106,7 +107,7 @@ export const deleteMember = async (groupId, selectedMember) => {
 export const deleteRoom = async (userId, roomId) => {
   const { DELETE } = API_METHOD;
 
-  const response = await fetch(`https://localhost:5000/rooms/${roomId}`, {
+  const response = await fetch(`${SERVER_URL}/rooms/${roomId}`, {
     method: DELETE,
     headers: {
       'Content-Type': 'application/json'
@@ -123,7 +124,7 @@ export const deleteRoom = async (userId, roomId) => {
 export const getRoomHost = async (roomUUID) => {
   const { GET } = API_METHOD;
 
-  const serverRoute = 'https://localhost:5000/rooms/' + roomUUID;
+  const serverRoute = `${SERVER_URL}/rooms/` + roomUUID;
 
   const response = await fetch(serverRoute, {
     method: GET,
@@ -144,7 +145,7 @@ export const getRoomHost = async (roomUUID) => {
 export const sendMailToMembers = async (sender, receiver, roomLink, groupId) => {
   const { POST } = API_METHOD;
 
-  const serverRoute = `https://localhost:5000/groups/${groupId}/members/mail`;
+  const serverRoute = `${SERVER_URL}/groups/${groupId}/members/mail`;
 
   const response = await fetch(serverRoute, {
     method: POST,

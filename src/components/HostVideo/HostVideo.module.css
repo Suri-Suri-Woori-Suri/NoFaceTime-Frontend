@@ -1,0 +1,6 @@
+.HostVideo {
+  background-color: yellow;
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+}

@@ -3,76 +3,238 @@ import Peer from "simple-peer";
 import * as faceapi from 'face-api.js';
 
 import Logo from '../Logo/Logo';
+import Canvas from '../Canvas/Canvas';
 import MenuBar from '../MenuBar/MenuBar';
 import PeerVideo from '../PeerVideo/PeerVideo';
 import Chat from '../../components/Chat/Chat';
+import MyVideo from '../../components/MyVideo/MyVideo';
 import HostVideo from '../../components/HostVideo/HostVideo';
-import GroupContainer from '../../containers/GroupContainer/GroupContainer';
-import Group from '../../components/Group/Group';
-import GroupList from '../../components/GroupList/GroupList';
 import GroupListInVideoRoom from '../GroupListInVideoRoom/GroupListInVideoRoom';
 
+import { MENU_MODE, MY_VIDEO_MODE } from '../../constants/index';
 import { socket } from '../../utils/socket';
 import styles from './VideoConferenceRoom.module.css';
 
 const VideoConferenceRoom = ({
-  location,
-  currentUser,
   isHost,
-  memberInRoom,
+  isMuted,
+  setIsMuted,
+  location,
   joinMember,
-  deleteLeavingMember,
-  messageList,
-  secretMessageList,
   addMessage,
+  messageList,
+  currentUser,
+  memberInRoom,
   addSecretMessage,
-  setMuted,
-  setIsClickedEmoji,
-  isClickedInvite,
-  setIsClickedInvite,
-  setIsClickedPublicChat,
-  setIsClickedQuestionChat
+  secretMessageList,
+  deleteLeavingMember,
 }) => {
-  console.log("ISHOST???", isHost);
-  console.log(messageList);
-  console.log(secretMessageList);
+  const {
+    MIC,
+    NOTE,
+    INVITE,
+    STUDENTS,
+    PUBLIC_CHAT,
+    SCREEN_SHARE,
+    QUESTION_CHAT } = MENU_MODE;
 
-  console.log("CURRENT Video USER", currentUser);
-  console.log("INVITE CLick??", isClickedInvite);
+  const { HOST } = MY_VIDEO_MODE;
+
+  const { _id, nickname } = currentUser;
+  const ROOM_ID = location.pathname.split('/').pop();
+
+  const [mode, setMode] = useState(STUDENTS);
+  const [peers, setPeers] = useState([]); //체크
+  const [initialized, setInitialized] = useState(false);
+  const [streamForShare, setStreamForShare] = useState();
 
   const videoRef = useRef();
   const canvasRef = useRef();
   const streamRef = useRef();
-
+  const myPeer = useRef(); //share
   let peersRef = useRef([]);
 
-  const myPeer = useRef();//share
-  const [streamForShare, setstreamForShare] = useState();
+  // const videoWidth = 400;
+  // const videoHeight = 400;
 
-  const videoWidth = 500;
-  const videoHeight = 500;
 
-  const { _id, nickname } = currentUser;
-  const [initialized, setInitialized] = useState(false);
-  const [peers, setPeers] = useState([]);//체크
-  const [mode, setMode] = useState('Emoji');
-  const ROOM_ID = location.pathname.split('/').pop();
-  console.log("MEMBERIN ROOM", memberInRoom);
+
+
+
+
+
+
+
+
+
+  const [socketOn, setSocketOn] = useState(false);
+  const [initializing, setInitializing] = useState(false);
+
+
+  const roomLinkId = location.pathname.split('/').pop();//'/room/여기'
+
+  console.log(process.env.PUBLIC_URL);// empty
+
+  useEffect(() => {
+    const loadModels = async () => {
+      const MODEL_URL = process.env.PUBLIC_URL + '/faceApiModels'; //process.env.PUBLIC_URL +
+      setInitializing(true);
+      Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
+        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
+      ]).then(startVideo());
+    };
+
+    loadModels();
+  }, []);
+
+
+  useEffect(() => {
+    if (!socketOn) return;
+
+    const socketClient = socket;
+    socketClient.emit('join-room', { name: 'woori', roomLinkId });
+    //socketClient.emit('join', { name:'woori', roomLinkId });
+
+    return () => {
+      socket.emit('disconnect');
+      socket.off();
+    };
+  }, [socketOn, socket, roomLinkId]);
+
+  const startVideo = async () => {
+    try {
+      const result = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      videoRef.current.srcObject = result;
+    }
+    catch (err) {
+      console.log(err);
+    }
+  };
+
+  const emojis = {
+    default: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg', // '😎',
+    neutral: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg', // '🙂',
+    happy: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/happy_emoji.jpeg', // '😀',
+    sad: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/sad_emoji.jpeg', // '😥',
+    angry: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/gun_emoji.jpeg', // '😠',
+    fearful: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/fearful_emoji.jpeg', // '😨',
+    disgusted: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/disgusted_emoji.jpeg', // '🤢',
+    surprised: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/surprised_emoji.jpg', //'😳'
+    noFace: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/emoji-sleep-smiley-emoticon-fatigue-tired.jpg'
+  };
+
+
+
+  const handleVideoPlay = () => {
+    console.log('handle video Play!!!!');
+
+
+    setInterval(async () => {
+      if (initializing) {
+        setInitializing(false);
+      }
+
+      canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
+      const displaySize = {
+        width: 500,
+        height: 500
+      };
+
+      faceapi.matchDimensions(canvasRef.current, displaySize);
+
+      const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
+      const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
+      canvasRef.current.getContext('2d').clearRect(0, 0, 500, 500);
+      faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+      faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
+      faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
+
+      if (detections.length > 0) {
+        const xCoord = resizedDetections[0]?.detection?._box?._x;
+        const yCoord = resizedDetections[0]?.detection?._box?._y;
+
+        console.log("X좌표", xCoord, "Y좌표", yCoord);
+
+        detections.forEach(element => {
+          console.log("HERE", element);
+          let status = "";
+          let valueStatus = 0.0;
+          for (const [key, value] of Object.entries(element.expressions)) {
+            console.log(element.expressions, '##', key, value, status);
+
+            if (value > valueStatus) {
+              status = key;
+              valueStatus = value;
+            }
+          }
+
+
+          //canvasRef.current.fillTex = emojis.default;
+          //anvasRef.current.innerHTML = emojis.default;
+
+          const context = canvasRef.current.getContext('2d');
+          const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
+          console.log("RESIZED", resizedDetections);
+
+
+          console.log("HAPPY!!!");
+          // context.drawImage(img, xCoord, yCoord, 100, 100);
+          // context.font = '300px';
+          // context.fillText('😎', xCoord, yCoord, 10000  );
+
+          const img = new Image();
+          img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/emoji-sleep-smiley-emoticon-fatigue-tired.jpg';
+          context.drawImage(img, xCoord - xCoord * 0.25, yCoord - yCoord * 0.25, _width * 1.5, _height * 1.5);
+        }
+        );
+      } else {
+        console.log("No Faces");
+        const context = canvasRef.current.getContext('2d');
+
+        const img = new Image();
+        img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg';
+        context.drawImage(img, 0, 0, 500, 500);
+
+        //const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
+      }
+    }, 1000);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   useEffect(() => {
     socket.emit('join-room', { roomId: ROOM_ID, userId: _id, nickname, isHost });//isHost : socket
+
     socket.on('joined', ({ members, host }) => {//host : socketId
       console.log('원래 있던 맴버!!!!', members);
       joinMember(members);
       console.log('socket Id of host', host);
     });
 
-
     socket.on('joined-newMember', newMember => {
       console.log('새로운 맴버', newMember);
       joinMember(newMember);
     });
-
 
     socket.on('user left', ({ socketId }) => {
       console.log(socketId);
@@ -91,21 +253,7 @@ const VideoConferenceRoom = ({
       });
     });
 
-    const startVideo = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-        videoRef.current.srcObject = stream;
-        streamRef.current = stream;
 
-        setstreamForShare(stream);//share
-
-        setInitialized(true);
-      }
-      catch (err) {
-        console.log(err);
-        alert('현재 비디오를 사용하실 수 없습니다.');
-      }
-    };
 
     startVideo();
 
@@ -194,13 +342,14 @@ const VideoConferenceRoom = ({
     return () => socket.off();
 
   }, [initialized]);
-
+  /////////////////////////////////////////////////////////////////////////////////////////// screen share
   const shareScreen = () => {
     navigator.mediaDevices.getDisplayMedia({ cursor: true })
       .then(screenStream => {
         peersRef.current.map(item => {
           item.peer.replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare);
           videoRef.current.srcObject = screenStream;
+
           screenStream.getTracks()[0].onended = () => {
             item.peer.replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare);
             videoRef.current.srcObject = streamForShare;
@@ -223,16 +372,16 @@ const VideoConferenceRoom = ({
       });
   };
 
-  /////////////////////////////////////////////////////////////////// CHAT
+  /////////////////////////////////////////////////////////////////////////////////////////// CHAT
   const [message, setMessage] = useState('');
-  const targetMessage = mode === 'PublicChat' ? messageList : secretMessageList;
   const [sendTo, setSendTo] = useState('');
+  const targetMessage = mode === PUBLIC_CHAT ? messageList : secretMessageList;
+
   console.log("MODE", mode);
   console.log("PUBLIC MESSAGE", messageList);
   console.log("SECRET MESSAGE", secretMessageList);
 
   useEffect(() => {
-
     socket.on('message-public', message => {//from -> user's nickname, text
       console.log("@@@@@@@,", message); // ex) { from: "woori", text: "sasaasasassss" }
 
@@ -278,26 +427,68 @@ const VideoConferenceRoom = ({
     //console.log('!!!!!!!secret message data', data);//socket io의 callbak 문제....
   };
 
-  const sendMessage = mode === 'PublicChat' ? sendMessagePublic : sendMessageSecretly;
-
-  const myVideo = (<video
-    id={styles.HostVideo}
-    ref={videoRef} autoPlay//videoRef => user's
-    muted
-    height={videoHeight}
-    width={videoWidth}
-    onPlay={console.log('handleVideoPlay')}
-  />);
-
+  const sendMessage = mode === PUBLIC_CHAT ? sendMessagePublic : sendMessageSecretly;
+  ////////////////////////////////////////////////////////////////////////// Mute
   const [audioMuted, setAudioMuted] = useState(false);
-  function toggleAudio() {
+
+  const toggleAudio = () => {
     if (streamRef.current) {
       streamRef.current
         .getAudioTracks()
         .forEach(track => track.enabled = audioMuted);
     }
+
     setAudioMuted(!audioMuted);
-  }
+  };
+  //////////////////////////////////////////////////////////////////////////  right side bar
+  const showMenuOnMode = () => {
+    switch (mode) {
+      case MIC:
+        return toggleAudio();
+
+      case PUBLIC_CHAT:
+      case QUESTION_CHAT:
+        return (
+          <Chat
+            mode={mode}
+            message={message}
+            nickname={nickname}
+            setMessage={setMessage}
+            sendMessage={sendMessage}
+            targetMessage={targetMessage}
+            setSendTo={setSendTo} />
+        );
+
+      case SCREEN_SHARE:
+        return shareScreen();
+
+      case NOTE:
+        return setMode(NOTE);
+
+      case INVITE:
+        return (
+          <GroupListInVideoRoom
+            id={styles.Invite}
+            groups={currentUser.groups}
+            sender={currentUser.email} />
+        );
+
+      case STUDENTS:
+      default:
+        isHost
+          ? peers.map((peer, index) => {
+            return <PeerVideo key={index} peer={peer} />;
+          })
+          : <>
+            <MyVideo videoRef={videoRef} />
+            {
+              peers.slice(1).map((peer, index) => {
+                return <PeerVideo key={index} peer={peer} />;
+              })
+            }
+          </>;
+    }
+  };
 
   return (
     <>
@@ -308,56 +499,31 @@ const VideoConferenceRoom = ({
         <div className={styles.Content}>
           <div className={styles.LeftSide}>
             <div className={styles.CanvasOnVideo}>
-              {isHost ?
-                myVideo :
-                peers.length && <HostVideo peer={peers} />
+              {
+                isHost
+                  ? <MyVideo
+                    mode={HOST}
+                    videoRef={videoRef}
+                    startDetectionOnCanvas={handleVideoPlay} />
+                  : <HostVideo
+                    peers={peers}
+                    videoRef={videoRef}
+                    startDetectionOnCanvas={handleVideoPlay}
+                  />
               }
               <canvas
-                ref={canvasRef}
                 className={styles.Canvas}
-                width={videoWidth}
-                height={videoHeight} />
+                ref={canvasRef}
+              />
             </div>
             <div className={styles.MenuBar}>
-              <MenuBar setMode={setMode} toggleAudio={toggleAudio} />
-              <button onClick={() => shareScreen()}> SHARE </button>
+              <MenuBar
+                isMuted={isMuted}
+                setMode={setMode} />
             </div>
           </div>
           <div className={styles.RightSide}>
-            {mode === 'Emoji' && (
-              <>{isHost ?
-                peers.map((peer, index) => {
-                  return <PeerVideo key={index} peer={peer} />;
-                }) :
-                <>
-                  {myVideo}
-                  {peers.slice(1).map((peer, index) => {
-                    return <PeerVideo key={index} peer={peer} />;
-                  })}
-                </>
-              }</>
-            )}
-            {(mode === 'PublicChat' || mode === 'QuestionChat') &&
-              <Chat
-                mode={mode}
-                message={message}
-                setMessage={setMessage}
-                sendMessage={sendMessage}
-                targetMessage={targetMessage}
-                nickname={nickname}
-                setSendTo={setSendTo}
-              />
-            }
-            {
-              isClickedInvite
-                ? <>
-                  <GroupListInVideoRoom
-                    id={styles.Invite}
-                    groups={currentUser.groups}
-                    host={currentUser.email} />
-                </>
-                : <></>
-            }
+            {showMenuOnMode()}
           </div>
         </div>
       </div>
@@ -366,6 +532,7 @@ const VideoConferenceRoom = ({
 };
 
 export default VideoConferenceRoom;
+
   //socket.emit('leave') -> leave 버튼
 
   // const Video = (props) => {

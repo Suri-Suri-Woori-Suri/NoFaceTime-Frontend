@@ -1,5 +1,6 @@
 import { authService, googleProvider } from '../config/firebase';
 import { API_METHOD } from '../constants';
+import { SERVER_URL } from '../config/index';
 
 export const signInWithGoogle = () => {
   googleProvider.addScope('email');
@@ -12,7 +13,7 @@ export const signInWithGoogle = () => {
         nickname: userInfo.additionalUserInfo.profile.name,
       };
 
-      const userData = fetch('https://localhost:5000/login', {
+      const userData = fetch(`${SERVER_URL}/login`, {
         method: POST,
         headers: {
           'Content-Type': 'application/json'
