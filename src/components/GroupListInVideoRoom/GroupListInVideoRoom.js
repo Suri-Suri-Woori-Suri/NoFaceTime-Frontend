@@ -7,14 +7,14 @@ import CompleteButton from '../CompleteButton/CompleteButton';
 
 const GroupListInVideoRoom = ({
   groups,
-  host
+  sender
 }) => {
   const [isShowMembers, setIsShowMembers] = useState(false);
   const [clickedGroupId, setClickedGroupId] = useState("");
   const [membersToShow, setMembersToShow] = useState([]);
 
   console.log("Groups", groups);
-  console.log("HOST", host);
+  console.log("sender", sender);
   console.log("MEMBERS", membersToShow);
   console.log("CLICKED GROUPID", clickedGroupId);
 
@@ -45,11 +45,11 @@ const GroupListInVideoRoom = ({
           buttonName="Send Mail"
           onClick={() => {
             console.log("!!!!!! 클릭했음");
-            console.log("HOST", host);
+            console.log("sender", sender);
             console.log("Members", membersToShow);
             console.log("roomLink", roomLink);
             console.log("clickedGroupId", clickedGroupId);
-            sendMailToMembers(host, membersToShow, roomLink, clickedGroupId);
+            sendMailToMembers(sender, membersToShow, roomLink, clickedGroupId);
           }} />
 
       </div>

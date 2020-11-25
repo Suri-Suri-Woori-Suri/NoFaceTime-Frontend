@@ -5,9 +5,7 @@ import styles from './FaceDetectionCanvas.module.css';
 
 const FaceDetectionCanvas = async ({
   videoRef,
-  startVideo,
-  videoWidth,
-  videoHeight
+  startVideo
 }) => {
   const loadModels = async () => {
     const MODEL_URL = process.env.PUBLIC_URL + '/faceApiModels';

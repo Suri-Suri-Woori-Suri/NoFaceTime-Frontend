@@ -11,9 +11,7 @@ const memberInRoomReducer = (state = {}, action) => {
       return { ...state, ...action.payload };
 
     case LEAVE_ROOM:
-      return state.filter((socketId) => {
-        return socketId !== action.payload;
-      });
+      return delete state[action.payload];
 
     default:
       return state;

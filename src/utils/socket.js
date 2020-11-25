@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
-export const socket = io('localhost:5000');
+import { SERVER_URL } from '../config/index';
+export const socket = io(SERVER_URL);
 
 // export const joinRoom = (data) => {
 //   socket.emit('join-room', data);

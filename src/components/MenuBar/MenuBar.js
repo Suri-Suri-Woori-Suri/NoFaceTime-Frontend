@@ -1,48 +1,52 @@
 import React, { useState } from 'react';
+
+import MenubarButton from '../MenubarButton/MenubarButton';
+import { MENU_MODE } from '../../constants/index';
 import styles from './MenuBar.module.css';
 
 const MenuBar = ({
   isMuted,
-  setAudio,
-  toggleAudio,
   setMode
 }) => {
-  // const [muted, setMuted] = useState(isMuted); // isMuted === true -> 음소거!
-  // const [isClickedPublicChat, setIsClickedPublicChat] = useState(false);
-  // const [isClickedQuestionChat, setIsClickedQuestionChat] = useState(false);
-  // const [isClickedNote, setIsClickedNote] = useState(false);
-  // const [isClickedEmoji, setIsClickedEmoji] = useState(true);
-  // const [isClickedInvite, setIsClickedInvite] = useState(false);
-
+  const {
+    MIC,
+    NOTE,
+    INVITE,
+    STUDENTS,
+    PUBLIC_CHAT,
+    SCREEN_SHARE,
+    QUESTION_CHAT } = MENU_MODE;
 
   const handleClick = (e) => {
-    console.log("Target", e.currentTarget.name);
+    const targetName = e.currentTarget.name;
 
-    if (e.currentTarget.name === "mic") {
-      //setIsMuted(!isMuted); //상위 컴포넌트에서 받은 프랍, 실제로 음소거 시킬 수 있도록-> 추후에 프랍 받으면 주석 풀기
-      toggleAudio();
-    }
-    else if (e.currentTarget.name === "PublicChat") {
-      // setIsClickedPublicChat(!isClickedPublicChat);
-      setMode('PublicChat');
-    } else if (e.currentTarget.name === "QuestionChat") {
-      // setIsClickedQuestionChat(!isClickedQuestionChat);
-      setMode('QuestionChat');
-    } else if (e.currentTarget.name === "Note") {
-      // setIsClickedNote(!isClickedNote);
-      setMode('Note');
-    } else if (e.currentTarget.name === "Emoji") {
-      // setIsClickedEmoji(!isClickedEmoji);
-      setMode('Emoji');
-    } else if (e.currentTarget.name === "Invite") {
-      // setIsClickedInvite(!isClickedInvite);
-      setMode('Invite');
+    switch (targetName) {
+      case MIC:
+        return setMode(MIC);
+
+      case PUBLIC_CHAT:
+        return setMode(PUBLIC_CHAT);
+
+      case QUESTION_CHAT:
+        return setMode(QUESTION_CHAT);
+
+      case SCREEN_SHARE:
+        return setMode(SCREEN_SHARE);
+
+      case NOTE:
+        return setMode(NOTE);
+
+      case INVITE:
+        return setMode(INVITE);
+
+      default:
+        return setMode(STUDENTS);
     }
   };
 
   return (
     <div className={styles.MenuBar}>
-      <button className={styles.MenuButton} name="mic" onClick={(e) => handleClick(e)}>
+      <button className={styles.MenuButton} name={MIC} onClick={(e) => handleClick(e)}>
         {
           isMuted
             ? <>
@@ -55,26 +59,7 @@ const MenuBar = ({
             </>
         }
       </button>
-      <button className={styles.MenuButton} name="PublicChat" onClick={(e) => handleClick(e)}>
-        <i class="fas fa-user-friends"></i>
-        <p className={styles.MenuTitle}>Public Chat</p>
-      </button>
-      <button className={styles.MenuButton} name="QuestionChat" onClick={(e) => handleClick(e)}>
-        <i class="fas fa-chalkboard-teacher" name="QuestionChat" onClick={(e) => handleClick(e)}></i>
-        <p className={styles.MenuTitle} name="QuestionChat" onClick={(e) => handleClick(e)}>Question Chat</p>
-      </button>
-      <button className={styles.MenuButton} name="Note" onClick={(e) => handleClick(e)}>
-        <i class="fas fa-book-open"></i>
-        <p className={styles.MenuTitle}>Note</p>
-      </button>
-      <button className={styles.MenuButton} name="Emoji" onClick={(e) => handleClick(e)}>
-        <i class="far fa-laugh"></i>
-        <p className={styles.MenuTitle}>Students</p>
-      </button>
-      <button className={styles.MenuButton} name="Invite" onClick={(e) => handleClick(e)}>
-        <i class="fas fa-user-plus"></i>
-        <p className={styles.MenuTitle}>Invite</p>
-      </button>
+      <MenubarButton handleClick={handleClick} />
     </div >
   );
 };

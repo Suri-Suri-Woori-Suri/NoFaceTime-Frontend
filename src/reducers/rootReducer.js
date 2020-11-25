@@ -2,13 +2,13 @@ import { combineReducers } from 'redux';
 
 import userReducer from './userReducer';
 import groupReducer from './groupReducer';
-import memberReducer from './memberReducer';
+import memberInRoomReducer from './memberInRoomReducer';
 import messageListReducer from './messageListReducer';
 
 const rootReducer = combineReducers({
   userReducer,
   groupReducer,
-  memberReducer,
+  memberInRoomReducer,
   messageListReducer
 });
 
