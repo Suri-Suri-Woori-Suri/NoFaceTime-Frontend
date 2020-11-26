@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styles from './Chat.module.css';
 // import { socket } from '../../utils/socket';
 //import ScrollToBottom from 'react-scroll-to-bottom';
+import { MENU_MODE } from '../../constants/index';
 
 const Chat = ({
   mode,
@@ -13,6 +14,8 @@ const Chat = ({
   setSendTo
 }) => {
 
+  const { PUBLIC_CHAT } = MENU_MODE;
+  
   const messageList = targetMessage.map((message, index) => {
     const { from, text, to } = message;
     const isSentByUser = nickname === from;
@@ -38,14 +41,12 @@ const Chat = ({
 
   return (
     <div className={styles.Chat}>
-      {mode === 'PublicChat'
+      {mode === PUBLIC_CHAT
         ? <div className={styles.Mode}>PUBLIC CHAT</div>
         : <div className={styles.Mode}>QUESTION CHAT </div>
       }
       <div className={styles.ChatBox}>
         <div className={styles.MessageList}>
-
-
           {messageList}
         </div>
         <div className={styles.ChatInputBox}>
