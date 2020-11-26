@@ -10,7 +10,6 @@ const GroupList = ({
   onGroupNameClick,
   handleCheckbox
 }) => {
-  console.log("GROUPLIST groups", groups);
   const groupList = groups ? groups.map((group, index) => {
     const groupId = group._id;
 

@@ -30,7 +30,7 @@ const MenubarButton = ({ handleClick }) => {
           className={styles.MenuButton}
           name={menuName}
           onClick={(e) => handleClick(e)}>
-          <i class={iconName}></i>
+          <i className={iconName}></i>
           <p className={styles.MenuTitle}>{menuName}</p>
         </button>
       );

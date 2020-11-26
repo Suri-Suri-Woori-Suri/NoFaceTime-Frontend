@@ -17,8 +17,6 @@ import styles from './VideoConferenceRoom.module.css';
 
 const VideoConferenceRoom = ({
   isHost,
-  isMuted,
-  setIsMuted,
   location,
   joinMember,
   addMessage,
@@ -28,10 +26,10 @@ const VideoConferenceRoom = ({
   addSecretMessage,
   secretMessageList,
   deleteLeavingMember,
+  audioMuted,
+  setAudioMuted
 }) => {
   const {
-    MIC,
-    NOTE,
     INVITE,
     STUDENTS,
     PUBLIC_CHAT,
@@ -45,99 +43,28 @@ const VideoConferenceRoom = ({
 
   const [mode, setMode] = useState(STUDENTS);
   const [peers, setPeers] = useState([]); //체크
-  const [initialized, setInitialized] = useState(false);
   const [streamForShare, setStreamForShare] = useState();
 
   const videoRef = useRef();
-  const canvasRef = useRef();
   const streamRef = useRef();
+  const canvasRef = useRef();
+
+  const peersRef = useRef({});
+  const [initialized, setInitialized] = useState(false);
+  const [hostId, setHostId] = useState('');
+
   const myPeer = useRef(); //share
-  let peersRef = useRef([]);
 
-  // const videoWidth = 400;
-  // const videoHeight = 400;
-
-
-
-
-
-
-
-
-
-
-
-  const [socketOn, setSocketOn] = useState(false);
-  const [initializing, setInitializing] = useState(false);
-
-
-  const roomLinkId = location.pathname.split('/').pop();//'/room/여기'
-
-  console.log(process.env.PUBLIC_URL);// empty
-
-  useEffect(() => {
-    const loadModels = async () => {
-      const MODEL_URL = process.env.PUBLIC_URL + '/faceApiModels'; //process.env.PUBLIC_URL +
-      setInitializing(true);
-      Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
-      ]).then(startVideo());
-    };
-
-    loadModels();
-  }, []);
-
-
-  useEffect(() => {
-    if (!socketOn) return;
-
-    const socketClient = socket;
-    socketClient.emit('join-room', { name: 'woori', roomLinkId });
-    //socketClient.emit('join', { name:'woori', roomLinkId });
-
-    return () => {
-      socket.emit('disconnect');
-      socket.off();
-    };
-  }, [socketOn, socket, roomLinkId]);
-
-  const startVideo = async () => {
-    try {
-      const result = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-      videoRef.current.srcObject = result;
-    }
-    catch (err) {
-      console.log(err);
-    }
-  };
-
-  const emojis = {
-    default: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg', // '😎',
-    neutral: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg', // '🙂',
-    happy: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/happy_emoji.jpeg', // '😀',
-    sad: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/sad_emoji.jpeg', // '😥',
-    angry: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/gun_emoji.jpeg', // '😠',
-    fearful: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/fearful_emoji.jpeg', // '😨',
-    disgusted: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/disgusted_emoji.jpeg', // '🤢',
-    surprised: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/surprised_emoji.jpg', //'😳'
-    noFace: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/emoji-sleep-smiley-emoticon-fatigue-tired.jpg'
-  };
-
-
+  console.log("$$$$", peers)
+  console.log("$$$$", peersRef)
 
   const handleVideoPlay = () => {
     console.log('handle video Play!!!!');
 
-
     setInterval(async () => {
-      if (initializing) {
-        setInitializing(false);
-      }
 
       canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
+
       const displaySize = {
         width: 500,
         height: 500
@@ -172,19 +99,9 @@ const VideoConferenceRoom = ({
             }
           }
 
-
-          //canvasRef.current.fillTex = emojis.default;
-          //anvasRef.current.innerHTML = emojis.default;
-
           const context = canvasRef.current.getContext('2d');
           const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
           console.log("RESIZED", resizedDetections);
-
-
-          console.log("HAPPY!!!");
-          // context.drawImage(img, xCoord, yCoord, 100, 100);
-          // context.font = '300px';
-          // context.fillText('😎', xCoord, yCoord, 10000  );
 
           const img = new Image();
           img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/emoji-sleep-smiley-emoticon-fatigue-tired.jpg';
@@ -198,28 +115,38 @@ const VideoConferenceRoom = ({
         const img = new Image();
         img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg';
         context.drawImage(img, 0, 0, 500, 500);
-
-        //const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
       }
-    }, 1000);
+    }, 5000);
   };
 
+  const startVideo = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      console.log("SAME STREAM???", stream)
+      videoRef.current.srcObject = stream;
+      streamRef.current = stream;
 
+      setStreamForShare(stream);
+      setInitialized(true);
+    }
+    catch (err) {
+      console.error(err);
+    }
+  };
 
+  useEffect(() => {
+    const loadModels = () => {
+      const MODEL_URL = process.env.PUBLIC_URL + '/faceApiModels';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+      Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
+        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
+      ]).then(startVideo());
+    }
+    loadModels();
+  }, []);
 
 
   useEffect(() => {
@@ -228,7 +155,8 @@ const VideoConferenceRoom = ({
     socket.on('joined', ({ members, host }) => {//host : socketId
       console.log('원래 있던 맴버!!!!', members);
       joinMember(members);
-      console.log('socket Id of host', host);
+      console.log('socket Id of host', host);//ECs0877G_3exUiNDAAAB
+      setHostId(host);
     });
 
     socket.on('joined-newMember', newMember => {
@@ -240,9 +168,9 @@ const VideoConferenceRoom = ({
       console.log(socketId);
       console.log('user left');
       deleteLeavingMember(socketId);
+      delete peersRef.current[socketId];
 
       console.log("PEER REF", peersRef);
-      peersRef = peersRef.current.filter(peer => peer.peerId !== socketId);
 
       setPeers(peers => {
         const targetPeer = peers.filter(peer => peer.peerId === socketId)[0];
@@ -253,9 +181,21 @@ const VideoConferenceRoom = ({
       });
     });
 
+    // const startVideo = async () => {
+    //   try {
+    //     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    //     videoRef.current.srcObject = stream;
+    //     streamRef.current = stream;
 
+    //     setStreamForShare(stream);
+    //     setInitialized(true);
+    //   }
+    //   catch (err) {
+    //     console.error(err);
+    //   }
+    // };
 
-    startVideo();
+    // startVideo();
 
     return () => { //unmountung
       socket.emit('leave');
@@ -263,13 +203,15 @@ const VideoConferenceRoom = ({
     };
   }, []);
 
+
   useEffect(() => {
     if (!initialized) return;
 
     console.log("원래 있던 맴버를 돈다. 처음에 딱 한 번만 시행돼야한다.");
+    console.log(memberInRoom);
 
     for (let key in memberInRoom) {
-      console.log(key);
+      console.log("%%%%%%%", key);
 
       const peer = new Peer({
         initiator: true,
@@ -279,19 +221,13 @@ const VideoConferenceRoom = ({
 
       myPeer.current = peer;//share
 
-      peersRef.current.push({
-        peerId: key,
-        peer,
-      });
-
-      //peers.push(peer); ****
-
       peer.on('signal', signal => {
         socket.emit('send signal', { signal, to: memberInRoom[key] });
       });
 
+      peersRef.current[key] = peer;
       //setPeers(users => ([...users, peer])); ****
-      setPeers(users => ([...users, { peerId: key, peer }])); //soketId
+      setPeers(peers => [...peers, { peerId: key, peer }]); //soketId
     }
 
     ////////////////////////// Reciever
@@ -309,77 +245,55 @@ const VideoConferenceRoom = ({
 
       myPeer.current = peer;//share
 
-      peersRef.current.push({
-        peerId: from.socketId,
-        peer,
-      });
-
       peer.signal(signal);
 
       peer.on('signal', signal => {
         socket.emit('respond signal', { signal, to: initiator });
       });
 
+      peersRef.current[initiator.socketId] = peer;
+
       console.log('여기서 새로운 사람이 조인했을 때 반응하고 peer에 추가해야한다.');
       console.log(peersRef.current, "initiator === ", peer);
       console.log('기존 peers', peers);
       //setPeers(users => [...users, peer]); ****
-      setPeers(users => ([...users, { peerId: from.socketId, peer }]));
+      setPeers(peers => [...peers, { peerId: from.socketId, peer }]);
     });
 
     socket.on('respond signal', ({ signal, from }) => {
-      console.log("HERE", peers);
-      const targetPeer = peersRef.current.find(p => p.peerId === from.socketId);
+      const targetPeer = peersRef.current[from.socketId];
       console.log(targetPeer, ' === RECIVER');
-      console.log(targetPeer.peer);
-      targetPeer.peer.signal(signal);
-      // const targetPeer = peers.find(p => p.peerId === from.socketId);
-      // console.log(targetPeer, ' === RECIVER');
-      // console.log(targetPeer.peer);
-      // targetPeer.peer.signal(signal);
+      targetPeer.signal(signal);
     });
 
     return () => socket.off();
 
   }, [initialized]);
+
   /////////////////////////////////////////////////////////////////////////////////////////// screen share
   const shareScreen = () => {
     navigator.mediaDevices.getDisplayMedia({ cursor: true })
       .then(screenStream => {
-        peersRef.current.map(item => {
-          item.peer.replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare);
-          videoRef.current.srcObject = screenStream;
+        for (let key in peersRef.current) {
+          peersRef.current[key].replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare)
+        }
+        videoRef.current.srcObject = screenStream;
 
-          screenStream.getTracks()[0].onended = () => {
-            item.peer.replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare);
-            videoRef.current.srcObject = streamForShare;
-          };
-        });
-
-        // peersRef.current.replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare)
-        // videoRef.current.srcObject = screenStream // Cannot set property 'srcObject' of undefined
-        // screenStream.getTracks()[0].onended = () => {
-        //   peersRef.current.replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare)
-        //   videoRef.current.srcObject = streamForShare
-        // }
-
-        // myPeer.current.replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare)
-        // userVideo.current.srcObject = screenStream // Cannot set property 'srcObject' of undefined
-        // screenStream.getTracks()[0].onended = () => {
-        //   myPeer.current.replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare)
-        //   userVideo.current.srcObject = streamForShare
-        // }
+        screenStream.getTracks()[0].onended = () => {
+          for (let key in peersRef.current) {
+            peersRef.current[key].replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare)
+          }
+          videoRef.current.srcObject = streamForShare;
+        }
       });
+
+    setMode(STUDENTS);
   };
 
   /////////////////////////////////////////////////////////////////////////////////////////// CHAT
   const [message, setMessage] = useState('');
   const [sendTo, setSendTo] = useState('');
   const targetMessage = mode === PUBLIC_CHAT ? messageList : secretMessageList;
-
-  console.log("MODE", mode);
-  console.log("PUBLIC MESSAGE", messageList);
-  console.log("SECRET MESSAGE", secretMessageList);
 
   useEffect(() => {
     socket.on('message-public', message => {//from -> user's nickname, text
@@ -423,28 +337,16 @@ const VideoConferenceRoom = ({
     setMessage('');
     addSecretMessage(data);
     socket.emit('message-secret', data);
-    // socket.off('message-secret');
-    //console.log('!!!!!!!secret message data', data);//socket io의 callbak 문제....
   };
 
   const sendMessage = mode === PUBLIC_CHAT ? sendMessagePublic : sendMessageSecretly;
-  ////////////////////////////////////////////////////////////////////////// Mute
-  const [audioMuted, setAudioMuted] = useState(false);
 
-  const toggleAudio = () => {
-    if (streamRef.current) {
-      streamRef.current
-        .getAudioTracks()
-        .forEach(track => track.enabled = audioMuted);
-    }
+  ///////////////////////////////////////////////////////////////
 
-    setAudioMuted(!audioMuted);
-  };
+
   //////////////////////////////////////////////////////////////////////////  right side bar
   const showMenuOnMode = () => {
     switch (mode) {
-      case MIC:
-        return toggleAudio();
 
       case PUBLIC_CHAT:
       case QUESTION_CHAT:
@@ -461,9 +363,8 @@ const VideoConferenceRoom = ({
 
       case SCREEN_SHARE:
         return shareScreen();
-
-      case NOTE:
-        return setMode(NOTE);
+      // case NOTE:// MIC 랑 NOTE 일단 지웠습니다.. 컴포넌트가 로딩되거나 함수가 시행되어야 하는데 setMode로 모드가 바뀌면서 무한루프에 빠집니다.
+      // return setMode(NOTE);
 
       case INVITE:
         return (
@@ -475,19 +376,35 @@ const VideoConferenceRoom = ({
 
       case STUDENTS:
       default:
-        isHost
-          ? peers.map((peer, index) => {
-            return <PeerVideo key={index} peer={peer} />;
-          })
-          : <>
-            <MyVideo videoRef={videoRef} />
-            {
-              peers.slice(1).map((peer, index) => {
-                return <PeerVideo key={index} peer={peer} />;
-              })
-            }
-          </>;
+        return (
+          isHost
+            ? peers.map((peer, index) => {
+              return <PeerVideo faceapi={faceapi} key={index} peer={peer} />;
+            })
+            : <>
+              <MyVideo isHost={isHost} videoRef={videoRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} />
+              {
+                peers.slice(1).map((peer, index) => {
+                  return <PeerVideo faceapi={faceapi} key={index} peer={peer} />;
+                })
+              }
+              {/* <canvas
+                className={styles.StudentCanvas}
+                ref={studentCanvasRef}
+              /> */}
+            </>
+        );
     }
+  };
+
+  const toggleAudio = () => {
+    if (streamRef.current) {
+      streamRef.current
+        .getAudioTracks()
+        .forEach(track => track.enabled = audioMuted);
+    }
+
+    setAudioMuted(!audioMuted);
   };
 
   return (
@@ -499,17 +416,9 @@ const VideoConferenceRoom = ({
         <div className={styles.Content}>
           <div className={styles.LeftSide}>
             <div className={styles.CanvasOnVideo}>
-              {
-                isHost
-                  ? <MyVideo
-                    mode={HOST}
-                    videoRef={videoRef}
-                    startDetectionOnCanvas={handleVideoPlay} />
-                  : <HostVideo
-                    peers={peers}
-                    videoRef={videoRef}
-                    startDetectionOnCanvas={handleVideoPlay}
-                  />
+              {isHost ?
+                <MyVideo isHost={isHost} videoRef={videoRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} /> :
+                peers.length && <HostVideo peers={peers} hostId={hostId} />
               }
               <canvas
                 className={styles.Canvas}
@@ -518,8 +427,10 @@ const VideoConferenceRoom = ({
             </div>
             <div className={styles.MenuBar}>
               <MenuBar
-                isMuted={isMuted}
-                setMode={setMode} />
+                audioMuted={audioMuted}
+                toggleAudio={toggleAudio}
+                setMode={setMode}
+              />
             </div>
           </div>
           <div className={styles.RightSide}>
@@ -532,30 +443,3 @@ const VideoConferenceRoom = ({
 };
 
 export default VideoConferenceRoom;
-
-  //socket.emit('leave') -> leave 버튼
-
-  // const Video = (props) => {
-  //   const ref = useRef();
-  //   const { targetPeer } = props;
-
-  //   useEffect(() => {
-  //     console.log("2@@@@@@", targetPeer);
-  //     if (!targetPeer) return;
-
-  //     targetPeer.peer.on("stream", stream => {
-  //       ref.current.srcObject = stream;
-  //     });
-  //   }, []);
-
-  //   return (
-  //     <video muted playsInline autoPlay ref={ref} />
-  //   );
-  // }
-
-  // const peervideoList = for (let key in memberInRoom) {
-  //   const targetPeer =  peersRef.current.filter(peer => peer.peerID === key)[0];
-  //   return (
-  //     <Video key={index} targetPeer={targetPeer} />
-  //   );
-  // }

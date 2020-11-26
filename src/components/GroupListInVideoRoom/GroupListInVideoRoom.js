@@ -13,11 +13,6 @@ const GroupListInVideoRoom = ({
   const [clickedGroupId, setClickedGroupId] = useState("");
   const [membersToShow, setMembersToShow] = useState([]);
 
-  console.log("Groups", groups);
-  console.log("sender", sender);
-  console.log("MEMBERS", membersToShow);
-  console.log("CLICKED GROUPID", clickedGroupId);
-
   const roomLink = document.location.href;
 
   const onGroupNameClick = (clickedGroupId) => {
@@ -44,11 +39,6 @@ const GroupListInVideoRoom = ({
 
           buttonName="Send Mail"
           onClick={() => {
-            console.log("!!!!!! 클릭했음");
-            console.log("sender", sender);
-            console.log("Members", membersToShow);
-            console.log("roomLink", roomLink);
-            console.log("clickedGroupId", clickedGroupId);
             sendMailToMembers(sender, membersToShow, roomLink, clickedGroupId);
           }} />
 
@@ -64,7 +54,6 @@ const GroupListInVideoRoom = ({
                   id={group._id}
                   className={styles.GroupName}
                   onClick={(e) => {
-                    console.log(e.target.id);
                     onGroupNameClick(e.target.id);
                   }} >
                   {group.name}
