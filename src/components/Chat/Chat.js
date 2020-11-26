@@ -12,7 +12,6 @@ const Chat = ({
   nickname,
   setSendTo
 }) => {
-  console.log("SEND MESSAGE", sendMessage);
 
   const messageList = targetMessage.map((message, index) => {
     const { from, text, to } = message;
