@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import Peer from "simple-peer";
 import * as faceapi from 'face-api.js';
 
@@ -36,7 +37,7 @@ const VideoConferenceRoom = ({
     SCREEN_SHARE,
     QUESTION_CHAT } = MENU_MODE;
 
-  const { HOST } = MY_VIDEO_MODE;
+  const { HOST, PEER } = MY_VIDEO_MODE;
 
   const { _id, nickname } = currentUser;
   const ROOM_ID = location.pathname.split('/').pop();
@@ -48,26 +49,22 @@ const VideoConferenceRoom = ({
   const videoRef = useRef();
   const streamRef = useRef();
   const canvasRef = useRef();
-
+  const myPeer = useRef();
   const peersRef = useRef({});
+
   const [initialized, setInitialized] = useState(false);
   const [hostId, setHostId] = useState('');
 
-  const myPeer = useRef(); //share
-
-  console.log("$$$$", peers)
-  console.log("$$$$", peersRef)
-
   const handleVideoPlay = () => {
-    console.log('handle video Play!!!!');
+    let xCoord, yCoord, width, height;
 
     setInterval(async () => {
 
       canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
 
       const displaySize = {
-        width: 500,
-        height: 500
+        width: 350,
+        height: 350
       };
 
       faceapi.matchDimensions(canvasRef.current, displaySize);
@@ -76,23 +73,22 @@ const VideoConferenceRoom = ({
       const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
       canvasRef.current.getContext('2d').clearRect(0, 0, 500, 500);
-      faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+      faceapi.draw.drawDetections(canvasRef.current, resizedDetections, { withScore: false });
       faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
       faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
 
-      if (detections.length > 0) {
-        const xCoord = resizedDetections[0]?.detection?._box?._x;
-        const yCoord = resizedDetections[0]?.detection?._box?._y;
 
-        console.log("X좌표", xCoord, "Y좌표", yCoord);
+      if (detections.length > 0) {
+        xCoord = resizedDetections[0]?.detection?._box?._x;
+        yCoord = resizedDetections[0]?.detection?._box?._y;
+        width = resizedDetections[0]?.detection?._box?._width;
+        height = resizedDetections[0]?.detection?._box?._height;
 
         detections.forEach(element => {
-          console.log("HERE", element);
           let status = "";
           let valueStatus = 0.0;
-          for (const [key, value] of Object.entries(element.expressions)) {
-            console.log(element.expressions, '##', key, value, status);
 
+          for (const [key, value] of Object.entries(element.expressions)) {
             if (value > valueStatus) {
               status = key;
               valueStatus = value;
@@ -101,11 +97,10 @@ const VideoConferenceRoom = ({
 
           const context = canvasRef.current.getContext('2d');
           const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
-          console.log("RESIZED", resizedDetections);
 
           const img = new Image();
-          img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/emoji-sleep-smiley-emoticon-fatigue-tired.jpg';
-          context.drawImage(img, xCoord - xCoord * 0.25, yCoord - yCoord * 0.25, _width * 1.5, _height * 1.5);
+          img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_angry2_emoji.png';
+          context.drawImage(img, 0.75 * xCoord, 0.75 * yCoord, 350, 350);
         }
         );
       } else {
@@ -113,8 +108,8 @@ const VideoConferenceRoom = ({
         const context = canvasRef.current.getContext('2d');
 
         const img = new Image();
-        img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg';
-        context.drawImage(img, 0, 0, 500, 500);
+        img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_angry2_emoji.png';
+        context.drawImage(img, 0.75 * xCoord, 0.75 * yCoord, 350, 350);
       }
     }, 5000);
   };
@@ -122,7 +117,6 @@ const VideoConferenceRoom = ({
   const startVideo = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-      console.log("SAME STREAM???", stream)
       videoRef.current.srcObject = stream;
       streamRef.current = stream;
 
@@ -144,33 +138,26 @@ const VideoConferenceRoom = ({
         faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
         faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
       ]).then(startVideo());
-    }
+    };
     loadModels();
   }, []);
 
 
   useEffect(() => {
-    socket.emit('join-room', { roomId: ROOM_ID, userId: _id, nickname, isHost });//isHost : socket
+    socket.emit('join-room', { roomId: ROOM_ID, userId: _id, nickname, isHost });
 
-    socket.on('joined', ({ members, host }) => {//host : socketId
-      console.log('원래 있던 맴버!!!!', members);
+    socket.on('joined', ({ members, host }) => {
       joinMember(members);
-      console.log('socket Id of host', host);//ECs0877G_3exUiNDAAAB
       setHostId(host);
     });
 
     socket.on('joined-newMember', newMember => {
-      console.log('새로운 맴버', newMember);
       joinMember(newMember);
     });
 
     socket.on('user left', ({ socketId }) => {
-      console.log(socketId);
-      console.log('user left');
       deleteLeavingMember(socketId);
       delete peersRef.current[socketId];
-
-      console.log("PEER REF", peersRef);
 
       setPeers(peers => {
         const targetPeer = peers.filter(peer => peer.peerId === socketId)[0];
@@ -181,23 +168,7 @@ const VideoConferenceRoom = ({
       });
     });
 
-    // const startVideo = async () => {
-    //   try {
-    //     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-    //     videoRef.current.srcObject = stream;
-    //     streamRef.current = stream;
-
-    //     setStreamForShare(stream);
-    //     setInitialized(true);
-    //   }
-    //   catch (err) {
-    //     console.error(err);
-    //   }
-    // };
-
-    // startVideo();
-
-    return () => { //unmountung
+    return () => {
       socket.emit('leave');
       socket.off();
     };
@@ -207,35 +178,25 @@ const VideoConferenceRoom = ({
   useEffect(() => {
     if (!initialized) return;
 
-    console.log("원래 있던 맴버를 돈다. 처음에 딱 한 번만 시행돼야한다.");
-    console.log(memberInRoom);
-
     for (let key in memberInRoom) {
-      console.log("%%%%%%%", key);
-
       const peer = new Peer({
         initiator: true,
         trickle: false,
         stream: streamRef.current
       });
 
-      myPeer.current = peer;//share
+      myPeer.current = peer;
 
       peer.on('signal', signal => {
         socket.emit('send signal', { signal, to: memberInRoom[key] });
       });
 
       peersRef.current[key] = peer;
-      //setPeers(users => ([...users, peer])); ****
-      setPeers(peers => [...peers, { peerId: key, peer }]); //soketId
+      setPeers(peers => [...peers, { peerId: key, peer }]);
     }
-
-    ////////////////////////// Reciever
 
     socket.on('return signal', ({ signal, from }) => {
       const initiator = from;
-      console.log("INITIATOR", initiator);
-      console.log("RECIVER", socket.id);
 
       const peer = new Peer({
         initiator: false,
@@ -243,7 +204,7 @@ const VideoConferenceRoom = ({
         stream: streamRef.current,
       });
 
-      myPeer.current = peer;//share
+      myPeer.current = peer;
 
       peer.signal(signal);
 
@@ -253,16 +214,11 @@ const VideoConferenceRoom = ({
 
       peersRef.current[initiator.socketId] = peer;
 
-      console.log('여기서 새로운 사람이 조인했을 때 반응하고 peer에 추가해야한다.');
-      console.log(peersRef.current, "initiator === ", peer);
-      console.log('기존 peers', peers);
-      //setPeers(users => [...users, peer]); ****
       setPeers(peers => [...peers, { peerId: from.socketId, peer }]);
     });
 
     socket.on('respond signal', ({ signal, from }) => {
       const targetPeer = peersRef.current[from.socketId];
-      console.log(targetPeer, ' === RECIVER');
       targetPeer.signal(signal);
     });
 
@@ -270,40 +226,35 @@ const VideoConferenceRoom = ({
 
   }, [initialized]);
 
-  /////////////////////////////////////////////////////////////////////////////////////////// screen share
   const shareScreen = () => {
     navigator.mediaDevices.getDisplayMedia({ cursor: true })
       .then(screenStream => {
         for (let key in peersRef.current) {
-          peersRef.current[key].replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare)
+          peersRef.current[key].replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare);
         }
         videoRef.current.srcObject = screenStream;
 
         screenStream.getTracks()[0].onended = () => {
           for (let key in peersRef.current) {
-            peersRef.current[key].replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare)
+            peersRef.current[key].replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare);
           }
           videoRef.current.srcObject = streamForShare;
-        }
+        };
       });
 
     setMode(STUDENTS);
   };
 
-  /////////////////////////////////////////////////////////////////////////////////////////// CHAT
   const [message, setMessage] = useState('');
   const [sendTo, setSendTo] = useState('');
   const targetMessage = mode === PUBLIC_CHAT ? messageList : secretMessageList;
 
   useEffect(() => {
-    socket.on('message-public', message => {//from -> user's nickname, text
-      console.log("@@@@@@@,", message); // ex) { from: "woori", text: "sasaasasassss" }
-
+    socket.on('message-public', message => {
       addMessage(message);
     });
 
     socket.on('message-secret', message => {
-      console.log("HERE!!!!", message);
       const { from } = message;
       if (from !== nickname) addSecretMessage(message);
     });
@@ -325,7 +276,6 @@ const VideoConferenceRoom = ({
       setMessage('');
       addMessage(data);
     });
-    // socket.off('message-public');
   };
 
   const sendMessageSecretly = (event) => {
@@ -333,7 +283,7 @@ const VideoConferenceRoom = ({
     if (!message) return;
 
     const data = { text: message, from: nickname, to: sendTo };
-    console.log(data);
+
     setMessage('');
     addSecretMessage(data);
     socket.emit('message-secret', data);
@@ -341,10 +291,6 @@ const VideoConferenceRoom = ({
 
   const sendMessage = mode === PUBLIC_CHAT ? sendMessagePublic : sendMessageSecretly;
 
-  ///////////////////////////////////////////////////////////////
-
-
-  //////////////////////////////////////////////////////////////////////////  right side bar
   const showMenuOnMode = () => {
     switch (mode) {
 
@@ -363,8 +309,6 @@ const VideoConferenceRoom = ({
 
       case SCREEN_SHARE:
         return shareScreen();
-      // case NOTE:// MIC 랑 NOTE 일단 지웠습니다.. 컴포넌트가 로딩되거나 함수가 시행되어야 하는데 setMode로 모드가 바뀌면서 무한루프에 빠집니다.
-      // return setMode(NOTE);
 
       case INVITE:
         return (
@@ -411,7 +355,9 @@ const VideoConferenceRoom = ({
     <>
       <div className={styles.VideoConferenceRoom}>
         <div className={styles.LogoWrapper}>
-          <Logo />
+          <Link to='/'>
+            <Logo />
+          </Link>
         </div>
         <div className={styles.Content}>
           <div className={styles.LeftSide}>

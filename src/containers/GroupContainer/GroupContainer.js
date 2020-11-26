@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import ModalContainer from '../ModalContainer/ModalContainer';
-import Header from '../../components/Header/Header';
 import Group from '../../components/Group/Group';
 import Sidebar from '../../components/Sidebar/Sidebar';
 
@@ -85,10 +84,11 @@ const GroupContainer = ({
   const addNewMember = (event) => {
     event.preventDefault();
     setNewMembers([...newMembers, memberEmail]);
+    setMemberEmail('');
   };
 
-  const newMemberList = newMembers.map((member, i) => {
-    return <div key={i} className={styles.member}>{member}</div>;
+  const newMemberList = newMembers.map((member, index) => {
+    return <div key={index} className={styles.Member}>{member}</div>;
   });
 
   const createGroupModal = (
@@ -104,10 +104,15 @@ const GroupContainer = ({
         className={`${styles.Input} ${styles.InputMember}`}
         type='text'
         placeholder='Add Member'
+        value={memberEmail}
         onChange={changeMemberEmail}
+        onKeyPress={event => event.key === 'Enter' ? addNewMember(event) : null}
       />
-      <button className={styles.AddButton} onClick={addNewMember}>+</button>
-      <div className={styles.Members}> added member
+      <button className={`${styles.AddButton} ${styles.PlusButton}`} onClick={addNewMember}>+</button>
+      <div className={styles.Members}>
+        <div className={styles.AddedMemberListTitle}>
+          Member List
+        </div>
         {newMemberList}
       </div>
     </div>
@@ -120,11 +125,16 @@ const GroupContainer = ({
         className={styles.Input}
         type='text'
         placeholder='Add Member'
+        value={memberEmail}
         onChange={changeMemberEmail}
+        onKeyPress={event => event.key === 'Enter' ? addNewMember(event) : null}
       />
-      <button className={styles.AddButton} onClick={addNewMember}>+</button>
-      <div className={styles.Members}> added member
-      {newMemberList}
+      <button className={`${styles.AddButton} ${styles.PlusButton}`} onClick={addNewMember}>+</button>
+      <div className={styles.Members}>
+        <div className={styles.AddedMemberListTitle}>
+          Member List
+        </div>
+        {newMemberList}
       </div>
     </div>
   );
