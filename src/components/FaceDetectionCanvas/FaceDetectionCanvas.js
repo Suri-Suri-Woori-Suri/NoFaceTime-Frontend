@@ -69,11 +69,9 @@ const FaceDetectionCanvas = async ({
 
   if (detections.length > 0) {
     detections.forEach(element => {
-      console.log("HERE", element);
       let status = "";
       let valueStatus = 0.0;
       for (const [key, value] of Object.entries(element.expressions)) {
-        console.log(element.expressions, '##', key, value, status);
 
         if (value > valueStatus) {
           status = key;

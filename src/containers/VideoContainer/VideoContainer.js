@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import * as faceapi from 'face-api.js';
 import styles from './VideoContainer.module.css';
 
 import SettingModal from '../../components/SettingModal/SettingModal';
@@ -64,8 +63,6 @@ const VideoContainer = ({
 
   const videoRef = useRef();
   const streamRef = useRef();
-  const videoHeight = 200;
-  const videoWidth = 200;
   const [audioMuted, setAudioMuted] = useState(false);
 
   useEffect(() => {
@@ -92,77 +89,6 @@ const VideoContainer = ({
 
     setAudioMuted(!audioMuted);
   };
-
-  // const handleVideoPlay = () => {
-  //   console.log('handle video Play!!!!');
-
-  //   setInterval(async () => {
-
-  //     canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
-  //     const displaySize = {
-  //       width: 500,
-  //       height: 500
-  //     };
-
-  //     faceapi.matchDimensions(canvasRef.current, displaySize);
-
-  //     const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
-  //     const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
-  //     canvasRef.current.getContext('2d').clearRect(0, 0, 500, 500);
-  //     faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-  //     faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
-  //     faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
-
-  //     if (detections.length > 0) {
-  //       const xCoord = resizedDetections[0]?.detection?._box?._x;
-  //       const yCoord = resizedDetections[0]?.detection?._box?._y;
-
-  //       console.log("X좌표", xCoord, "Y좌표", yCoord);
-
-  //       detections.forEach(element => {
-  //         console.log("HERE", element);
-  //         let status = "";
-  //         let valueStatus = 0.0;
-  //         for (const [key, value] of Object.entries(element.expressions)) {
-  //           console.log(element.expressions, '##', key, value, status);
-
-  //           if (value > valueStatus) {
-  //             status = key;
-  //             valueStatus = value;
-  //           }
-  //         }
-
-  //         //canvasRef.current.fillText = emojis.default;
-  //         //anvasRef.current.innerHTML = emojis.default;
-
-  //         const context = canvasRef.current.getContext('2d');
-  //         const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
-  //         console.log("RESIZED", resizedDetections);
-
-
-  //         console.log("HAPPY!!!");
-  //         // context.drawImage(img, xCoord, yCoord, 100, 100);
-  //         // context.font = '300px';
-  //         // context.fillText('😎', xCoord, yCoord, 10000  );
-
-  //         const img = new Image();
-  //         img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/emoji-sleep-smiley-emoticon-fatigue-tired.jpg';
-  //         context.drawImage(img, xCoord - xCoord * 0.25, yCoord - yCoord * 0.25, _width * 1.5, _height * 1.5);
-  //       }
-  //       );
-  //     } else {
-  //       console.log("No Faces");
-  //       const context = canvasRef.current.getContext('2d');
-
-  //       const img = new Image();
-  //       img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg';
-  //       context.drawImage(img, 0, 0, 500, 500);
-
-  //       //const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
-  //     }
-  //   }, 1000);
-  // };
 
   return (
     !isJoinedRoom
