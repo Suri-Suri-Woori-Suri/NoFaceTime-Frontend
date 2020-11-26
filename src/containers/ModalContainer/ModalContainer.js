@@ -32,15 +32,17 @@ const ModalContainer = ({
   return (
     <div className={styles.ModalBackground}>
       <div className={styles.Modal}>
-        {children}
-        <div className={styles.Buttons}>
-          <CancelButton
-            buttonName={'Cancel'}
-            onClick={closeModal} />
-          <CompleteButton
-            buttonName={'Create'}
-            onClick={handleClickButton}
-          />
+        <div className={styles.ModalContent}>
+          {children}
+          <div className={styles.Buttons}>
+            <CancelButton
+              buttonName={'Cancel'}
+              onClick={closeModal} />
+            <CompleteButton
+              buttonName={'Create'}
+              onClick={handleClickButton}
+            />
+          </div>
         </div>
       </div>
     </div>
