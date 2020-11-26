@@ -13,8 +13,9 @@ const Chat = ({
   nickname,
   setSendTo
 }) => {
-  console.log("SEND MESSAGE", sendMessage);
+
   const { PUBLIC_CHAT } = MENU_MODE;
+  
   const messageList = targetMessage.map((message, index) => {
     const { from, text, to } = message;
     const isSentByUser = nickname === from;
