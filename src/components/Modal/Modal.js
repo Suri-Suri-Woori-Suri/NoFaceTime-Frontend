@@ -10,8 +10,7 @@ const Modal = (props) => {
     currentUser,
     setCurrentUser,
     setShowModal,
-    newMembers,//members와 setmembers는 Group쪽에서 들어옴. Room과는 관계없음.
-    setNewMembers,//members와 setmembers는 Group쪽에서 들어옴. Room과는 관계없음.
+    setNewMembers,
     fetchFunction,
     setExistMember,
     children

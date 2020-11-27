@@ -1,9 +1,6 @@
 import React from 'react';
-
 import GroupList from '../GroupList/GroupList';
 import MemberList from '../MemberList/MemberList';
-
-import styles from './Group.module.css';
 
 const Group = ({
   currentUser,

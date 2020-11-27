@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Route, Switch, Redirect, useRouteMatch } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -40,10 +40,6 @@ const AppContainer = ({
     localStorage.roomUUID = roomLink.params.roomId;
   };
 
-  console.log('ISLOGGED IN???', isLoggedIn);
-  console.log('CURRENT USER STATE', currentUser);
-  const [isJoinedRoom, setIsJoinedRoom] = useState(false);
-
   return (
     <div>
       <Switch>
@@ -58,8 +54,7 @@ const AppContainer = ({
                 <Redirect to='/rooms' />
               </Route>
               <Route exact path='/rooms'>
-                <RoomContainer
-                  setIsJoinedRoom={setIsJoinedRoom} />
+                <RoomContainer />
               </Route>
               <Route path='/groups'>
                 <Header />

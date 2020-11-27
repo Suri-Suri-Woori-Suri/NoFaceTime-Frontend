@@ -2,7 +2,7 @@ import React from 'react';
 import { MENU_MODE } from '../../constants/index';
 import styles from './MenubarButton.module.css';
 
-const MenubarButton = ({ handleClick }) => {
+const MenubarButton = ({ handleClick, stopVideo }) => {
   const {
     NOTE,
     INVITE,
@@ -20,21 +20,30 @@ const MenubarButton = ({ handleClick }) => {
     [INVITE, "fas fa-user-plus"],
   ];
 
-  return (
-    menuIcons.map((icon, index) => {
-      const [menuName, iconName] = icon;
+  const goBack = () => {
+    stopVideo();
+    window.history.back();
+  }
 
-      return (
-        <button
-          key={index}
-          className={styles.MenuButton}
-          name={menuName}
-          onClick={(e) => handleClick(e)}>
-          <i className={iconName}></i>
-          <p className={styles.MenuTitle}>{menuName}</p>
-        </button>
-      );
-    })
+  const menus = menuIcons.map((icon, index) => {
+    const [menuName, iconName] = icon;
+    return (
+      <button
+        key={index}
+        className={styles.MenuButton}
+        name={menuName}
+        onClick={(e) => handleClick(e)}>
+        <i className={iconName}></i>
+        <p className={styles.MenuTitle}>{menuName}</p>
+      </button>
+    );
+  })
+
+  return (
+    <>
+    {menus}
+    <button onClick={goBack}>Leave</button>
+    </>
   );
 };
 
