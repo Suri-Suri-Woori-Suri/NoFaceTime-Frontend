@@ -47,6 +47,7 @@ const VideoConferenceRoom = ({
   const streamRef = useRef();
   const canvasRef = useRef();
   const peersRef = useRef({});
+  const rightSideRef = useRef();
 
   const [initialized, setInitialized] = useState(false);
   const [hostId, setHostId] = useState('');
@@ -66,7 +67,7 @@ const VideoConferenceRoom = ({
     const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
     const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
-    canvasRef.current.getContext('2d').clearRect(0, 0, 500, 500);
+    await canvasRef.current.getContext('2d').clearRect(0, 0, 500, 500);
     faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
     faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
     faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
@@ -302,51 +303,6 @@ const VideoConferenceRoom = ({
   };
 
   const sendMessage = mode === PUBLIC_CHAT ? sendMessagePublic : sendMessageSecretly;
-  console.log("CHECK MODE", mode);
-  const showMenuOnMode = () => {
-    switch (mode) {
-      case PUBLIC_CHAT:
-      case QUESTION_CHAT:
-        return (
-          <Chat
-            mode={mode}
-            message={message}
-            nickname={nickname}
-            setMessage={setMessage}
-            sendMessage={sendMessage}
-            targetMessage={targetMessage}
-            setSendTo={setSendTo} />
-        );
-
-      case SCREEN_SHARE:
-        return shareScreen();
-
-      case INVITE:
-        return (
-          <GroupListInVideoRoom
-            id={styles.Invite}
-            groups={currentUser.groups}
-            sender={currentUser.email} />
-        );
-
-      case STUDENTS:
-      default:
-        return (
-          isHost
-            ? peers.map((peer, index) => {
-              return <PeerVideo key={index} peer={peer} handleVideoPlay={handleVideoPlay} />;
-            })
-            : <>
-              <MyVideo isHost={isHost} videoRef={videoRef} audioMuted={audioMuted} />
-              {
-                peers.slice(1).map((peer, index) => {
-                  return <PeerVideo key={index} peer={peer} handleVideoPlay={handleVideoPlay} />;
-                })
-              }
-            </>
-        );
-    }
-  };
 
   const toggleAudio = () => {
     if (streamRef.current) {
@@ -387,7 +343,73 @@ const VideoConferenceRoom = ({
           </div>
         </div>
         <div className={styles.RightSide}>
-          {showMenuOnMode()}
+          {
+            isHost
+              ? peers.map((peer, index) => {
+                return (
+                  <PeerVideo
+                    calssName={styles.PeerVideo}
+                    faceapi={faceapi}
+                    key={index}
+                    peer={peer} />
+                );
+              })
+              : <>
+                <MyVideo isHost={isHost} videoRef={videoRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} />
+                {
+                  peers.slice(1).map((peer, index) => {
+                    return (
+                      <PeerVideo
+                        className={styles.PeerVideo}
+                        faceapi={faceapi}
+                        key={index}
+                        peer={peer} />
+                    );
+                  })
+                }
+              </>
+          }
+          {
+            <div
+              className={`${styles.RightSideInnerOnMode}`}
+              ref={rightSideRef} >
+              {
+                (() => {
+                  switch (mode) {
+                    case PUBLIC_CHAT:
+                    case QUESTION_CHAT:
+                      rightSideRef.current.style.display = "block";
+                      return (
+                        <Chat
+                          mode={mode}
+                          message={message}
+                          nickname={nickname}
+                          setMessage={setMessage}
+                          sendMessage={sendMessage}
+                          targetMessage={targetMessage}
+                          setSendTo={setSendTo} />
+                      );
+                    case SCREEN_SHARE:
+                      rightSideRef.current.style.display = "block";
+                      return shareScreen();
+                    case INVITE:
+                      rightSideRef.current.style.display = "block";
+                      return (
+                        <GroupListInVideoRoom
+                          className={styles.Invite}
+                          groups={currentUser.groups}
+                          sender={currentUser.email} />
+                      );
+                    case STUDENTS:
+                    default:
+                      if (rightSideRef.current) {
+                        rightSideRef.current.style.display = "none";
+                      }
+                  }
+                })()
+              }
+            </div>
+          }
         </div>
       </div>
     </div>

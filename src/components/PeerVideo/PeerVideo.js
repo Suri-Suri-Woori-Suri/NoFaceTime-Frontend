@@ -18,11 +18,7 @@ const PeerVideo = ({ peer, handleVideoPlay }) => {
         ref={videoRef}
         autoPlay
         playsInline
-        onPlay={handleVideoPlay}
-      />
-      <canvas
-        className={styles.Canvas}
-        ref={canvasRef}
+        // onPlay={handleVideoPlay}
       />
     </>
   );
