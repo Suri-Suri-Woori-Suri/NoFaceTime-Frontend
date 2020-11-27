@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import MenubarButton from '../MenubarButton/MenubarButton';
 import { MENU_MODE } from '../../constants/index';
@@ -7,11 +7,11 @@ import styles from './MenuBar.module.css';
 const MenuBar = ({
   audioMuted,
   toggleAudio,
+  stopVideo,
   setMode
 }) => {
   const {
     MIC,
-    NOTE,
     INVITE,
     STUDENTS,
     PUBLIC_CHAT,
@@ -31,9 +31,6 @@ const MenuBar = ({
 
       case SCREEN_SHARE:
         return setMode(SCREEN_SHARE);
-
-      case NOTE:
-        return setMode(NOTE);
 
       case INVITE:
         return setMode(INVITE);
@@ -58,7 +55,7 @@ const MenuBar = ({
             </>
         }
       </button>
-      <MenubarButton handleClick={handleClick} />
+      <MenubarButton handleClick={handleClick} stopVideo={stopVideo} />
     </div >
   );
 };

@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import styles from './VideoContainer.module.css';
-
 import SettingModal from '../../components/SettingModal/SettingModal';
 import VideoConferenceRoom from '../../components/VideoConferenceRoom/VideoConferenceRoom';
 

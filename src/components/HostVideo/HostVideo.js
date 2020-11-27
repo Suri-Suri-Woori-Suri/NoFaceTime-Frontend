@@ -3,17 +3,17 @@ import styles from './HostVideo.module.css';
 
 const HostVideo = ({
   peers,
-  hostId
-  // startDetectionOnCanvas
+  hostId,
+  handleVideoPlay
 }) => {
-  console.log("HOST VIDEO 내 peer", peers);
-  console.log("HOST VIDEO 내 peer", hostId);
 
   const ref = useRef();
 
   useEffect(() => {
 
     const host = peers.find(peer => peer.peerId === hostId);
+
+    if(!host) alert('호스트가 입장하지 않았습니다.');
 
     host.peer.on("stream", stream => {
       ref.current.srcObject = stream;
@@ -24,7 +24,7 @@ const HostVideo = ({
     <video
       className={styles.HostVideo}
       ref={ref}
-      onPlay={console.log('startDetectionOnVancas')}
+      onPlay={handleVideoPlay}
       autoPlay
     />
   );

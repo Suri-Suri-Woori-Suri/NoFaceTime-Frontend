@@ -1,21 +1,12 @@
 import React from 'react';
-
-import { MY_VIDEO_MODE } from '../../constants/index';
 import styles from './MyVideo.module.css';
 
 const MyVideo = ({
-  mode,
-  MyVideo,
   isHost,
   videoRef,
   audioMuted,
-  handleVideoPlay,
-  // canvasRef
-  // startDetectionOnCanvas
+  handleVideoPlay
 }) => {
-  const { HOST } = MY_VIDEO_MODE;
-  console.log('MY VIDEO');
-
   if (isHost) {
     return (
       <video
@@ -27,12 +18,13 @@ const MyVideo = ({
     );
   }
 
-  return <video
-    className={styles.Peer}
-    ref={videoRef}
-    // onPlay={() => handleVideoPlay(videoRef)}
-    // onPlay={startDetectionOnCanvas}
-    autoPlay />
+  return (
+    <video
+      className={styles.Peer}
+      ref={videoRef}
+      onPlay={handleVideoPlay}
+      autoPlay />
+  );
 };
 
 export default MyVideo;
