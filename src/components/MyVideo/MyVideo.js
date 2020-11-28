@@ -6,8 +6,7 @@ const MyVideo = ({
   videoRef,
   canvasRef,
   audioMuted,
-  handleVideoPlay,
-  isJoinedRoom
+  handleVideoPlay
 }) => {
 
   if (isHost) {
@@ -21,29 +20,11 @@ const MyVideo = ({
     );
   }
 
-  if (isJoinedRoom) {
-    return <>
-      <div className={styles.PeerWrapper}>
-        <video
-          className={styles.Peer}
-          ref={videoRef}
-          onPlay={handleVideoPlay}
-          playsInline
-          autoPlay />
-        <canvas
-          className={styles.Canvas}
-          ref={canvasRef}
-        />
-      </div>
-    </>
-  }
-
   return (
     <video
       className={styles.Peer}
       ref={videoRef}
       onPlay={handleVideoPlay}
-      playsInline
       autoPlay />
   );
 };
