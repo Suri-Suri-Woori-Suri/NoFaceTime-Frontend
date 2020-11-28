@@ -4,9 +4,11 @@ import styles from './MyVideo.module.css';
 const MyVideo = ({
   isHost,
   videoRef,
+  canvasRef,
   audioMuted,
   handleVideoPlay
 }) => {
+
   if (isHost) {
     return (
       <video
@@ -19,11 +21,17 @@ const MyVideo = ({
   }
 
   return (
-    <video
-      className={styles.Peer}
-      ref={videoRef}
-      onPlay={handleVideoPlay}
-      autoPlay />
+    <>
+      <video
+        className={styles.Peer}
+        ref={videoRef}
+        onPlay={handleVideoPlay}
+        autoPlay />
+      <canvas
+        className={styles.Canvas}
+        ref={canvasRef}
+      />
+    </>
   );
 };
 
