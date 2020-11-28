@@ -4,6 +4,7 @@ import styles from './SettingModal.module.css';
 import MyVideo from '../MyVideo/MyVideo';
 
 const SettingModal = ({
+  isJoinedRoom,
   setIsJoinedRoom,
   videoRef,
   toggleAudio,
@@ -15,7 +16,7 @@ const SettingModal = ({
     <div className={styles.SettingModalBackground}>
       <div className={styles.SettingModal}>
         <div className={styles.VideoWrapper}>
-          <MyVideo isHost={isHost} videoRef={videoRef} audioMuted={audioMuted}/>
+          <MyVideo isJoinedRoom={isJoinedRoom} isHost={isHost} videoRef={videoRef} audioMuted={audioMuted}/>
         </div>
         <div className={styles.Mute}>
           <label>

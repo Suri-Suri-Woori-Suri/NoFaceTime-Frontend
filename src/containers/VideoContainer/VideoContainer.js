@@ -91,12 +91,13 @@ const VideoContainer = ({
   return (
     !isJoinedRoom
       ? < SettingModal
+        isJoinedRoom={isJoinedRoom}
         setIsJoinedRoom={setIsJoinedRoom}
         videoRef={videoRef}
         toggleAudio={toggleAudio}
         isHost={isHost}
         audioMuted={audioMuted}
-        />
+      />
       :
       <VideoConferenceRoom
         location={location}
