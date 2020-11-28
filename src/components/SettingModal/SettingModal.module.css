@@ -49,8 +49,3 @@ input {
   -webkit-transform: rotateY(180deg);
   -moz-transform: rotateY(180deg);
 }
-
-.VideoWrapper > canvas:last-child {
-  border: 20px solid purple;
-  box-sizing: border-box;
-}

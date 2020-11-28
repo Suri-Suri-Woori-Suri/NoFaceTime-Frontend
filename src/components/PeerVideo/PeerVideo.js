@@ -90,7 +90,7 @@ const PeerVideo = ({ faceapi, peer, analyzeFace }) => {
   }, []);
 
   return (
-    <>
+    <div className={styles.PeerVideoWrapper}>
       <video
         className={styles.PeerVideo}
         ref={videoRef}
@@ -102,7 +102,7 @@ const PeerVideo = ({ faceapi, peer, analyzeFace }) => {
         className={styles.Canvas}
         ref={canvasRef}
       />
-    </>
+    </div>
   );
 };
 
