@@ -12,6 +12,7 @@ const MenuBar = ({
 }) => {
   const {
     MIC,
+    OUT,
     INVITE,
     STUDENTS,
     PUBLIC_CHAT,
@@ -35,6 +36,11 @@ const MenuBar = ({
       case INVITE:
         return setMode(INVITE);
 
+      case OUT:
+        stopVideo();
+        window.history.back();
+        return;
+
       default:
         return setMode(STUDENTS);
     }
@@ -55,7 +61,7 @@ const MenuBar = ({
             </>
         }
       </button>
-      <MenubarButton handleClick={handleClick} stopVideo={stopVideo} />
+      <MenubarButton handleClick={handleClick} />
     </div >
   );
 };

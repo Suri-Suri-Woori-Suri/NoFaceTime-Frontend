@@ -13,9 +13,8 @@ const Chat = ({
   nickname,
   setSendTo
 }) => {
-
   const { PUBLIC_CHAT } = MENU_MODE;
-  
+
   const messageList = targetMessage.map((message, index) => {
     const { from, text, to } = message;
     const isSentByUser = nickname === from;
@@ -47,6 +46,7 @@ const Chat = ({
       }
       <div className={styles.ChatBox}>
         <div className={styles.MessageList}>
+          {console.log("MESSAGELIST", messageList)}
           {messageList}
         </div>
         <div className={styles.ChatInputBox}>

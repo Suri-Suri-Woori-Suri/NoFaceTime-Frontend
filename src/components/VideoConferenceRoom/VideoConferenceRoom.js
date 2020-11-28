@@ -163,8 +163,8 @@ const VideoConferenceRoom = ({
 
     socket.on('user left', ({ socketId }) => {
       console.log('USER LEFT!!!!!!!', socketId);
-      console.log(peersRef.current)
-      console.log("$$$$$$$", peersRef.current[socketId])
+      console.log(peersRef.current);
+      console.log("$$$$$$$", peersRef.current[socketId]);
       deleteLeavingMember(socketId);
       delete peersRef.current[socketId];
 
@@ -298,8 +298,8 @@ const VideoConferenceRoom = ({
 
   const LeaveAndstopVideo = () => {
     socket.emit('leave room');
-    videoRef.current.srcObject.getVideoTracks()[0].enabled = false
-    streamRef.current.getVideoTracks()[0].enabled = false
+    videoRef.current.srcObject.getVideoTracks()[0].enabled = false;
+    streamRef.current.getVideoTracks()[0].enabled = false;
   };
 
   const sendMessage = mode === PUBLIC_CHAT ? sendMessagePublic : sendMessageSecretly;
@@ -325,8 +325,12 @@ const VideoConferenceRoom = ({
         <div className={styles.LeftSide}>
           <div className={styles.CanvasOnVideo}>
             {isHost ?
-              <MyVideo isHost={isHost} videoRef={videoRef} canvasRef={canvasRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} /> :
-              peers.length && <HostVideo peers={peers} hostId={hostId} handleVideoPlay={handleVideoPlay} />
+              <MyVideo isHost={isHost} videoRef={videoRef} canvasRef={canvasRef} audioMuted={audioMuted}
+              //handleVideoPlay={handleVideoPlay} 
+              /> :
+              peers.length && <HostVideo peers={peers} hostId={hostId}
+              //handleVideoPlay={handleVideoPlay}
+              />
             }
             <canvas
               className={styles.Canvas}
@@ -355,7 +359,9 @@ const VideoConferenceRoom = ({
                 );
               })
               : <>
-                <MyVideo isHost={isHost} videoRef={videoRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} />
+                <MyVideo isHost={isHost} videoRef={videoRef} audioMuted={audioMuted}
+                //handleVideoPlay={handleVideoPlay} 
+                />
                 {
                   peers.slice(1).map((peer, index) => {
                     return (

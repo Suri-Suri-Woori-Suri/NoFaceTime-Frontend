@@ -34,14 +34,11 @@ const GroupListInVideoRoom = ({
     <div className={styles.GroupListInVideoRoom}>
       <div
         className={styles.SendMailButton}>
-
         <CompleteButton
-
           buttonName="Send Mail"
           onClick={() => {
             sendMailToMembers(sender, membersToShow, roomLink, clickedGroupId);
           }} />
-
       </div>
       {
         groups.map((group, index) => {
