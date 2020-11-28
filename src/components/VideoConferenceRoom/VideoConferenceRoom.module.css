@@ -44,7 +44,6 @@
   display: grid;
   width: 40%;
   height: 100%;
-  border: 1px solid grey;
 
   grid-template-rows: repeat(4, 1fr);
   grid-template-columns: repeat(2, 1fr);
@@ -57,10 +56,6 @@
 }
 
 .Invite {
-  /* display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; */
   border: 30px solid blue;
   box-sizing: border-box;
 }
