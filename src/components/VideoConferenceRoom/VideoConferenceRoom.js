@@ -11,7 +11,7 @@ import MyVideo from '../../components/MyVideo/MyVideo';
 import HostVideo from '../../components/HostVideo/HostVideo';
 import GroupListInVideoRoom from '../GroupListInVideoRoom/GroupListInVideoRoom';
 
-import { MENU_MODE } from '../../constants/index';
+import { MENU_MODE, FACE_STATUS } from '../../constants/index';
 import { socket } from '../../utils/socket';
 import styles from './VideoConferenceRoom.module.css';
 
@@ -36,11 +36,22 @@ const VideoConferenceRoom = ({
     SCREEN_SHARE,
     QUESTION_CHAT } = MENU_MODE;
 
+  const {
+    DEFAULT,
+    NEUTRAL,
+    HAPPY,
+    SAD,
+    ANGRY,
+    DISGUSTED,
+    FEARFUL,
+    SURPRIZED
+  } = FACE_STATUS;
+
   const { _id, nickname } = currentUser;
   const ROOM_ID = location.pathname.split('/').pop();
 
   const [mode, setMode] = useState(STUDENTS);
-  const [peers, setPeers] = useState([]); //체크
+  const [peers, setPeers] = useState([]);
   const [streamForShare, setStreamForShare] = useState();
 
   const videoRef = useRef();
@@ -52,8 +63,19 @@ const VideoConferenceRoom = ({
   const [initialized, setInitialized] = useState(false);
   const [hostId, setHostId] = useState('');
 
-  const analyzeFace = () => {
+  const emojis = {
+    default: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_sleep.png',
+    neutral: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_kennim.png',
+    happy: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_happy_emoji.png',
+    sad: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_sad_emoji.png',
+    angry: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_angry2_emoji.png',
+    fearful: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_fearful_emoji.png',
+    disgusted: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_disgusted_emoji.png',
+    surprised: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_apple_surprised.png',
+    noFace: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_sleep.png'
+  };
 
+  const analyzeFace = () => {
     setInterval(async () => {
       if (!initialized) return;
       if (!videoRef.current) return;
@@ -76,6 +98,8 @@ const VideoConferenceRoom = ({
       faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
       faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
 
+      const context = canvasRef.current.getContext('2d');
+
       if (detections.length > 0) {
         const xCoord = resizedDetections[0]?.detection?._box?._x;
         const yCoord = resizedDetections[0]?.detection?._box?._y;
@@ -83,11 +107,13 @@ const VideoConferenceRoom = ({
         console.log("X좌표", xCoord, "Y좌표", yCoord);
 
         detections.forEach(element => {
-          console.log("HERE", element);
+          console.log("HERE", element.expressions);
           let status = "";
           let valueStatus = 0.0;
+
           for (const [key, value] of Object.entries(element.expressions)) {
             console.log(element.expressions, '##', key, value, status);
+            console.log("FACE_STATUS", status);
 
             if (value > valueStatus) {
               status = key;
@@ -95,25 +121,42 @@ const VideoConferenceRoom = ({
             }
           }
 
-          const context = canvasRef.current.getContext('2d');
-          const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
-          console.log("RESIZED", resizedDetections);
+          const { _x, _y } = resizedDetections[0].detection._box;
+          const _width = resizedDetections[0].landmarks.imageWidth;
+          const _height = resizedDetections[0].landmarks.imageHeight;
 
           const img = new Image();
-          img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/emoji-sleep-smiley-emoticon-fatigue-tired.jpg';
-          context.drawImage(img, xCoord - xCoord * 0.25, yCoord - yCoord * 0.25, _width * 1.5, _height * 1.5);
+
+          if (status === NEUTRAL) {
+            img.src = emojis.neutral;
+          } else if (status === HAPPY) {
+            img.src = emojis.happy;
+          } else if (status === SAD) {
+            img.src = emojis.sad;
+          } else if (status === ANGRY) {
+            img.src = emojis.angry;
+          } else if (status === DISGUSTED) {
+            img.src = emojis.disgusted;
+          } else if (status === FEARFUL) {
+            img.src = emojis.fearful;
+          } else if (status === SURPRIZED) {
+            img.src = emojis.surprized;
+          }
+
+          context.drawImage(img, _x * 0.5, _y * 0.5, _width * 2, _height * 2);
         }
         );
       } else {
         console.log("No Faces");
-        const context = canvasRef.current.getContext('2d');
 
+        const context = canvasRef.current.getContext('2d');
         const img = new Image();
-        img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg';
+        img.src = emojis.noFace;
         context.drawImage(img, 0, 0, 500, 500);
       }
     }, 5000);
   };
+
 
 
   const handleVideoPlay = () => {
@@ -173,8 +216,8 @@ const VideoConferenceRoom = ({
 
     socket.on('user left', ({ socketId }) => {
       console.log('USER LEFT!!!!!!!', socketId);
-      console.log(peersRef.current)
-      console.log("$$$$$$$", peersRef.current[socketId])
+      console.log(peersRef.current);
+      console.log("$$$$$$$", peersRef.current[socketId]);
       deleteLeavingMember(socketId);
       delete peersRef.current[socketId];
 
@@ -308,8 +351,8 @@ const VideoConferenceRoom = ({
 
   const LeaveAndstopVideo = () => {
     socket.emit('leave room');
-    videoRef.current.srcObject.getVideoTracks()[0].enabled = false
-    streamRef.current.getVideoTracks()[0].enabled = false
+    videoRef.current.srcObject.getVideoTracks()[0].enabled = false;
+    streamRef.current.getVideoTracks()[0].enabled = false;
   };
 
   const sendMessage = mode === PUBLIC_CHAT ? sendMessagePublic : sendMessageSecretly;

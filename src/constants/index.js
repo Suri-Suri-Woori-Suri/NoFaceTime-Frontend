@@ -20,3 +20,14 @@ export const MY_VIDEO_MODE = {
   HOST: 'host',
   PEER: 'peer'
 };
+
+export const FACE_STATUS = {
+  DEFAULT: 'default',
+  NEUTRAL: 'neutral',
+  HAPPY: 'happy',
+  SAD: 'sad',
+  ANGRY: 'angry',
+  DISGUSTED: 'disgusted',
+  FEARFUL: 'fearful',
+  SURPRIZED: 'surprized'
+};
