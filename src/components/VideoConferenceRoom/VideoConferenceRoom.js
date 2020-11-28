@@ -52,71 +52,81 @@ const VideoConferenceRoom = ({
   const [initialized, setInitialized] = useState(false);
   const [hostId, setHostId] = useState('');
 
-  const analyzeFace = async () => {
-    if (!videoRef) return;
+  const analyzeFace = () => {
 
-    canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
+    setInterval(async () => {
+      if (!initialized) return;
+      if (!videoRef.current) return;
+      if (!canvasRef.current) return;
 
-    const displaySize = {
-      width: 500,
-      height: 500
-    };
+      canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
 
-    faceapi.matchDimensions(canvasRef.current, displaySize);
+      const displaySize = {
+        width: 500,
+        height: 500
+      };
 
-    const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
-    const resizedDetections = faceapi.resizeResults(detections, displaySize);
+      faceapi.matchDimensions(canvasRef.current, displaySize);
 
-    await canvasRef.current.getContext('2d').clearRect(0, 0, 500, 500);
-    faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-    faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
-    faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
+      const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
+      const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
-    if (detections.length > 0) {
-      const xCoord = resizedDetections[0]?.detection?._box?._x;
-      const yCoord = resizedDetections[0]?.detection?._box?._y;
+      canvasRef.current.getContext('2d').clearRect(0, 0, 500, 500);
+      faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+      faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
+      faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
 
-      console.log("X좌표", xCoord, "Y좌표", yCoord);
+      if (detections.length > 0) {
+        const xCoord = resizedDetections[0]?.detection?._box?._x;
+        const yCoord = resizedDetections[0]?.detection?._box?._y;
 
-      detections.forEach(element => {
-        console.log("HERE", element);
-        let status = "";
-        let valueStatus = 0.0;
-        for (const [key, value] of Object.entries(element.expressions)) {
-          console.log(element.expressions, '##', key, value, status);
+        console.log("X좌표", xCoord, "Y좌표", yCoord);
 
-          if (value > valueStatus) {
-            status = key;
-            valueStatus = value;
+        detections.forEach(element => {
+          console.log("HERE", element);
+          let status = "";
+          let valueStatus = 0.0;
+          for (const [key, value] of Object.entries(element.expressions)) {
+            console.log(element.expressions, '##', key, value, status);
+
+            if (value > valueStatus) {
+              status = key;
+              valueStatus = value;
+            }
           }
-        }
 
+          const context = canvasRef.current.getContext('2d');
+          const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
+          console.log("RESIZED", resizedDetections);
+
+          const img = new Image();
+          img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/emoji-sleep-smiley-emoticon-fatigue-tired.jpg';
+          context.drawImage(img, xCoord - xCoord * 0.25, yCoord - yCoord * 0.25, _width * 1.5, _height * 1.5);
+        }
+        );
+      } else {
+        console.log("No Faces");
         const context = canvasRef.current.getContext('2d');
-        const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
 
         const img = new Image();
-        img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/emoji-sleep-smiley-emoticon-fatigue-tired.jpg';
-        context.drawImage(img, xCoord - xCoord * 0.25, yCoord - yCoord * 0.25, _width * 1.5, _height * 1.5);
+        img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg';
+        context.drawImage(img, 0, 0, 500, 500);
       }
-      );
-    } else {
-      console.log("No Faces");
-      const context = canvasRef.current.getContext('2d');
-
-      const img = new Image();
-      img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg';
-      context.drawImage(img, 0, 0, 500, 500);
-    }
+    }, 5000);
   };
 
+
   const handleVideoPlay = () => {
+    //setVideoOnplay(true);
     analyzeFace();
   };
 
   useEffect(() => {
+    if (!initialized) return;
     const useInterval = setInterval(analyzeFace, 5000);
     return (() => {
       clearInterval(useInterval);
+      //setVideoOnplay(false);
     });
   }, [videoRef]);
 
@@ -163,8 +173,8 @@ const VideoConferenceRoom = ({
 
     socket.on('user left', ({ socketId }) => {
       console.log('USER LEFT!!!!!!!', socketId);
-      console.log(peersRef.current);
-      console.log("$$$$$$$", peersRef.current[socketId]);
+      console.log(peersRef.current)
+      console.log("$$$$$$$", peersRef.current[socketId])
       deleteLeavingMember(socketId);
       delete peersRef.current[socketId];
 
@@ -298,8 +308,8 @@ const VideoConferenceRoom = ({
 
   const LeaveAndstopVideo = () => {
     socket.emit('leave room');
-    videoRef.current.srcObject.getVideoTracks()[0].enabled = false;
-    streamRef.current.getVideoTracks()[0].enabled = false;
+    videoRef.current.srcObject.getVideoTracks()[0].enabled = false
+    streamRef.current.getVideoTracks()[0].enabled = false
   };
 
   const sendMessage = mode === PUBLIC_CHAT ? sendMessagePublic : sendMessageSecretly;
@@ -325,12 +335,8 @@ const VideoConferenceRoom = ({
         <div className={styles.LeftSide}>
           <div className={styles.CanvasOnVideo}>
             {isHost ?
-              <MyVideo isHost={isHost} videoRef={videoRef} canvasRef={canvasRef} audioMuted={audioMuted}
-              //handleVideoPlay={handleVideoPlay} 
-              /> :
-              peers.length && <HostVideo peers={peers} hostId={hostId}
-              //handleVideoPlay={handleVideoPlay}
-              />
+              <MyVideo isHost={isHost} videoRef={videoRef} canvasRef={canvasRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} /> :
+              peers.length && <HostVideo peers={peers} hostId={hostId} handleVideoPlay={handleVideoPlay} />
             }
             <canvas
               className={styles.Canvas}
@@ -354,20 +360,20 @@ const VideoConferenceRoom = ({
                   <PeerVideo
                     calssName={styles.PeerVideo}
                     faceapi={faceapi}
+                    analyzeFace={analyzeFace}
                     key={index}
                     peer={peer} />
                 );
               })
               : <>
-                <MyVideo isHost={isHost} videoRef={videoRef} audioMuted={audioMuted}
-                //handleVideoPlay={handleVideoPlay} 
-                />
+                <MyVideo isHost={isHost} videoRef={videoRef} canvasRef={canvasRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} />
                 {
                   peers.slice(1).map((peer, index) => {
                     return (
                       <PeerVideo
                         className={styles.PeerVideo}
                         faceapi={faceapi}
+                        analyzeFace={analyzeFace}
                         key={index}
                         peer={peer} />
                     );
