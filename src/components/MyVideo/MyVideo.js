@@ -21,11 +21,17 @@ const MyVideo = ({
   }
 
   return (
-    <video
-      className={styles.Peer}
-      ref={videoRef}
-      onPlay={handleVideoPlay}
-      autoPlay />
+    <div className={styles.PeerWrapper}>
+      <video
+        className={styles.Peer}
+        ref={videoRef}
+        onPlay={handleVideoPlay}
+        autoPlay />
+      <canvas
+        className={styles.Canvas}
+        ref={canvasRef}
+      />
+    </div>
   );
 };
 
