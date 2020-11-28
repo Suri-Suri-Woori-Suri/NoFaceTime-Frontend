@@ -3,7 +3,7 @@ import styles from './PeerVideo.module.css';
 
 const PeerVideo = ({ peer, handleVideoPlay }) => {
   const videoRef = useRef();//studentVideoRef
-  const canvasRef = useRef();
+  //const canvasRef = useRef();
 
   useEffect(() => {
     peer.peer.on("stream", stream => {
@@ -18,7 +18,7 @@ const PeerVideo = ({ peer, handleVideoPlay }) => {
         ref={videoRef}
         autoPlay
         playsInline
-        // onPlay={handleVideoPlay}
+      // onPlay={handleVideoPlay}
       />
     </>
   );

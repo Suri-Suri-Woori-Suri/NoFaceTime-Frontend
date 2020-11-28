@@ -6,9 +6,9 @@ export const API_METHOD = {
 };
 
 export const MENU_MODE = {
+  OUT: 'Out',
   MIC: 'mic',
   MUTE: 'mute',
-  NOTE: 'Note',
   INVITE: 'Invite',
   STUDENTS: 'Students',
   PUBLIC_CHAT: 'PublicChat',
