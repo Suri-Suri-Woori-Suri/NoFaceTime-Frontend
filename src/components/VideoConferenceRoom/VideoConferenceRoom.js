@@ -4,7 +4,6 @@ import Peer from "simple-peer";
 import * as faceapi from 'face-api.js';
 
 import Logo from '../Logo/Logo';
-import Canvas from '../Canvas/Canvas';
 import MenuBar from '../MenuBar/MenuBar';
 import PeerVideo from '../PeerVideo/PeerVideo';
 import Chat from '../../components/Chat/Chat';
@@ -12,7 +11,7 @@ import MyVideo from '../../components/MyVideo/MyVideo';
 import HostVideo from '../../components/HostVideo/HostVideo';
 import GroupListInVideoRoom from '../GroupListInVideoRoom/GroupListInVideoRoom';
 
-import { MENU_MODE, MY_VIDEO_MODE } from '../../constants/index';
+import { MENU_MODE, FACE_STATUS } from '../../constants/index';
 import { socket } from '../../utils/socket';
 import styles from './VideoConferenceRoom.module.css';
 
@@ -37,34 +36,56 @@ const VideoConferenceRoom = ({
     SCREEN_SHARE,
     QUESTION_CHAT } = MENU_MODE;
 
-  const { HOST, PEER } = MY_VIDEO_MODE;
+  const {
+    DEFAULT,
+    NEUTRAL,
+    HAPPY,
+    SAD,
+    ANGRY,
+    DISGUSTED,
+    FEARFUL,
+    SURPRIZED
+  } = FACE_STATUS;
 
   const { _id, nickname } = currentUser;
   const ROOM_ID = location.pathname.split('/').pop();
 
   const [mode, setMode] = useState(STUDENTS);
-  const [peers, setPeers] = useState([]); //체크
+  const [peers, setPeers] = useState([]);
   const [streamForShare, setStreamForShare] = useState();
 
   const videoRef = useRef();
   const streamRef = useRef();
   const canvasRef = useRef();
-  const myPeer = useRef();
   const peersRef = useRef({});
+  const rightSideRef = useRef();
 
   const [initialized, setInitialized] = useState(false);
   const [hostId, setHostId] = useState('');
 
-  const handleVideoPlay = () => {
-    let xCoord, yCoord, width, height;
+  const emojis = {
+    default: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_sleep.png',
+    neutral: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_kennim.png',
+    happy: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_happy_emoji.png',
+    sad: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_sad_emoji.png',
+    angry: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_angry2_emoji.png',
+    fearful: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_fearful_emoji.png',
+    disgusted: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_disgusted_emoji.png',
+    surprised: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_apple_surprised.png',
+    noFace: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_sleep.png'
+  };
 
+  const analyzeFace = () => {
     setInterval(async () => {
+      if (!initialized) return;
+      if (!videoRef.current) return;
+      if (!canvasRef.current) return;
 
       canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
 
       const displaySize = {
-        width: 350,
-        height: 350
+        width: 500,
+        height: 500
       };
 
       faceapi.matchDimensions(canvasRef.current, displaySize);
@@ -73,46 +94,84 @@ const VideoConferenceRoom = ({
       const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
       canvasRef.current.getContext('2d').clearRect(0, 0, 500, 500);
-      faceapi.draw.drawDetections(canvasRef.current, resizedDetections, { withScore: false });
+      faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
       faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
       faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
 
+      const context = canvasRef.current.getContext('2d');
 
       if (detections.length > 0) {
-        xCoord = resizedDetections[0]?.detection?._box?._x;
-        yCoord = resizedDetections[0]?.detection?._box?._y;
-        width = resizedDetections[0]?.detection?._box?._width;
-        height = resizedDetections[0]?.detection?._box?._height;
+        const xCoord = resizedDetections[0]?.detection?._box?._x;
+        const yCoord = resizedDetections[0]?.detection?._box?._y;
+
+        console.log("X좌표", xCoord, "Y좌표", yCoord);
 
         detections.forEach(element => {
+          console.log("HERE", element.expressions);
           let status = "";
           let valueStatus = 0.0;
 
           for (const [key, value] of Object.entries(element.expressions)) {
+            console.log(element.expressions, '##', key, value, status);
+            console.log("FACE_STATUS", status);
+
             if (value > valueStatus) {
               status = key;
               valueStatus = value;
             }
           }
 
-          const context = canvasRef.current.getContext('2d');
-          const { _x, _y, _width, _height } = resizedDetections[0].detection._box;
+          const { _x, _y } = resizedDetections[0].detection._box;
+          const _width = resizedDetections[0].landmarks.imageWidth;
+          const _height = resizedDetections[0].landmarks.imageHeight;
 
           const img = new Image();
-          img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_angry2_emoji.png';
-          context.drawImage(img, 0.75 * xCoord, 0.75 * yCoord, 350, 350);
+
+          if (status === NEUTRAL) {
+            img.src = emojis.neutral;
+          } else if (status === HAPPY) {
+            img.src = emojis.happy;
+          } else if (status === SAD) {
+            img.src = emojis.sad;
+          } else if (status === ANGRY) {
+            img.src = emojis.angry;
+          } else if (status === DISGUSTED) {
+            img.src = emojis.disgusted;
+          } else if (status === FEARFUL) {
+            img.src = emojis.fearful;
+          } else if (status === SURPRIZED) {
+            img.src = emojis.surprized;
+          }
+
+          context.drawImage(img, _x * 0.5, _y * 0.5, _width * 2, _height * 2);
         }
         );
       } else {
         console.log("No Faces");
-        const context = canvasRef.current.getContext('2d');
 
+        const context = canvasRef.current.getContext('2d');
         const img = new Image();
-        img.src = 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_angry2_emoji.png';
-        context.drawImage(img, 0.75 * xCoord, 0.75 * yCoord, 350, 350);
+        img.src = emojis.noFace;
+        context.drawImage(img, 0, 0, 500, 500);
       }
     }, 5000);
   };
+
+
+
+  const handleVideoPlay = () => {
+    //setVideoOnplay(true);
+    analyzeFace();
+  };
+
+  useEffect(() => {
+    if (!initialized) return;
+    const useInterval = setInterval(analyzeFace, 5000);
+    return (() => {
+      clearInterval(useInterval);
+      //setVideoOnplay(false);
+    });
+  }, [videoRef]);
 
   const startVideo = async () => {
     try {
@@ -156,20 +215,23 @@ const VideoConferenceRoom = ({
     });
 
     socket.on('user left', ({ socketId }) => {
+      console.log('USER LEFT!!!!!!!', socketId);
+      console.log(peersRef.current);
+      console.log("$$$$$$$", peersRef.current[socketId]);
       deleteLeavingMember(socketId);
       delete peersRef.current[socketId];
 
       setPeers(peers => {
-        const targetPeer = peers.filter(peer => peer.peerId === socketId)[0];
+        console.log("지울거야...", peers);
+        const targetPeer = peers.find(peer => peer.peerId === socketId);
+        console.log(targetPeer);
         const rest = peers.filter(peer => peer.peerId !== socketId);
-
         if (targetPeer) targetPeer.peer.destroy();
         return [...rest];
       });
     });
 
     return () => {
-      socket.emit('leave');
       socket.off();
     };
   }, []);
@@ -179,13 +241,13 @@ const VideoConferenceRoom = ({
     if (!initialized) return;
 
     for (let key in memberInRoom) {
+      if (memberInRoom[key].roomId !== ROOM_ID) continue;
+
       const peer = new Peer({
         initiator: true,
         trickle: false,
         stream: streamRef.current
       });
-
-      myPeer.current = peer;
 
       peer.on('signal', signal => {
         socket.emit('send signal', { signal, to: memberInRoom[key] });
@@ -203,8 +265,6 @@ const VideoConferenceRoom = ({
         trickle: false,
         stream: streamRef.current,
       });
-
-      myPeer.current = peer;
 
       peer.signal(signal);
 
@@ -289,57 +349,13 @@ const VideoConferenceRoom = ({
     socket.emit('message-secret', data);
   };
 
-  const sendMessage = mode === PUBLIC_CHAT ? sendMessagePublic : sendMessageSecretly;
-
-  const showMenuOnMode = () => {
-    switch (mode) {
-
-      case PUBLIC_CHAT:
-      case QUESTION_CHAT:
-        return (
-          <Chat
-            mode={mode}
-            message={message}
-            nickname={nickname}
-            setMessage={setMessage}
-            sendMessage={sendMessage}
-            targetMessage={targetMessage}
-            setSendTo={setSendTo} />
-        );
-
-      case SCREEN_SHARE:
-        return shareScreen();
-
-      case INVITE:
-        return (
-          <GroupListInVideoRoom
-            id={styles.Invite}
-            groups={currentUser.groups}
-            sender={currentUser.email} />
-        );
-
-      case STUDENTS:
-      default:
-        return (
-          isHost
-            ? peers.map((peer, index) => {
-              return <PeerVideo faceapi={faceapi} key={index} peer={peer} />;
-            })
-            : <>
-              <MyVideo isHost={isHost} videoRef={videoRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} />
-              {
-                peers.slice(1).map((peer, index) => {
-                  return <PeerVideo faceapi={faceapi} key={index} peer={peer} />;
-                })
-              }
-              {/* <canvas
-                className={styles.StudentCanvas}
-                ref={studentCanvasRef}
-              /> */}
-            </>
-        );
-    }
+  const LeaveAndstopVideo = () => {
+    socket.emit('leave room');
+    videoRef.current.srcObject.getVideoTracks()[0].enabled = false;
+    streamRef.current.getVideoTracks()[0].enabled = false;
   };
+
+  const sendMessage = mode === PUBLIC_CHAT ? sendMessagePublic : sendMessageSecretly;
 
   const toggleAudio = () => {
     if (streamRef.current) {
@@ -352,39 +368,106 @@ const VideoConferenceRoom = ({
   };
 
   return (
-    <>
-      <div className={styles.VideoConferenceRoom}>
-        <div className={styles.LogoWrapper}>
-          <Link to='/'>
-            <Logo />
-          </Link>
+    <div className={styles.VideoConferenceRoom}>
+      <div className={styles.LogoWrapper}>
+        <Link to='/'>
+          <Logo />
+        </Link>
+      </div>
+      <div className={styles.Content}>
+        <div className={styles.LeftSide}>
+          <div className={styles.CanvasOnVideo}>
+            {isHost ?
+              <MyVideo isHost={isHost} videoRef={videoRef} canvasRef={canvasRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} /> :
+              peers.length && <HostVideo peers={peers} hostId={hostId} handleVideoPlay={handleVideoPlay} />
+            }
+            <canvas
+              className={styles.Canvas}
+              ref={canvasRef}
+            />
+          </div>
+          <div className={styles.MenuBar}>
+            <MenuBar
+              audioMuted={audioMuted}
+              toggleAudio={toggleAudio}
+              stopVideo={LeaveAndstopVideo}
+              setMode={setMode}
+            />
+          </div>
         </div>
-        <div className={styles.Content}>
-          <div className={styles.LeftSide}>
-            <div className={styles.CanvasOnVideo}>
-              {isHost ?
-                <MyVideo isHost={isHost} videoRef={videoRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} /> :
-                peers.length && <HostVideo peers={peers} hostId={hostId} />
+        <div className={styles.RightSide}>
+          {
+            isHost
+              ? peers.map((peer, index) => {
+                return (
+                  <PeerVideo
+                    calssName={styles.PeerVideo}
+                    faceapi={faceapi}
+                    analyzeFace={analyzeFace}
+                    key={index}
+                    peer={peer} />
+                );
+              })
+              : <>
+                <MyVideo isHost={isHost} videoRef={videoRef} canvasRef={canvasRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} />
+                {
+                  peers.slice(1).map((peer, index) => {
+                    return (
+                      <PeerVideo
+                        className={styles.PeerVideo}
+                        faceapi={faceapi}
+                        analyzeFace={analyzeFace}
+                        key={index}
+                        peer={peer} />
+                    );
+                  })
+                }
+              </>
+          }
+          {
+            <div
+              className={`${styles.RightSideInnerOnMode}`}
+              ref={rightSideRef} >
+              {
+                (() => {
+                  switch (mode) {
+                    case PUBLIC_CHAT:
+                    case QUESTION_CHAT:
+                      rightSideRef.current.style.display = "block";
+                      return (
+                        <Chat
+                          mode={mode}
+                          message={message}
+                          nickname={nickname}
+                          setMessage={setMessage}
+                          sendMessage={sendMessage}
+                          targetMessage={targetMessage}
+                          setSendTo={setSendTo} />
+                      );
+                    case SCREEN_SHARE:
+                      rightSideRef.current.style.display = "block";
+                      return shareScreen();
+                    case INVITE:
+                      rightSideRef.current.style.display = "block";
+                      return (
+                        <GroupListInVideoRoom
+                          className={styles.Invite}
+                          groups={currentUser.groups}
+                          sender={currentUser.email} />
+                      );
+                    case STUDENTS:
+                    default:
+                      if (rightSideRef.current) {
+                        rightSideRef.current.style.display = "none";
+                      }
+                  }
+                })()
               }
-              <canvas
-                className={styles.Canvas}
-                ref={canvasRef}
-              />
             </div>
-            <div className={styles.MenuBar}>
-              <MenuBar
-                audioMuted={audioMuted}
-                toggleAudio={toggleAudio}
-                setMode={setMode}
-              />
-            </div>
-          </div>
-          <div className={styles.RightSide}>
-            {showMenuOnMode()}
-          </div>
+          }
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

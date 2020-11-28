@@ -6,9 +6,9 @@ export const API_METHOD = {
 };
 
 export const MENU_MODE = {
+  OUT: 'Out',
   MIC: 'mic',
   MUTE: 'mute',
-  NOTE: 'Note',
   INVITE: 'Invite',
   STUDENTS: 'Students',
   PUBLIC_CHAT: 'PublicChat',
@@ -19,4 +19,15 @@ export const MENU_MODE = {
 export const MY_VIDEO_MODE = {
   HOST: 'host',
   PEER: 'peer'
+};
+
+export const FACE_STATUS = {
+  DEFAULT: 'default',
+  NEUTRAL: 'neutral',
+  HAPPY: 'happy',
+  SAD: 'sad',
+  ANGRY: 'angry',
+  DISGUSTED: 'disgusted',
+  FEARFUL: 'fearful',
+  SURPRIZED: 'surprized'
 };

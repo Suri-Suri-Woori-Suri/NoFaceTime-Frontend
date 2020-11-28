@@ -1,3 +1,4 @@
-export const SERVER_URL = 'https://api.twofacetime.xyz';
+//export const SERVER_URL = 'https://192.168.0.59:5000';
 //'https://localhost:5000';
-// process.env.REACT_APP_PROXY_URL;
+export const SERVER_URL = 'https://api.twofacetime.xyz';
+

@@ -24,8 +24,7 @@ import styles from './RoomContainer.module.css';
 const RoomContainer = ({
   currentUser,
   addRooms,
-  deleteRooms,
-  setIsJoinedRoom
+  deleteRooms
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [roomName, setRoomName] = useState('');

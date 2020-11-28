@@ -1,4 +1,9 @@
+.PeerWrapper {
+  position: relative;
+}
+
 .Host {
+  left: 0;
   background-color: black;
   width: 100%;
   height: 100%;
@@ -10,8 +15,13 @@
 .Peer {
   width: 100%;
   height: 100%;
-  border: 10px solid green;
   box-sizing: border-box;
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+}
+
+canvas {
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
   -moz-transform: rotateY(180deg);
