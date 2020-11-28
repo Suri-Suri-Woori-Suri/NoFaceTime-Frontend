@@ -34,23 +34,10 @@ const VideoContainer = ({
   const [isHost, setIsHost] = useState(false);
   const [isJoinedRoom, setIsJoinedRoom] = useState(false);
 
-  const emojis = {
-    default: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg', // '😎',
-    neutral: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/mask_emoji.jpeg', // '🙂',
-    happy: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/happy_emoji.jpeg', // '😀',
-    sad: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/sad_emoji.jpeg', // '😥',
-    angry: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/gun_emoji.jpeg', // '😠',
-    fearful: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/fearful_emoji.jpeg', // '😨',
-    disgusted: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/disgusted_emoji.jpeg', // '🤢',
-    surprised: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/surprised_emoji.jpg', //'😳'
-    noFace: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/emoji-sleep-smiley-emoticon-fatigue-tired.jpg'
-  };
-
   useEffect(() => {
     const fetchToGetRoomHostData = async () => {
       const hostId = await getRoomHost(ROOM_ID);
-      console.log("#####", hostId)
-      console.log(currentUser._id)
+
       if (currentUser._id === hostId) {
         setIsHost(true);
       }
@@ -91,7 +78,6 @@ const VideoContainer = ({
   return (
     !isJoinedRoom
       ? < SettingModal
-        isJoinedRoom={isJoinedRoom}
         setIsJoinedRoom={setIsJoinedRoom}
         videoRef={videoRef}
         toggleAudio={toggleAudio}
@@ -118,7 +104,7 @@ const VideoContainer = ({
 
 const mapStateToProps = (state) => {
   const { userReducer, memberInRoomReducer, messageListReducer } = state;
-  console.log("MEMBER", memberInRoomReducer)
+  console.log("MEMBER", memberInRoomReducer);
   return {
     currentUser: userReducer,
     isLoggedIn: userReducer.isLoggedIn,
