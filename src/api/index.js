@@ -163,18 +163,3 @@ export const sendMailToMembers = async (sender, receiver, roomLink, groupId) => 
 
   return result;
 };;
-
-// export const getMember = async (groupId) => {
-//   const { GET } = API_METHOD;
-//   const response = await fetch(`http://localhost:5000/groups/${groupId}`, {
-//     method: GET,
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     credentials: 'include'
-//   });
-
-//   const data = await response.json();
-//   const { members } = data;
-//   return members;
-// };

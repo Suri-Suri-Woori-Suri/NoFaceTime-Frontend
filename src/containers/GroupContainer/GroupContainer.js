@@ -30,16 +30,15 @@ const GroupContainer = ({
   groupId,
   saveTargetGroupId
 }) => {
-  const [showModal, setShowModal] = useState(false); // 얘랑
+  const [showModal, setShowModal] = useState(false);
   const [showMember, setShowMember] = useState(false);
   const [groupName, setGroupName] = useState('');
-  const [targetGroupId, setTargetGroupId] = useState(null); // 얘랑 리덕스에 들어가야 그룹 리스트 재사용 가능..
+  const [targetGroupId, setTargetGroupId] = useState(null);
   const [checkedGroups, setCheckedGroups] = useState([]);
   const [memberEmail, setMemberEmail] = useState('');
   const [checkedMembers, setCheckedMembers] = useState([]);
   const [newMembers, setNewMembers] = useState([]);
 
-  console.log("TARGET GROUP Id", groupId);
   const onChange = (emailOrId, selectedArray, setSelectedArray) => {
     const selected = selectedArray.indexOf(emailOrId);
 
@@ -166,7 +165,7 @@ const GroupContainer = ({
         {showModal &&
           <ModalContainer
             currentUser={currentUser}
-            addAndUpdateUserState={addAndUpdateUserState}////////  REDUX DISPATCH ADD ROOM
+            addAndUpdateUserState={addAndUpdateUserState}
             setShowModal={setShowModal}
             fetchToCreate={fetchToCreate}
             setNewMembers={setNewMembers}
@@ -208,7 +207,6 @@ const GroupContainer = ({
 
 const mapStateToProps = (state) => {
   const { userReducer, memberInRoomReducer, groupReducer } = state;
-  console.log("mapStateToProps groupReducer", state.groupReducer);
 
   return {
     currentUser: userReducer,

@@ -104,7 +104,7 @@ const VideoContainer = ({
 
 const mapStateToProps = (state) => {
   const { userReducer, memberInRoomReducer, messageListReducer } = state;
-  console.log("MEMBER", memberInRoomReducer);
+
   return {
     currentUser: userReducer,
     isLoggedIn: userReducer.isLoggedIn,
