@@ -104,17 +104,11 @@ const VideoConferenceRoom = ({
         const xCoord = resizedDetections[0]?.detection?._box?._x;
         const yCoord = resizedDetections[0]?.detection?._box?._y;
 
-        console.log("X좌표", xCoord, "Y좌표", yCoord);
-
         detections.forEach(element => {
-          console.log("HERE", element.expressions);
           let status = "";
           let valueStatus = 0.0;
 
           for (const [key, value] of Object.entries(element.expressions)) {
-            console.log(element.expressions, '##', key, value, status);
-            console.log("FACE_STATUS", status);
-
             if (value > valueStatus) {
               status = key;
               valueStatus = value;
@@ -147,10 +141,9 @@ const VideoConferenceRoom = ({
         }
         );
       } else {
-        console.log("No Faces");
-
         const context = canvasRef.current.getContext('2d');
         const img = new Image();
+
         img.src = emojis.noFace;
         context.drawImage(img, 0, 0, 500, 500);
       }
@@ -160,16 +153,16 @@ const VideoConferenceRoom = ({
 
 
   const handleVideoPlay = () => {
-    //setVideoOnplay(true);
     analyzeFace();
   };
 
   useEffect(() => {
     if (!initialized) return;
+
     const useInterval = setInterval(analyzeFace, 5000);
+
     return (() => {
       clearInterval(useInterval);
-      //setVideoOnplay(false);
     });
   }, [videoRef]);
 
@@ -215,18 +208,15 @@ const VideoConferenceRoom = ({
     });
 
     socket.on('user left', ({ socketId }) => {
-      console.log('USER LEFT!!!!!!!', socketId);
-      console.log(peersRef.current);
-      console.log("$$$$$$$", peersRef.current[socketId]);
       deleteLeavingMember(socketId);
       delete peersRef.current[socketId];
 
       setPeers(peers => {
-        console.log("지울거야...", peers);
         const targetPeer = peers.find(peer => peer.peerId === socketId);
-        console.log(targetPeer);
         const rest = peers.filter(peer => peer.peerId !== socketId);
+
         if (targetPeer) targetPeer.peer.destroy();
+
         return [...rest];
       });
     });

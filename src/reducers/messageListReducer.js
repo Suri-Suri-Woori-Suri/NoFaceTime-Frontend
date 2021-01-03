@@ -4,7 +4,6 @@ import {
 } from '../constants/actionTypes';
 
 const messageListReducer = (state = { public: [], secret: [] }, action) => {
-  console.log('reducer,, Add Message');
   switch (action.type) {
     case ADD_MESSAGE:
       return { ...state, public: [...state.public, action.payload] };

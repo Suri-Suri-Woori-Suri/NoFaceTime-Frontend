@@ -1,7 +1,6 @@
 import React from 'react';
+
 import styles from './Chat.module.css';
-// import { socket } from '../../utils/socket';
-//import ScrollToBottom from 'react-scroll-to-bottom';
 import { MENU_MODE } from '../../constants/index';
 
 const Chat = ({
@@ -45,10 +44,7 @@ const Chat = ({
         : <div className={styles.Mode}>QUESTION CHAT </div>
       }
       <div className={styles.ChatBox}>
-        <div className={styles.MessageList}>
-          {console.log("MESSAGELIST", messageList)}
-          {messageList}
-        </div>
+        <div className={styles.MessageList}>{messageList}</div>
         <div className={styles.ChatInputBox}>
           <input
             className={styles.MessageBox}
