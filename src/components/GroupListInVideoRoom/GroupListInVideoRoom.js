@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styles from './GroupListInVideoRoom.module.css';
 
 import { sendMailToMembers } from '../../api';
-//sendMailToMembers = async (sender, receiver, roomLink, groupId)
 import CompleteButton from '../CompleteButton/CompleteButton';
 
 const GroupListInVideoRoom = ({
@@ -57,13 +56,7 @@ const GroupListInVideoRoom = ({
                   {
                     isShowMembers &&
                     group._id === clickedGroupId &&
-                    membersToShow.map((member) => {
-                      return (
-                        <div
-                          onClick={(e) => console.log("E TARGET", e.target)}>
-                          {member}
-                        </div>);
-                    })
+                    membersToShow.map((member) => <div>{member}</div>)
                   }
                 </div>
               </label>

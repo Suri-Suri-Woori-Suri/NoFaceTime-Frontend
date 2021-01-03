@@ -1,7 +1,7 @@
 .Logo {
   display: inline-flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-shadow: -5px 5px 5px grey;
   color: white;
@@ -11,6 +11,13 @@
   font-size: 45px;
   transition: all 0.05s ease-out;
   text-decoration: none;
+  width: 70vw;
+  height: 150px;
+}
+
+.LogoImage {
+  height: 100%;
+  margin-left: 30px;
 }
 
 .letter:hover {

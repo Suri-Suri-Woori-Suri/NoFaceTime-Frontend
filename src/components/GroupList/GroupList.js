@@ -2,9 +2,6 @@ import React from 'react';
 import styles from './GroupList.module.css';
 
 const GroupList = ({
-  //currentUser,
-  //getMemberData, //onGroupItemClick
-  //handleCheckbox
   groups,
   onGroupItemClick,
   onGroupNameClick,
