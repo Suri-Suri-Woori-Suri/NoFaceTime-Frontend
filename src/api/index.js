@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 import { API_METHOD } from '../constants';
-import { SERVER_URL } from '../config/index';
+import SERVER_URL from '../config/index';
 
 export const getUser = async (userId) => {
   const { GET } = API_METHOD;
