@@ -1,6 +1,6 @@
 import { authService, googleProvider } from '../config/firebase';
 import { API_METHOD } from '../constants';
-import { SERVER_URL } from '../config/index';
+import SERVER_URL from '../config/index';
 
 export const signInWithGoogle = () => {
   googleProvider.addScope('email');
