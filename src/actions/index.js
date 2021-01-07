@@ -14,7 +14,6 @@ import {
 } from '../constants/actionTypes';
 
 export const createActionForUserData = (userData) => {
-
   return {
     type: GET_USER_DATA_FROM_DB,
     payload: userData

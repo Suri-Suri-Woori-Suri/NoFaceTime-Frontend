@@ -3,16 +3,22 @@ import { Link } from 'react-router-dom';
 
 import Logo from '../Logo/Logo';
 import ButtonInHeader from '../ButtonInHeader/ButtonInHeader';
+
 import styles from './Header.module.css';
 
-const Header = () => {
+const Header = ({
+  isLoggedIn,
+  updateUserData
+}) => {
   return (
     <div className={styles.Header}>
       <Link to='/'>
         <Logo />
       </Link>
       <Link to='/login'>
-        <ButtonInHeader />
+        <ButtonInHeader
+          isLoggedIn={isLoggedIn}
+          updateUserData={updateUserData} />
       </Link>
     </div>
   );
