@@ -47,7 +47,9 @@ const AppContainer = ({
           isLoggedIn
             ? <>
               <Route exact path='/'>
-                <Header />
+                <Header
+                  isLoggedIn={isLoggedIn}
+                  updateUserData={updateUserData} />
                 <Home />
               </Route>
               <Route path='/login'>
@@ -57,7 +59,9 @@ const AppContainer = ({
                 <RoomContainer />
               </Route>
               <Route path='/groups'>
-                <Header />
+                <Header
+                  isLoggedIn={isLoggedIn}
+                  updateUserData={updateUserData} />
                 <GroupContainer />
               </Route>
               <Route
@@ -68,25 +72,27 @@ const AppContainer = ({
                     currentUser={currentUser}
                     memberInRoom={memberInRoom}
                     joinMember={joinMember}
-                    deleteLeavingMember={deleteLeavingMember}
-                  />}
+                    deleteLeavingMember={deleteLeavingMember} />
+                }
               />
             </>
             : <>
               <Route exact path='/'>
-                <Header />
+                <Header
+                  isLoggedIn={isLoggedIn}
+                  updateUserData={updateUserData} />
                 <Home />
               </Route>
               <Route path='/login'>
-                <Header />
+                <Header
+                  isLoggedIn={isLoggedIn}
+                  updateUserData={updateUserData} />
                 <Login
                   currentUser={currentUser}
                   updateUserData={updateUserData} />
               </Route>
               <Route path='/rooms'>
-                {
-                  checkRoomInvitationLink()
-                }
+                {checkRoomInvitationLink()}
                 <Redirect to='/login' />
               </Route>
               <Route path='/groups'>

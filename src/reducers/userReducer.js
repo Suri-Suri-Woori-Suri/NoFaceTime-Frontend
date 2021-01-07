@@ -17,8 +17,7 @@ const userReducer = (state = initialState, action) => {
     case GET_USER_DATA_FROM_DB:
       return {
         ...state,
-        ...action.payload,
-        isLoggedIn: true
+        ...action.payload
       };
 
     case ADD_ROOM:
