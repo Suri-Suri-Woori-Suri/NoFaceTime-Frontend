@@ -16,7 +16,7 @@ const HostVideo = ({
     host.peer.on("stream", stream => {
       ref.current.srcObject = stream;
     });
-  }, []);
+  }, [hostId, peers]);
 
   return (
     <video

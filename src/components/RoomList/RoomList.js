@@ -16,8 +16,8 @@ const RoomList = ({
       ? currentUser.rooms.map((room) => {
         return (
           <div
+            key={room._id}
             className={styles.RoomEntry}
-            key={room._Id}
             onClick={(e) => enterRoom(e, room.link)}>
             <div className={styles.RoomName}>
               {room.name}
@@ -34,7 +34,7 @@ const RoomList = ({
           </div>
         );
       })
-    : <>{currentUser.rooms}</>
+      : <>{currentUser.rooms}</>
   );
 };
 

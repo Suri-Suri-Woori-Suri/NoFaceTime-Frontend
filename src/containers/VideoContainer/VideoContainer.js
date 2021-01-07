@@ -44,7 +44,7 @@ const VideoContainer = ({
     };
 
     fetchToGetRoomHostData();
-  }, []);
+  }, [ROOM_ID, currentUser._id]);
 
   const videoRef = useRef();
   const streamRef = useRef();
