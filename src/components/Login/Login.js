@@ -13,7 +13,8 @@ const Login = ({ updateUserData }) => {
       const userData = await signInWithGoogle();
       const { loginUserData } = userData;
 
-      updateUserData({ ...loginUserData });
+      updateUserData({ ...loginUserData, isLoggedIn: true });
+
       if (isUserFromMailInvitation) {
         const roomLink = localStorage.roomLink;
 

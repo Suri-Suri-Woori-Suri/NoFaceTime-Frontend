@@ -22,9 +22,11 @@ import { createRoom, deleteRoom } from '../../api';
 import styles from './RoomContainer.module.css';
 
 const RoomContainer = ({
+  isLoggedIn,
   currentUser,
   addRooms,
-  deleteRooms
+  deleteRooms,
+  updateUserData
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [roomName, setRoomName] = useState('');
@@ -70,7 +72,9 @@ const RoomContainer = ({
 
   return (
     <>
-      <Header />
+      <Header
+        isLoggedIn={isLoggedIn}
+        updateUserData={updateUserData} />
       <div className={styles.RoomContainer}>
         <Sidebar />
         <div className={styles.ContentWrap}>
