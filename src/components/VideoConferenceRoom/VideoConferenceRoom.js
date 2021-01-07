@@ -101,9 +101,6 @@ const VideoConferenceRoom = ({
       const context = canvasRef.current.getContext('2d');
 
       if (detections.length > 0) {
-        const xCoord = resizedDetections[0]?.detection?._box?._x;
-        const yCoord = resizedDetections[0]?.detection?._box?._y;
-
         detections.forEach(element => {
           let status = "";
           let valueStatus = 0.0;

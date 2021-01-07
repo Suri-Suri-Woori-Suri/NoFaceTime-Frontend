@@ -14,13 +14,13 @@ const PeerVideo = ({ faceapi, peer, analyzeFace }) => {
       clearInterval(useInterval);
       setInitialized(false);
     });
-  }, [initialized]);
+  }, [initialized, analyzeFace]);
 
   useEffect(() => {
     peer.peer.on("stream", stream => {
       videoRef.current.srcObject = stream;
     });
-  }, []);
+  }, [peer.peer]);
 
   return (
     <div className={styles.PeerVideoWrapper}>
