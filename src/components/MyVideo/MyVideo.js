@@ -14,9 +14,10 @@ const MyVideo = ({
       <video
         className={styles.Host}
         ref={videoRef}
-        mute={audioMuted.toString()}
+        // mute={audioMuted.toString()}
         onPlay={handleVideoPlay}
-        autoPlay />
+        autoPlay
+        data-testid='video' />
     );
   }
 
@@ -25,7 +26,8 @@ const MyVideo = ({
       className={styles.Peer}
       ref={videoRef}
       onPlay={handleVideoPlay}
-      autoPlay />
+      autoPlay
+      data-testid='video' />
   );
 };
 

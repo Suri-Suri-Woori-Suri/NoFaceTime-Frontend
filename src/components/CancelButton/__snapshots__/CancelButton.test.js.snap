@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CancelButton/> matches snapshot 1`] = `
+<CancelButton
+  buttonName="취소"
+  onClick={[MockFunction]}
+>
+  <button
+    className="CancelButton"
+    onClick={[MockFunction]}
+  >
+    취소
+  </button>
+</CancelButton>
+`;

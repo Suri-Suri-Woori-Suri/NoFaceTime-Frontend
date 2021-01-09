@@ -15,7 +15,10 @@ const Home = () => {
         </p>
       </div>
       <div className={styles.ServiceImage}>
-        <img src="https://no-face-time.s3.ap-northeast-2.amazonaws.com/notebook.jpg" alt="notebook" className={styles.NoteBook} />
+        <img
+          src="https://no-face-time.s3.ap-northeast-2.amazonaws.com/notebook.jpg"
+          alt="notebook"
+          className={styles.NoteBook} />
       </div>
     </div>
   );

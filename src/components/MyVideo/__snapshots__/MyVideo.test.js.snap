@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<MyVideo /> matches snapshot 1`] = `
+<MyVideo
+  autioMuted="muted"
+  isHost={true}
+  onPlay={[MockFunction]}
+>
+  <video
+    autoPlay={true}
+    className="Host"
+    data-testid="video"
+  />
+</MyVideo>
+`;

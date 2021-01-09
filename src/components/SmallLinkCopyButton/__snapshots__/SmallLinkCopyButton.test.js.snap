@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SmallLinkCopyButton/> matches snapshot 1`] = `
+<SmallButton
+  buttonName="properly render"
+  clickEventFunction={[MockFunction]}
+  link="https://www.twofacetim.xyz"
+>
+  <button
+    className="SmallLinkCopyButton"
+    id="https://www.twofacetim.xyz"
+    onClick={[Function]}
+    value="https://www.twofacetim.xyz"
+  >
+    properly render
+  </button>
+</SmallButton>
+`;

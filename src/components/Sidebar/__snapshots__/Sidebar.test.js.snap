@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Sidebar/> matches snapshot 1`] = `
+<BrowserRouter>
+  <Router
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "createHref": [Function],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "length": 1,
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
+  >
+    <Sidebar>
+      <div
+        className="SideBar"
+      >
+        <div
+          className="MenuBox"
+        >
+          <Link
+            className="Menu"
+            to="/rooms"
+          >
+            <LinkAnchor
+              className="Menu"
+              href="/rooms"
+              navigate={[Function]}
+            >
+              <a
+                className="Menu"
+                href="/rooms"
+                onClick={[Function]}
+              >
+                Room
+              </a>
+            </LinkAnchor>
+          </Link>
+          <Link
+            className="Menu"
+            to="/groups"
+          >
+            <LinkAnchor
+              className="Menu"
+              href="/groups"
+              navigate={[Function]}
+            >
+              <a
+                className="Menu"
+                href="/groups"
+                onClick={[Function]}
+              >
+                Group
+              </a>
+            </LinkAnchor>
+          </Link>
+        </div>
+      </div>
+    </Sidebar>
+  </Router>
+</BrowserRouter>
+`;
