@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<GroupList/> matches snapshot 1`] = `
+<GroupList
+  groups={
+    Array [
+      Object {
+        "_id": "a",
+        "name": "group1",
+      },
+      Object {
+        "_id": "b",
+        "name": "group2",
+      },
+    ]
+  }
+  handleCheckbox={[MockFunction]}
+  onGroupItemClick={[MockFunction]}
+  onGroupNameClick={[MockFunction]}
+>
+  <div
+    className="GroupList"
+  >
+    <div
+      className="GroupEntry"
+      key="0"
+    >
+      <input
+        onChange={[Function]}
+        type="checkbox"
+      />
+      <div
+        className="GroupName"
+        key="0"
+        onClick={[Function]}
+      >
+        group1
+      </div>
+    </div>
+    <div
+      className="GroupEntry"
+      key="1"
+    >
+      <input
+        onChange={[Function]}
+        type="checkbox"
+      />
+      <div
+        className="GroupName"
+        key="1"
+        onClick={[Function]}
+      >
+        group2
+      </div>
+    </div>
+  </div>
+</GroupList>
+`;

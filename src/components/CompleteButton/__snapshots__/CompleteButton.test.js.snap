@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CompleteButton /> matches snapshot 1`] = `
+<CompleteButton
+  buttonName="완료"
+  onClick={[MockFunction]}
+>
+  <button
+    className="CompleteButton"
+    onClick={[MockFunction]}
+  >
+    완료
+  </button>
+</CompleteButton>
+`;

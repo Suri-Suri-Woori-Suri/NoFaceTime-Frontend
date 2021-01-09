@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<MyRoom/> matches snapshot 1`] = `
+<MyRoom
+  currentUser={
+    Array [
+      Object {
+        "_id": "a",
+        "name": "group1",
+      },
+      Object {
+        "_id": "b",
+        "name": "group2",
+      },
+    ]
+  }
+  enterRoom={[MockFunction]}
+  handleCheckbox={[MockFunction]}
+  popupModal={[MockFunction]}
+>
+  <div
+    className="MyRoom"
+  >
+    <div
+      className="RoomsContainer"
+    >
+      <RoomList
+        currentUser={
+          Array [
+            Object {
+              "_id": "a",
+              "name": "group1",
+            },
+            Object {
+              "_id": "b",
+              "name": "group2",
+            },
+          ]
+        }
+        enterRoom={[MockFunction]}
+      />
+    </div>
+    <button
+      className="AddRoomButton"
+      onClick={[MockFunction]}
+    >
+      Add Room
+    </button>
+  </div>
+</MyRoom>
+`;

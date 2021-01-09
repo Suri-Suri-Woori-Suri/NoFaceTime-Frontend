@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<MenubarButton /> matches snapshot 1`] = `
+<MenubarButton
+  handleClick={[MockFunction]}
+>
+  <button
+    className="MenuButton"
+    key="0"
+    name="PublicChat"
+    onClick={[Function]}
+  >
+    <i
+      className="fas fa-user-friends"
+    />
+    <p
+      className="MenuTitle"
+    >
+      PublicChat
+    </p>
+  </button>
+  <button
+    className="MenuButton"
+    key="1"
+    name="QuestionChat"
+    onClick={[Function]}
+  >
+    <i
+      className="fas fa-chalkboard-teacher"
+    />
+    <p
+      className="MenuTitle"
+    >
+      QuestionChat
+    </p>
+  </button>
+  <button
+    className="MenuButton"
+    key="2"
+    name="ScreenShare"
+    onClick={[Function]}
+  >
+    <i
+      className="fas fa-desktop"
+    />
+    <p
+      className="MenuTitle"
+    >
+      ScreenShare
+    </p>
+  </button>
+  <button
+    className="MenuButton"
+    key="3"
+    name="Students"
+    onClick={[Function]}
+  >
+    <i
+      className="far fa-laugh"
+    />
+    <p
+      className="MenuTitle"
+    >
+      Students
+    </p>
+  </button>
+  <button
+    className="MenuButton"
+    key="4"
+    name="Invite"
+    onClick={[Function]}
+  >
+    <i
+      className="fas fa-user-plus"
+    />
+    <p
+      className="MenuTitle"
+    >
+      Invite
+    </p>
+  </button>
+  <button
+    className="MenuButton"
+    key="5"
+    name="Out"
+    onClick={[Function]}
+  >
+    <i
+      className="fas fa-sign-out-alt"
+    />
+    <p
+      className="MenuTitle"
+    >
+      Out
+    </p>
+  </button>
+</MenubarButton>
+`;

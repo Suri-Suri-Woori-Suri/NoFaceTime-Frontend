@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Home /> matches snapshot 1`] = `
+<BrowserRouter>
+  <Router
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "createHref": [Function],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "length": 1,
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
+  >
+    <Home>
+      <div
+        className="Home"
+      >
+        <div
+          className="ServiceDescription"
+        >
+          <p>
+            <b>
+              Are you there?
+            </b>
+            <br />
+            Check your students
+            <br />
+            in real time through emoji
+          </p>
+        </div>
+        <div
+          className="ServiceImage"
+        >
+          <img
+            alt="notebook"
+            className="NoteBook"
+            src="https://no-face-time.s3.ap-northeast-2.amazonaws.com/notebook.jpg"
+          />
+        </div>
+      </div>
+    </Home>
+  </Router>
+</BrowserRouter>
+`;
