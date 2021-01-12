@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import Peer from "simple-peer";
 import * as faceapi from 'face-api.js';
@@ -14,6 +14,8 @@ import GroupListInVideoRoom from '../GroupListInVideoRoom/GroupListInVideoRoom';
 import { MENU_MODE, FACE_STATUS } from '../../constants/index';
 import { socket } from '../../utils/socket';
 import styles from './VideoConferenceRoom.module.css';
+
+import image from '../../assets/background.png';
 
 const VideoConferenceRoom = ({
   isHost,
@@ -37,7 +39,6 @@ const VideoConferenceRoom = ({
     QUESTION_CHAT } = MENU_MODE;
 
   const {
-    DEFAULT,
     NEUTRAL,
     HAPPY,
     SAD,
@@ -75,7 +76,7 @@ const VideoConferenceRoom = ({
     noFace: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_sleep.png'
   };
 
-  const analyzeFace = () => {
+  const analyzeFace = useCallback(() => {
     setInterval(async () => {
       if (!initialized) return;
       if (!videoRef.current) return;
@@ -145,8 +146,24 @@ const VideoConferenceRoom = ({
         context.drawImage(img, 0, 0, 500, 500);
       }
     }, 5000);
-  };
-
+  }, [
+    ANGRY,
+    DISGUSTED,
+    FEARFUL,
+    HAPPY,
+    NEUTRAL,
+    SAD,
+    SURPRIZED,
+    emojis.angry,
+    emojis.disgusted,
+    emojis.happy,
+    emojis.fearful,
+    emojis.neutral,
+    emojis.noFace,
+    emojis.sad,
+    emojis.surprized,
+    initialized
+  ]);
 
 
   const handleVideoPlay = () => {
@@ -161,7 +178,7 @@ const VideoConferenceRoom = ({
     return (() => {
       clearInterval(useInterval);
     });
-  }, [videoRef]);
+  }, [videoRef, analyzeFace, initialized]);
 
   const startVideo = async () => {
     try {
@@ -221,7 +238,7 @@ const VideoConferenceRoom = ({
     return () => {
       socket.off();
     };
-  }, []);
+  }, [ROOM_ID, _id, deleteLeavingMember, isHost, joinMember, nickname]);
 
 
   useEffect(() => {
@@ -271,7 +288,7 @@ const VideoConferenceRoom = ({
 
     return () => socket.off();
 
-  }, [initialized]);
+  }, [initialized, ROOM_ID, memberInRoom]);
 
   const shareScreen = () => {
     navigator.mediaDevices.getDisplayMedia({ cursor: true })
@@ -311,7 +328,7 @@ const VideoConferenceRoom = ({
       socket.off('message-secret');
     };
 
-  }, [messageList, secretMessageList]);
+  }, [messageList, secretMessageList, addMessage, addSecretMessage, nickname]);
 
   const sendMessagePublic = (event) => {
     event.preventDefault();
@@ -383,6 +400,7 @@ const VideoConferenceRoom = ({
           </div>
         </div>
         <div className={styles.RightSide}>
+          <img src={image} alt="background" className={styles.BackgroundImage} />
           {
             isHost
               ? peers.map((peer, index) => {

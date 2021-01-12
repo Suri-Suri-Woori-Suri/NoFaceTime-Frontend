@@ -4,14 +4,14 @@
   justify-content: flex-start;
   align-items: center;
   width: 95%;
-  height: 65%;
-  border: 1px solid #8e8e93;
+  height: 80%;
+  border: 1px solid #e5eaf5;
   border-radius: 10px;
   font-weight: 250;
-  background-color: whitesmoke;
+  background-color: #e5eaf5;
   box-sizing: border-box;
   overflow: scroll;
-  padding-top: 50px;
+  padding-top: 20px;
 }
 
 .GroupEntry {
@@ -19,20 +19,23 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-
   width: 90%;
-  height: 10%;
+  height: 70px;
   overflow: auto;
   border: 1px solid #c9d3dd;
   border-radius: 10px;
-  background: rgb(255, 245, 188);
+  background: whitesmoke;
   margin: 5px;
-  padding-left: 15px;
+  color: #274ba0;
+  font-family: "Oswald";
+  font-size: 1.2rem;
+  padding-left: 20px;
   box-sizing: border-box;
 }
 
 .GroupEntry:hover {
-  background: rgb(243, 213, 43);
+  background: #ffdc3f;
+  color: rgb(49, 45, 5);
 }
 
 .GroupName {

@@ -33,6 +33,10 @@ const Login = ({ updateUserData }) => {
     <div className={styles.LoginWrap}>
       <div className={styles.Login}>
         <h1>Login</h1>
+        <div>
+          <p>Two Face Time은</p>
+          <p>로그인이 필요합니다.</p>
+        </div>
         <button
           className={styles.GoogleLoginButton}
           onClick={showPopUpToSignIn}>

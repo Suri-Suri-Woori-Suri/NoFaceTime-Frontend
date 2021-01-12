@@ -24,7 +24,7 @@ const RoomList = ({
             </div>
             <div className={styles.Buttons}>
               <SmallLinkCopyButton
-                buttonName="Link Copy"
+                buttonName="Room Link Copy"
                 link={room.link}
                 clickEventFunction={(e) => copyRoomInvitationLink(e)} />
               <CancelButton

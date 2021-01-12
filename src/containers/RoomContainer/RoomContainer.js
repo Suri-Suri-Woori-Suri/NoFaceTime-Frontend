@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import ModalContainer from '../ModalContainer/ModalContainer';
-import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import MyRoom from '../../components/MyRoom/MyRoom';
 
@@ -76,9 +75,10 @@ const RoomContainer = ({
         isLoggedIn={isLoggedIn}
         updateUserData={updateUserData} />
       <div className={styles.RoomContainer}>
-        <Sidebar />
         <div className={styles.ContentWrap}>
-          <h1 className={styles.Title}> Your Rooms </h1>
+          <div className={styles.Title}>
+            🎥  Video Meeting Rooms
+          </div>
           <MyRoom
             currentUser={currentUser}
             enterRoom={enterRoom}

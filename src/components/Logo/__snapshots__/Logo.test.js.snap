@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Logo /> matches snapshot 1`] = `
+<Logo>
+  <div
+    className="Logo"
+  >
+    <img
+      alt="Two Face Time gif"
+      className="LogoImage"
+      src="TwoFaceTime.gif"
+    />
+  </div>
+</Logo>
+`;

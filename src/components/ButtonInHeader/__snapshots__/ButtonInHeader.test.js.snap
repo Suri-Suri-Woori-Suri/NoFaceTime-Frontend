@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ButtonInHeader /> matches snapshot 1`] = `
+<ButtonInHeader
+  isLoggedIn={false}
+  updateUserData={[MockFunction]}
+>
+  <div
+    className="ButtonInHeader"
+  >
+    <button
+      className="Button"
+      onClick={[Function]}
+    >
+      Sign In
+    </button>
+  </div>
+</ButtonInHeader>
+`;
+
+exports[`<ButtonInHeader /> matches snapshot 2`] = `
+<ButtonInHeader
+  isLoggedIn={true}
+  updateUserData={[MockFunction]}
+>
+  <div
+    className="ButtonInHeader"
+  >
+    <button
+      className="Button"
+      onClick={[Function]}
+    >
+      Sign Out
+    </button>
+  </div>
+</ButtonInHeader>
+`;

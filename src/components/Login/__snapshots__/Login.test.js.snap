@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Login /> matches snapshot 1`] = `
+<Login
+  updateUserData={[MockFunction]}
+>
+  <div
+    className="LoginWrap"
+  >
+    <div
+      className="Login"
+    >
+      <h1>
+        Login
+      </h1>
+      <button
+        className="GoogleLoginButton"
+        onClick={[Function]}
+      >
+        Google Login
+      </button>
+    </div>
+  </div>
+</Login>
+`;

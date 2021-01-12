@@ -10,13 +10,15 @@ const MyVideo = ({
 }) => {
 
   if (isHost) {
+    console.log("AUDIOMUTED", audioMuted, audioMuted.toString());
     return (
       <video
         className={styles.Host}
         ref={videoRef}
-        mute={audioMuted.toString()}
+        muted={audioMuted}
         onPlay={handleVideoPlay}
-        autoPlay />
+        autoPlay
+        data-testid='video' />
     );
   }
 
@@ -25,7 +27,8 @@ const MyVideo = ({
       className={styles.Peer}
       ref={videoRef}
       onPlay={handleVideoPlay}
-      autoPlay />
+      autoPlay
+      data-testid='video' />
   );
 };
 
