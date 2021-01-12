@@ -23,7 +23,6 @@ const MenuBar = ({
     const targetName = e.currentTarget.name;
 
     switch (targetName) {
-
       case PUBLIC_CHAT:
         return setMode(PUBLIC_CHAT);
 

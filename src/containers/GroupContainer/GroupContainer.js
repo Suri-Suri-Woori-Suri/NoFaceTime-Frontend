@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import ModalContainer from '../ModalContainer/ModalContainer';
 import Group from '../../components/Group/Group';
-import Sidebar from '../../components/Sidebar/Sidebar';
 
 import {
   createActionForUserData,
@@ -100,7 +99,7 @@ const GroupContainer = ({
         onChange={changeGroupName}
       />
       <input
-        className={`${styles.Input} ${styles.InputMember}`}
+        className={styles.Input}
         type='text'
         placeholder='Add Member'
         value={memberEmail}
@@ -148,7 +147,6 @@ const GroupContainer = ({
     setShowMember(true);
   };
 
-  const title = showMember ? 'Member' : 'Your Groups';
   const fetchToDelete = showMember ? fetchToDeletemembers : fetchToDeleteGroups;
   const fetchToCreate = showMember ? fetchToAddMember : fetchTocreateGroup;
   const modalContent = showMember ? addMemberModal : createGroupModal;
@@ -168,13 +166,27 @@ const GroupContainer = ({
             addAndUpdateUserState={addAndUpdateUserState}
             setShowModal={setShowModal}
             fetchToCreate={fetchToCreate}
-            setNewMembers={setNewMembers}
-          >{modalContent}
+            setNewMembers={setNewMembers}>
+            {modalContent}
           </ModalContainer>
         }
-        <Sidebar />
         <div className={styles.ContentWrapper}>
-          <h1 className={styles.Title}>{title}</h1>
+          <div className={styles.Title}>
+            {
+              showMember
+                ? <div className={styles.MemberTitleWrapper}>
+                  <div className={styles.BackButtonWrapper}>
+                    <button
+                      className={styles.BackButton}
+                      onClick={() => { setShowMember(false); }}>
+                      Back to Group List
+                    </button>
+                  </div>
+                  <div className={styles.MemberTitle}> 👩🏻‍ 👨🏻 Manage Members In Group</div>
+                </div>
+                : '🏠 Manage Your Groups'
+            }
+          </div>
           <div className={styles.Group}>
             <div className={styles.ButtonWrapper}>
               <button
@@ -192,14 +204,12 @@ const GroupContainer = ({
               targetGroupId={targetGroupId}
               currentUser={currentUser}
               showMember={showMember}
-              setShowMember={setShowMember}
               getMemberData={getMemberData}
               handleCheckbox={handleCheckbox}
               saveTargetGroupId={saveTargetGroupId}
             />
           </div>
         </div>
-
       </div>
     </>
   );

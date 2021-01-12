@@ -1,5 +1,4 @@
 .Chat {
-  /* text-align: center; */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -7,6 +6,8 @@
   align-items: center;
   width: 100%;
   height: 100%;
+  background-color: whitesmoke;
+  border-radius: 10px;
 }
 
 .ChatBox {
@@ -40,6 +41,38 @@
   align-items: center;
   width: 100%;
   height: 10%;
+  font-family: "Oswald";
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.NotMyMessage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  align-self: flex-start;
+  width: 50%;
+  height: 100px;
+  margin: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 20px;
+  box-sizing: border-box;
+}
+
+.Nickname {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
+  height: 30px;
+  border-radius: 30px;
+  background-color: white;
+  margin: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .ChatInputBox {
@@ -66,15 +99,37 @@
   padding-left: 10px;
 }
 
+.MyMessageWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.AnswerDescription {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  padding-right: 5px;
+  margin-top: 15px;
+}
+
+.AnswerDescription > p {
+  color: #1a3064;
+  height: 10px;
+  font-size: 8px;
+  margin-bottom: -1px;
+}
+
 .MyMessage {
   background-color: rgb(254, 225, 2);
   border: 1px solid grey;
   box-sizing: border-box;
   display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-  /* width: 90%; */
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
   height: 30px;
   margin: 5px;
   padding-left: 10px;
@@ -83,19 +138,32 @@
 }
 
 .Message {
+  position: relative;
   background-color: rgb(170, 170, 170);
-  border: 5px solid grey;
+  border: 1px solid grey;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  width: 90%;
+  text-align: center;
   height: 30px;
-  margin: 5px;
+  margin-top: 5px;
+  margin-left: 15px;
   padding-left: 10px;
   padding-right: 10px;
   border-radius: 20px;
+}
+
+.Message:after {
+  border-top: 0px solid transparent;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 10px solid rgb(170, 170, 170);
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 10px;
 }
 
 .SendButton {
@@ -104,22 +172,19 @@
   justify-content: center;
   align-items: center;
   width: 80px;
-  height: 30px;
-  padding: 0px 10px 0px 10px;
-  background: #1180f1;
+  height: 40px;
+  background: #274ba0;
   color: #ffffff;
-  border-color: #1180f1;
+  border-color: #274ba0;
   border-width: 1px;
   border-style: solid;
   border-radius: 20px 20px 20px 20px;
-  font-family: "Open Sans";
-  font-weight: 700;
-  font-size: 0.8rem;
+  font-family: "Oswald";
+  font-weight: 500;
+  font-size: 1rem;
   text-align: center;
-  box-shadow: 0px 5px 10px grey;
 }
 
 .SendButton:hover {
-  transform: translateY(0.5px);
-  box-shadow: 0px 4px 5px grey;
+  transform: translateY(2px);
 }

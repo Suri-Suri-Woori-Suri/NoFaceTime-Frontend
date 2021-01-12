@@ -4,7 +4,6 @@ import styles from './MemberList.module.css';
 const MemberList = ({
   currentUser,
   targetGroupId,
-  setShowMember,
   handleCheckbox
 }) => {
   const targetGroup = currentUser.groups.filter(group => group._id === targetGroupId)[0];
@@ -23,17 +22,9 @@ const MemberList = ({
   });
 
   return (
-    <>
-      <div className={styles.MemberList}>
-        {existMemberList}
-      </div>
-      <button
-        className={styles.BackButton}
-        onClick={() => {
-          setShowMember(false);
-        }}>Go Back
-      </button>
-    </>
+    <div className={styles.MemberList}>
+      {existMemberList}
+    </div>
   );
 };
 

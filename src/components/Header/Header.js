@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import Logo from '../Logo/Logo';
 import ButtonInHeader from '../ButtonInHeader/ButtonInHeader';
+import Sidebar from '../Sidebar/Sidebar';
 
 import styles from './Header.module.css';
 
@@ -15,11 +16,14 @@ const Header = ({
       <Link to='/'>
         <Logo />
       </Link>
-      <Link to='/login'>
-        <ButtonInHeader
-          isLoggedIn={isLoggedIn}
-          updateUserData={updateUserData} />
-      </Link>
+      <div className={styles.MenuInHeder}>
+        <Sidebar />
+        <Link to='/login'>
+          <ButtonInHeader
+            isLoggedIn={isLoggedIn}
+            updateUserData={updateUserData} />
+        </Link>
+      </div>
     </div>
   );
 };

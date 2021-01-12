@@ -10,11 +10,12 @@ const MyVideo = ({
 }) => {
 
   if (isHost) {
+    console.log("AUDIOMUTED", audioMuted, audioMuted.toString());
     return (
       <video
         className={styles.Host}
         ref={videoRef}
-        // mute={audioMuted.toString()}
+        muted={audioMuted}
         onPlay={handleVideoPlay}
         autoPlay
         data-testid='video' />

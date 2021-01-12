@@ -4,7 +4,9 @@
   justify-content: center;
   align-items: center;
   width: 100vw;
-  height: 80vh;
+  height: calc(100vh - 150px);
+  /* background-color: #e5eaf5; */
+  background-color: whitesmoke;
 }
 
 .Login {
@@ -12,11 +14,12 @@
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
-  width: 20vw;
-  height: 50vh;
+  width: calc(max(300px, 20vw));
+  height: calc(max(500px, 50vh));
   background-color: whitesmoke;
   border-radius: 3%;
   box-shadow: 0px 10px 25px grey;
+  font-family: "Oswald";
 }
 
 .GoogleLoginButton {
@@ -28,9 +31,9 @@
   min-width: 100px;
   height: 40px;
   padding: 0px 10px 0px 10px;
-  background: #1180f1;
+  background: #274ba0;
   color: #ffffff;
-  border: 1px solid #1180f1;
+  border: 1px solid #274ba0;
   border-radius: 20px 20px 20px 20px;
   font-family: "Open Sans";
   font-weight: 700;
