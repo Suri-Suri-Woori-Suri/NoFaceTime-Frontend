@@ -3,19 +3,20 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 85%;
-  height: 60px;
+  width: 90%;
+  height: 70px;
   font-weight: 500;
   border: 1px solid #c9d3dd;
   border-radius: 10px;
-  background: rgb(255, 245, 188);
+  background: whitesmoke;
+  color: #274ba0;
+  font-family: "Oswald";
   box-sizing: border-box;
   margin: 5px;
 }
 
 .RoomEntry:hover {
   background: #ffdc3f;
-  font-weight: 900;
   color: rgb(49, 45, 5);
 }
 

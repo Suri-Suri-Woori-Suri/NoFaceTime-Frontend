@@ -4,23 +4,21 @@
   justify-content: center;
   align-items: center;
 
-  width: 100px;
+  width: 150px;
   height: 40px;
-  padding: 0px 10px 0px 10px;
-  background: #1180f1;
+
+  background: #274ba0;
   color: #ffffff;
-  border-color: #1180f1;
+  border-color: #274ba0;
   border-width: 1px;
   border-style: solid;
   border-radius: 20px 20px 20px 20px;
-  font-family: "Open Sans";
-  font-weight: 700;
+  font-family: "Oswald";
+  font-weight: 500;
   font-size: 1rem;
   text-align: center;
-  box-shadow: 0px 5px 10px grey;
 }
 
 .SmallLinkCopyButton:hover {
-  transform: translateY(0.5px);
-  box-shadow: 0px 4px 5px grey;
+  transform: translateY(2px);
 }

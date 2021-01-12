@@ -5,7 +5,6 @@ import MemberList from '../MemberList/MemberList';
 const Group = ({
   currentUser,
   showMember,
-  setShowMember,
   getMemberData,
   handleCheckbox,
   targetGroupId,
@@ -18,7 +17,6 @@ const Group = ({
         <MemberList
           currentUser={currentUser}
           targetGroupId={targetGroupId}
-          setShowMember={setShowMember}
           handleCheckbox={handleCheckbox} />
         :
         <GroupList

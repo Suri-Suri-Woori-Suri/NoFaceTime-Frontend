@@ -40,8 +40,7 @@ const ModalContainer = ({
               onClick={closeModal} />
             <CompleteButton
               buttonName={'Create'}
-              onClick={handleClickButton}
-            />
+              onClick={handleClickButton} />
           </div>
         </div>
       </div>
