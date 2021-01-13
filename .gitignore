@@ -8,6 +8,11 @@
 # testing
 /coverage
 
+#cypress
+/cypress.json
+/cypress.env.json
+/serviceAccount.json
+
 # production
 /build
 
@@ -22,3 +27,4 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
