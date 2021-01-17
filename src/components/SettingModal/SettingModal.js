@@ -1,32 +1,59 @@
-import React from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
+
 import CompleteButton from '../CompleteButton/CompleteButton';
 import styles from './SettingModal.module.css';
-import MyVideo from '../MyVideo/MyVideo';
 
 const SettingModal = ({
-  isJoinedRoom,
   setIsJoinedRoom,
-  videoRef,
   toggleAudio,
-  isHost,
   audioMuted
 }) => {
+  const videoRef = useRef();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      } catch (err) {
+        console.error("Can't Start Video in Setting", err);
+      }
+    })();
+  }, []);
+
+  const handleJoinButtonClick = useCallback(() => {
+    const stream = videoRef.current.srcObject;
+    const tracks = stream.getTracks();
+
+    tracks.forEach((track) => {
+      track.stop();
+    });
+
+    videoRef.current.srcObject = null;
+    setIsJoinedRoom(true);
+  }, [setIsJoinedRoom]);
 
   return (
     <div className={styles.SettingModalBackground}>
       <div className={styles.SettingModal}>
         <div className={styles.VideoWrapper}>
-          <MyVideo isJoinedRoom={isJoinedRoom} isHost={isHost} videoRef={videoRef} audioMuted={audioMuted}/>
+          <video
+            className={styles.Video}
+            ref={videoRef}
+            muted={audioMuted}
+            autoPlay />
         </div>
         <div className={styles.Mute}>
           <label>
             <input
+              className={styles.Checkbox}
               type="checkbox"
               onChange={toggleAudio} />
             Mute
           </label>
         </div>
-        <CompleteButton buttonName='Join' onClick={() => setIsJoinedRoom(true)} />
+        <CompleteButton buttonName='Join' onClick={handleJoinButtonClick} />
       </div>
     </div>
   );

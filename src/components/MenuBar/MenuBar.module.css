@@ -1,4 +1,4 @@
-.MenuBar {
+.MenuBarWrapper {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -10,7 +10,7 @@
   box-sizing: border-box;
 }
 
-.MenuButton {
+.MenuBar {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -18,15 +18,22 @@
   width: 80px;
   height: 80px;
   border-radius: 15px;
-  background-color: #e5eaf5;
-  border: 1px solid #e5eaf5;
 }
 
-.MenuButton:hover {
-  background-color: #274ba0;
-  border: 1px solid #274ba0;
-  color: whitesmoke;
-  font-weight: 500;
+.Muted {
+  background-color: grey;
+}
+
+.Muted:hover {
+  background-color: green;
+}
+
+.MicOn {
+  background-color: green;
+}
+
+.MicOn:hover {
+  background-color: grey;
 }
 
 .MenuTitle {
