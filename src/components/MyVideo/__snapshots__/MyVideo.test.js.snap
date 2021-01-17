@@ -6,10 +6,23 @@ exports[`<MyVideo /> matches snapshot 1`] = `
   isHost={true}
   onPlay={[MockFunction]}
 >
-  <video
-    autoPlay={true}
-    className="Host"
-    data-testid="video"
-  />
+  <div
+    className="Wrapper"
+  >
+    <video
+      autoPlay={true}
+      className="Host"
+      data-testid="video"
+      height={375}
+      playsInline={true}
+      poster="https://two-face-time.s3.ap-northeast-2.amazonaws.com/background-image/loading.png"
+      width={500}
+    />
+    <canvas
+      className="Canvas"
+      height={375}
+      width={500}
+    />
+  </div>
 </MyVideo>
 `;

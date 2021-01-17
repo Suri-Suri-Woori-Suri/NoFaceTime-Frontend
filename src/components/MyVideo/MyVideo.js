@@ -1,34 +1,32 @@
 import React from 'react';
 import styles from './MyVideo.module.css';
+import { BACKGROUND_IMG } from '../../constants';
 
 const MyVideo = ({
   isHost,
   videoRef,
   canvasRef,
-  audioMuted,
-  handleVideoPlay
+  isMuted
 }) => {
-
-  if (isHost) {
-    console.log("AUDIOMUTED", audioMuted, audioMuted.toString());
-    return (
-      <video
-        className={styles.Host}
-        ref={videoRef}
-        muted={audioMuted}
-        onPlay={handleVideoPlay}
-        autoPlay
-        data-testid='video' />
-    );
-  }
-
   return (
-    <video
-      className={styles.Peer}
-      ref={videoRef}
-      onPlay={handleVideoPlay}
-      autoPlay
-      data-testid='video' />
+    <div className={styles.Wrapper}>
+      <video
+        className={isHost ? styles.Host : styles.Peer}
+        ref={videoRef}
+        muted={isMuted}
+        width={500}
+        height={375}
+        poster={BACKGROUND_IMG.LOADING}
+        autoPlay
+        playsInline
+        data-testid='video'
+      />
+      <canvas
+        ref={canvasRef}
+        className={styles.Canvas}
+        width={500}
+        height={375} />
+    </div>
   );
 };
 

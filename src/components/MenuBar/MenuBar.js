@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import MenubarButton from '../MenubarButton/MenubarButton';
 import { MENU_MODE } from '../../constants/index';
 import styles from './MenuBar.module.css';
 
 const MenuBar = ({
-  audioMuted,
+  isMuted,
   toggleAudio,
-  stopVideo,
+  onClickOutButton,
   setMode
 }) => {
   const {
@@ -19,7 +19,7 @@ const MenuBar = ({
     SCREEN_SHARE,
     QUESTION_CHAT } = MENU_MODE;
 
-  const handleClick = (e) => {
+  const handleMenubarButtonClick = useCallback((e) => {
     const targetName = e.currentTarget.name;
 
     switch (targetName) {
@@ -36,31 +36,32 @@ const MenuBar = ({
         return setMode(INVITE);
 
       case OUT:
-        stopVideo();
-        window.history.back();
-        return;
+        return setMode(OUT);
 
       default:
         return setMode(STUDENTS);
     }
-  };
+  }, []);
 
   return (
-    <div className={styles.MenuBar}>
-      <button className={styles.MenuButton} name={MIC} onClick={toggleAudio}>
+    <div className={styles.MenuBarWrapper}>
+      <button
+        className={isMuted ? `${styles.MenuBar} ${styles.Muted}` : `${styles.MenuBar} ${styles.MicOn}`}
+        name={MIC}
+        onClick={toggleAudio}>
         {
-          !audioMuted
+          !isMuted
             ? <>
               <i className="fas fa-microphone"></i>
               <p className={styles.MenuTitle}>Mic</p>
             </>
             : <>
               <i className="fas fa-microphone-slash"></i>
-              <p className={styles.MenuTitle}>Mute</p>
+              <p className={styles.MenuTitle}>Muted</p>
             </>
         }
       </button>
-      <MenubarButton handleClick={handleClick} />
+      <MenubarButton handleClick={handleMenubarButtonClick} />
     </div >
   );
 };

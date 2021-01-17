@@ -62,17 +62,17 @@ export const createActionToDeleteMembers = (groupId, arrayOfEmail) => {
   };
 };
 
-export const createActionToJoinMembersInRoom = (obj) => {
+export const createActionToJoinMembersInRoom = (members) => {
   return {
     type: JOIN_ROOM,
-    payload: obj
+    payload: members
   };
 };
 
-export const createActionToDeleteMembersInRoom = (members) => {
+export const createActionToDeleteMembersInRoom = (socketId) => {
   return {
     type: LEAVE_ROOM,
-    payload: members
+    payload: socketId
   };
 };
 

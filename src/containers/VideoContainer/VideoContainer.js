@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import SettingModal from '../../components/SettingModal/SettingModal';
 import VideoConferenceRoom from '../../components/VideoConferenceRoom/VideoConferenceRoom';
@@ -30,60 +30,29 @@ const VideoContainer = ({
   addMessage,
   addSecretMessage
 }) => {
-  const ROOM_ID = location.pathname.split('/').pop();
+  const roomId = location.pathname.split('/').pop();
   const [isHost, setIsHost] = useState(false);
   const [isJoinedRoom, setIsJoinedRoom] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+
+  const toggleAudio = useCallback(() => {
+    setIsMuted(!isMuted);
+  }, [isMuted]);
 
   useEffect(() => {
-    const fetchToGetRoomHostData = async () => {
-      const hostId = await getRoomHost(ROOM_ID);
+    (async () => {
+      const hostId = await getRoomHost(roomId);
 
-      if (currentUser._id === hostId) {
-        setIsHost(true);
-      }
-    };
-
-    fetchToGetRoomHostData();
-  }, [ROOM_ID, currentUser._id]);
-
-  const videoRef = useRef();
-  const streamRef = useRef();
-  const [audioMuted, setAudioMuted] = useState(false);
-
-  useEffect(() => {
-    const startVideo = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-        videoRef.current.srcObject = stream;
-        streamRef.current = stream;
-      }
-      catch (err) {
-        console.error(err);
-      }
-    };
-
-    startVideo();
-  }, []);
-
-  const toggleAudio = () => {
-    if (streamRef.current) {
-      streamRef.current
-        .getAudioTracks()
-        .forEach(track => track.enabled = audioMuted);
-    }
-
-    setAudioMuted(!audioMuted);
-  };
+      if (currentUser._id === hostId) setIsHost(true);
+    })();
+  }, [roomId, currentUser._id]);
 
   return (
     !isJoinedRoom
       ? < SettingModal
         setIsJoinedRoom={setIsJoinedRoom}
-        videoRef={videoRef}
         toggleAudio={toggleAudio}
-        isHost={isHost}
-        audioMuted={audioMuted}
-      />
+        isMuted={isMuted} />
       :
       <VideoConferenceRoom
         location={location}
@@ -96,9 +65,8 @@ const VideoContainer = ({
         addSecretMessage={addSecretMessage}
         secretMessageList={secretMessageList}
         deleteLeavingMember={deleteLeavingMember}
-        audioMuted={audioMuted}
-        setAudioMuted={setAudioMuted}
-      />
+        isMuted={isMuted}
+        toggleAudio={toggleAudio} />
   );
 };
 
@@ -128,7 +96,6 @@ const mapDispatchToProps = (dispatch) => {
     addMessage: (message) => { dispatch(createActionToAddMessage(message)); },
     addSecretMessage: (message) => { dispatch(createActionToSecretMessage(message)); },
     saveTargetGroupId: (groupId) => { dispatch(createActionToSaveTargetGroupId(groupId)); }
-
   };
 };
 
