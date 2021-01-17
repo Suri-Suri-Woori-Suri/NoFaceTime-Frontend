@@ -1,22 +1,22 @@
 import React from 'react';
-
 import styles from './Home.module.css';
+import { BACKGROUND_IMG } from '../../constants';
 
 const Home = () => {
   return (
     <div className={styles.Home}>
       <div className={styles.ServiceDescription}>
         <p>
-          <b>Are you there?</b>
+          <b>Enjoy</b>
           <br />
-          Check your students
+          your vedeo meeting
           <br />
-          in real time through emoji
+          with emojis
         </p>
       </div>
       <div className={styles.ServiceImage}>
         <img
-          src="https://no-face-time.s3.ap-northeast-2.amazonaws.com/notebook.jpg"
+          src={BACKGROUND_IMG.NOTEBOOK}
           alt="notebook"
           className={styles.NoteBook} />
       </div>

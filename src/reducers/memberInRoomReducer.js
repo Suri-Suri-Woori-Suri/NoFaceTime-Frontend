@@ -9,8 +9,15 @@ const memberInRoomReducer = (state = {}, action) => {
       return { ...state, ...action.payload };
 
     case LEAVE_ROOM:
-      delete state[action.payload];
-      return state;
+      const newState = {};
+
+      for (const socketId in state) {
+        if (socketId !== action.payload) {
+          newState[socketId] = state[socketId];
+        }
+      }
+
+      return newState;
 
     default:
       return state;

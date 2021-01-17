@@ -1,21 +1,19 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Peer from "simple-peer";
-import * as faceapi from 'face-api.js';
 
 import Logo from '../Logo/Logo';
 import MenuBar from '../MenuBar/MenuBar';
-import PeerVideo from '../PeerVideo/PeerVideo';
 import Chat from '../../components/Chat/Chat';
 import MyVideo from '../../components/MyVideo/MyVideo';
 import HostVideo from '../../components/HostVideo/HostVideo';
+import PeerVideoWrapper from '../PeerVideoWrapper/PeerVideoWrapper';
 import GroupListInVideoRoom from '../GroupListInVideoRoom/GroupListInVideoRoom';
 
-import { MENU_MODE, FACE_STATUS } from '../../constants/index';
+import { MENU_MODE, SOCKET_EVENT, BACKGROUND_IMG } from '../../constants';
 import { socket } from '../../utils/socket';
+import { getStream } from '../../utils';
+import { loadModels, analyzeFacialExpression, clearAnalyzeFacialExpression } from '../../utils/face-api';
 import styles from './VideoConferenceRoom.module.css';
-
-import image from '../../assets/background.png';
 
 const VideoConferenceRoom = ({
   isHost,
@@ -28,448 +26,501 @@ const VideoConferenceRoom = ({
   addSecretMessage,
   secretMessageList,
   deleteLeavingMember,
-  audioMuted,
-  setAudioMuted
+  isMuted,
+  toggleAudio
 }) => {
-  const {
-    INVITE,
-    STUDENTS,
-    PUBLIC_CHAT,
-    SCREEN_SHARE,
-    QUESTION_CHAT } = MENU_MODE;
-
-  const {
-    NEUTRAL,
-    HAPPY,
-    SAD,
-    ANGRY,
-    DISGUSTED,
-    FEARFUL,
-    SURPRIZED
-  } = FACE_STATUS;
-
+  const { INVITE, STUDENTS, PUBLIC_CHAT, QUESTION_CHAT, SCREEN_SHARE, OUT } = MENU_MODE;
+  const members = Object.values(memberInRoom);
+  const currentVideoRoomId = location.pathname.split('/').pop();
   const { _id, nickname } = currentUser;
-  const ROOM_ID = location.pathname.split('/').pop();
+  const userId = _id;
+
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [isLoadedModels, setIsLoadedModels] = useState(false);
 
   const [mode, setMode] = useState(STUDENTS);
-  const [peers, setPeers] = useState([]);
-  const [streamForShare, setStreamForShare] = useState();
+  const [stream, setStream] = useState('');
+  const [mySocketId, setMysocketId] = useState('');
+  const [hostSocketId, setHostSocketId] = useState('');
+  const [peers, setPeers] = useState({});
+  const [intervalName, setIntervalName] = useState([]);
+  const [socketIdAndIntervalName, setSocketIdAndIntervalName] = useState({});
+  const [message, setMessage] = useState('');
+  const [sendTo, setSendTo] = useState('');
+  const [targetMessage, setTargetMessage] = useState([]);
+  const [isNewMember, setIsNewMember] = useState(false);
+  const [leftMemberSocketId, setLeftMemberSocektId] = useState('');
 
-  const videoRef = useRef();
-  const streamRef = useRef();
-  const canvasRef = useRef();
-  const peersRef = useRef({});
+  const myVideoRef = useRef();
+  const myCanvasRef = useRef();
+  const peersVideoRef = useRef({});
   const rightSideRef = useRef();
 
-  const [initialized, setInitialized] = useState(false);
-  const [hostId, setHostId] = useState('');
-
-  const emojis = {
-    default: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_sleep.png',
-    neutral: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_kennim.png',
-    happy: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_happy_emoji.png',
-    sad: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_sad_emoji.png',
-    angry: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_angry2_emoji.png',
-    fearful: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_fearful_emoji.png',
-    disgusted: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_disgusted_emoji.png',
-    surprised: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_apple_surprised.png',
-    noFace: 'https://no-face-time.s3.ap-northeast-2.amazonaws.com/Emoji/png_sleep.png'
-  };
-
-  const analyzeFace = useCallback(() => {
-    setInterval(async () => {
-      if (!initialized) return;
-      if (!videoRef.current) return;
-      if (!canvasRef.current) return;
-
-      canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
-
-      const displaySize = {
-        width: 500,
-        height: 500
-      };
-
-      faceapi.matchDimensions(canvasRef.current, displaySize);
-
-      const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
-      const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
-      canvasRef.current.getContext('2d').clearRect(0, 0, 500, 500);
-      faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-      faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
-      faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
-
-      const context = canvasRef.current.getContext('2d');
-
-      if (detections.length > 0) {
-        detections.forEach(element => {
-          let status = "";
-          let valueStatus = 0.0;
-
-          for (const [key, value] of Object.entries(element.expressions)) {
-            if (value > valueStatus) {
-              status = key;
-              valueStatus = value;
-            }
-          }
-
-          const { _x, _y } = resizedDetections[0].detection._box;
-          const _width = resizedDetections[0].landmarks.imageWidth;
-          const _height = resizedDetections[0].landmarks.imageHeight;
-
-          const img = new Image();
-
-          if (status === NEUTRAL) {
-            img.src = emojis.neutral;
-          } else if (status === HAPPY) {
-            img.src = emojis.happy;
-          } else if (status === SAD) {
-            img.src = emojis.sad;
-          } else if (status === ANGRY) {
-            img.src = emojis.angry;
-          } else if (status === DISGUSTED) {
-            img.src = emojis.disgusted;
-          } else if (status === FEARFUL) {
-            img.src = emojis.fearful;
-          } else if (status === SURPRIZED) {
-            img.src = emojis.surprized;
-          }
-
-          context.drawImage(img, _x * 0.5, _y * 0.5, _width * 2, _height * 2);
-        }
-        );
-      } else {
-        const context = canvasRef.current.getContext('2d');
-        const img = new Image();
-
-        img.src = emojis.noFace;
-        context.drawImage(img, 0, 0, 500, 500);
-      }
-    }, 5000);
-  }, [
-    ANGRY,
-    DISGUSTED,
-    FEARFUL,
-    HAPPY,
-    NEUTRAL,
-    SAD,
-    SURPRIZED,
-    emojis.angry,
-    emojis.disgusted,
-    emojis.happy,
-    emojis.fearful,
-    emojis.neutral,
-    emojis.noFace,
-    emojis.sad,
-    emojis.surprized,
-    initialized
-  ]);
-
-
-  const handleVideoPlay = () => {
-    analyzeFace();
-  };
-
-  useEffect(() => {
-    if (!initialized) return;
-
-    const useInterval = setInterval(analyzeFace, 5000);
-
-    return (() => {
-      clearInterval(useInterval);
-    });
-  }, [videoRef, analyzeFace, initialized]);
-
-  const startVideo = async () => {
+  const init = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-      videoRef.current.srcObject = stream;
-      streamRef.current = stream;
+      const stream = await getStream(isMuted);
+      myVideoRef.current.srcObject = stream;
+      myVideoRef.current.play();
 
-      setStreamForShare(stream);
-      setInitialized(true);
-    }
-    catch (err) {
+      setStream(stream);
+      setIsStreaming(true);
+    } catch (err) {
       console.error(err);
     }
-  };
+  }, [isMuted]);
 
-  useEffect(() => {
-    const loadModels = () => {
-      const MODEL_URL = process.env.PUBLIC_URL + '/faceApiModels';
+  const handleStreamSuccess = useCallback(() => {
+    init();
+    setMode(STUDENTS);
+  }, [init, STUDENTS]);
 
-      Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
-      ]).then(startVideo());
-    };
-    loadModels();
+  const handleStreamError = useCallback((err) => {
+    console.error("stream error", err);
   }, []);
 
+  const handleScreenShareButtonClick = useCallback(() => {
+    navigator.mediaDevices.getDisplayMedia({ video: true })
+      .then(stream => {
+        myVideoRef.current.srcObject = stream;
+        stream.getVideoTracks()[0].addEventListener('ended', handleStreamSuccess, handleStreamError);
+      }).catch(err => {
+        setMode(STUDENTS);
+        handleStreamError(err);
+      });
+  }, [STUDENTS, handleStreamSuccess, handleStreamError]);
+
+  // const handleRoomExitButtonClick = useCallback(() => {
+  //   //clearFaceDetectionInterval(result);
+  //   clearAnalyzeFacialExpression(result);
+  //   setIntervalName(null);
+  //   setIsStreaming(false);
+
+  //   const stream = myVideoRef.current.srcObject;
+  //   const tracks = stream.getTracks();
+
+  //   tracks.forEach((track) => {
+  //     console.log("TRACKS", tracks);
+  //     track.stop();
+  //     track.enabled = false;
+  //   });
+
+  //   myVideoRef.current.srcObject = null;
+
+  //   socket.emit(SOCKET_EVENT.LEAVE_ROOM);
+  //   window.history.back();
+  // }, []);
+
+  // useEffect(() => {
+
+  // }, []);
+
+  // const clearFaceDetectionInterval = useCallback((arr) => {
+  //   clearAnalyzeFacialExpression(arr);
+  // }, []);
+
+  // const sendMessagePublic = useCallback(() => {
+  //   if (!message) return;
+
+  //   const data = { text: message, from: nickname };
+
+  //   socket.emit(SOCKET_EVENT.MESSAGE_PUBLIC, data, () => {
+  //     setMessage('');
+  //     addMessage(data);
+  //   });
+  // }, [message, nickname, addMessage]);
+
+  // const sendMessageSecretly = useCallback(() => {
+  //   if (!message) return;
+
+  //   const data = { text: message, from: nickname, to: sendTo };
+
+  //   setMessage('');
+  //   addSecretMessage(data);
+  //   socket.emit(SOCKET_EVENT.MESSAGE_SECRET, data);
+  // }, [message, nickname, sendTo, addSecretMessage]);
 
   useEffect(() => {
-    socket.emit('join-room', { roomId: ROOM_ID, userId: _id, nickname, isHost });
+    init();
+  }, [init]);
 
-    socket.on('joined', ({ members, host }) => {
-      joinMember(members);
-      setHostId(host);
+  useEffect(() => {
+    if (!isStreaming) return;
+
+    loadModels();
+    setIsLoadedModels(true);
+  }, [isStreaming]);
+
+  useEffect(() => {
+    if (!isStreaming || !isLoadedModels) return;
+
+    const canvas = {
+      canvasRef: myCanvasRef,
+      width: myCanvasRef.current.width,
+      height: myCanvasRef.current.height
+    };
+
+    const video = {
+      videoRef: myVideoRef,
+      width: myVideoRef.current.width,
+      height: myVideoRef.current.height
+    };
+
+    analyzeFacialExpression(canvas, video, setIntervalName);
+    setIsLoadedModels(false);
+  }, [isStreaming, isLoadedModels, stream, intervalName]);
+
+  useEffect(() => {
+    if (!isStreaming) return;
+
+    socket.emit(SOCKET_EVENT.JOIN_ROOM, {
+      roomId: currentVideoRoomId,
+      userId,
+      nickname,
+      isHost
     });
 
-    socket.on('joined-newMember', newMember => {
+    socket.on(SOCKET_EVENT.DUPLICATE, () => {
+      alert(' 이미 다른 방에 입장해있습니다!');
+      //handleRoomExitButtonClick();
+      setMode(OUT);
+    });
+
+    socket.on(SOCKET_EVENT.JOIN_MYSELF, ({ members, hostSocketId, mySocketId }) => {
+      joinMember(members);
+
+      setHostSocketId(hostSocketId);
+      setMysocketId(mySocketId);
+      setIsNewMember(true);
+    });
+
+    socket.on(SOCKET_EVENT.JOIN_NEW_MEMBER, ({ newMember }) => {
       joinMember(newMember);
     });
 
-    socket.on('user left', ({ socketId }) => {
-      deleteLeavingMember(socketId);
-      delete peersRef.current[socketId];
+    socket.on(SOCKET_EVENT.MEMBER_LEFT, ({ leftMemberSocketId }) => {
+      delete peersVideoRef.current[leftMemberSocketId];
 
       setPeers(peers => {
-        const targetPeer = peers.find(peer => peer.peerId === socketId);
-        const rest = peers.filter(peer => peer.peerId !== socketId);
+        const { [leftMemberSocketId]: targetPeer, ...restPeers } = peers;
+        if (targetPeer) targetPeer.destroy();
 
-        if (targetPeer) targetPeer.peer.destroy();
-
-        return [...rest];
+        return restPeers;
       });
+      deleteLeavingMember(leftMemberSocketId);
     });
 
-    return () => {
-      socket.off();
-    };
-  }, [ROOM_ID, _id, deleteLeavingMember, isHost, joinMember, nickname]);
+    return (() => {
+      socket.off(SOCKET_EVENT.DUPLICATE);
+      socket.off(SOCKET_EVENT.JOIN_MYSELF);
+      socket.off(SOCKET_EVENT.JOIN_NEW_MEMBER);
 
+      socket.emit(SOCKET_EVENT.LEAVE_ROOM);
+    });
+  }, [
+    isStreaming,
+    userId,
+    nickname,
+    isHost,
+    currentVideoRoomId,
+    joinMember,
+    deleteLeavingMember,
+    //    socketIdAndIntervalName,
+  ]);
+
+  /* peer */
+  useEffect(() => {
+    if (!intervalName[0]) return;
+
+    const socketIdPeers = Object.keys(peers);
+    if (!socketIdPeers.length) return;
+
+
+    const socketIds = Object.keys(socketIdAndIntervalName);
+    const lastIndex = socketIdPeers.length - 1;
+    const socketIdNewPeer = socketIdPeers[lastIndex];
+    if (socketIds.includes(socketIdNewPeer)) return;
+
+    const intervalNames = Object.values(socketIdAndIntervalName);
+    const newIntervalName = intervalName[intervalName?.length - 1];
+    if (intervalNames.includes(newIntervalName)) return;
+
+    const newPeer = { [socketIdNewPeer]: newIntervalName };
+    setSocketIdAndIntervalName({ ...socketIdAndIntervalName, ...newPeer });
+  }, [peers, intervalName]);
+
+  /* host */
+  useEffect(() => {
+    if (!hostSocketId) return;
+    if (!intervalName[0]) return;
+
+    const socketIds = Object.keys(socketIdAndIntervalName);
+    if (socketIds.includes(hostSocketId)) return;
+
+    const intervalNames = Object.values(socketIdAndIntervalName);
+    if ((intervalNames).includes(intervalName)) return;
+
+    const newIntervalName = intervalName[intervalName?.length - 1];
+    const hostSocketIdAndIntervalName = { [hostSocketId]: newIntervalName };
+    setSocketIdAndIntervalName({ ...socketIdAndIntervalName, ...hostSocketIdAndIntervalName });
+  }, [hostSocketId, intervalName]);
+
+  /* my */
+  useEffect(() => {
+    if (!mySocketId) return;
+    if (!intervalName[0]) return;
+
+    const socketIds = Object.keys(socketIdAndIntervalName);
+    if (socketIds.includes(mySocketId)) return;
+
+    const intervalNames = Object.values(socketIdAndIntervalName);
+    if ((intervalNames).includes(intervalName)) return;
+
+    const myIntervalName = intervalName[intervalName?.length - 1];
+    const mySocketIdAndIntervalName = { [mySocketId]: myIntervalName };
+    setSocketIdAndIntervalName({ ...socketIdAndIntervalName, ...mySocketIdAndIntervalName });
+  }, [mySocketId, intervalName]);
 
   useEffect(() => {
-    if (!initialized) return;
+    if (!isNewMember) return;
+    if (!isStreaming || !hostSocketId) return;
 
-    for (let key in memberInRoom) {
-      if (memberInRoom[key].roomId !== ROOM_ID) continue;
+    for (const key in memberInRoom) {
+      const memberSocketId = key;
+
+      if (userId === memberInRoom[key].userId) continue;
 
       const peer = new Peer({
         initiator: true,
         trickle: false,
-        stream: streamRef.current
+        stream: stream
       });
 
       peer.on('signal', signal => {
-        socket.emit('send signal', { signal, to: memberInRoom[key] });
+        socket.emit(SOCKET_EVENT.SEND_SIGNAL_FROM_NEW_MEMBER, { signal, 'receiver': memberSocketId });
       });
 
-      peersRef.current[key] = peer;
-      setPeers(peers => [...peers, { peerId: key, peer }]);
+      peersVideoRef.current[memberSocketId] = peer;
+      setPeers(prev => ({ ...prev, [memberSocketId]: peer }));
     }
 
-    socket.on('return signal', ({ signal, from }) => {
-      const initiator = from;
+    setIsNewMember(false);
+  }, [isNewMember, isStreaming, userId, hostSocketId, memberInRoom, stream]);
 
+  useEffect(() => {
+    if (!isStreaming || !hostSocketId) return;
+    if (isNewMember) return;
+
+    socket.on(SOCKET_EVENT.CONVEY_SIGNAL_FROM_NEW_MEMBER, ({ signal, from }) => {
+      const initiator = from;
       const peer = new Peer({
         initiator: false,
         trickle: false,
-        stream: streamRef.current,
+        stream: stream
       });
 
       peer.signal(signal);
 
       peer.on('signal', signal => {
-        socket.emit('respond signal', { signal, to: initiator });
+        socket.emit(SOCKET_EVENT.SENDBACK_SIGANL_FROM_EXISTING_MEMBER, { signal, 'to': from });
       });
 
-      peersRef.current[initiator.socketId] = peer;
-
-      setPeers(peers => [...peers, { peerId: from.socketId, peer }]);
+      peersVideoRef.current[initiator] = peer;
+      setPeers(prev => ({ ...prev, [initiator]: peer }));
     });
 
-    socket.on('respond signal', ({ signal, from }) => {
-      const targetPeer = peersRef.current[from.socketId];
-      targetPeer.signal(signal);
+    socket.on(SOCKET_EVENT.CONVEY_SIGNAL_FROM_EXISTING_MEMBER, ({ signal, receiver }) => {
+      const peer = peersVideoRef.current[receiver];
+      peer.signal(signal);
     });
 
-    return () => socket.off();
-
-  }, [initialized, ROOM_ID, memberInRoom]);
-
-  const shareScreen = () => {
-    navigator.mediaDevices.getDisplayMedia({ cursor: true })
-      .then(screenStream => {
-        for (let key in peersRef.current) {
-          peersRef.current[key].replaceTrack(streamForShare.getVideoTracks()[0], screenStream.getVideoTracks()[0], streamForShare);
-        }
-        videoRef.current.srcObject = screenStream;
-
-        screenStream.getTracks()[0].onended = () => {
-          for (let key in peersRef.current) {
-            peersRef.current[key].replaceTrack(screenStream.getVideoTracks()[0], streamForShare.getVideoTracks()[0], streamForShare);
-          }
-          videoRef.current.srcObject = streamForShare;
-        };
-      });
-
-    setMode(STUDENTS);
-  };
-
-  const [message, setMessage] = useState('');
-  const [sendTo, setSendTo] = useState('');
-  const targetMessage = mode === PUBLIC_CHAT ? messageList : secretMessageList;
+    return (() => {
+      socket.off(SOCKET_EVENT.CONVEY_SIGNAL_FROM_NEW_MEMBER);
+      socket.off(SOCKET_EVENT.CONVEY_SIGNAL_FROM_EXISTING_MEMBER);
+    });
+  }, [
+    memberInRoom,
+    isStreaming,
+    isNewMember,
+    userId,
+    hostSocketId,
+    stream
+  ]);
 
   useEffect(() => {
-    socket.on('message-public', message => {
+    if (mode === OUT) {
+      const stream = myVideoRef.current.srcObject;
+      const tracks = stream.getTracks();
+
+      tracks.forEach((track) => {
+        track.stop();
+        track.enabled = false;
+      });
+
+      myVideoRef.current.srcObject = null;
+
+      socket.emit(SOCKET_EVENT.LEAVE_ROOM);
+      clearAnalyzeFacialExpression(intervalName);
+      setIsStreaming(false);
+      //setIntervalName([]);
+      window.history.back();
+    }
+  }, [mode, intervalName]);
+
+
+  useEffect(() => {
+    if (!myCanvasRef.current) return;
+
+    if (mode === SCREEN_SHARE) {
+      myCanvasRef.current.style.display = 'none';
+      return handleScreenShareButtonClick();
+    } else {
+      myCanvasRef.current.style.display = 'block';
+    }
+  }, [mode, SCREEN_SHARE, handleScreenShareButtonClick]);
+
+  useEffect(() => {
+    socket.on(SOCKET_EVENT.MESSAGE_PUBLIC, message => {
       addMessage(message);
     });
 
-    socket.on('message-secret', message => {
+    socket.on(SOCKET_EVENT.MESSAGE_SECRET, message => {
       const { from } = message;
       if (from !== nickname) addSecretMessage(message);
     });
 
     return () => {
-      socket.off('message-public');
-      socket.off('message-secret');
+      socket.off(SOCKET_EVENT.MESSAGE_PUBLIC);
+      socket.off(SOCKET_EVENT.MESSAGE_SECRET);
     };
+  }, [
+    messageList,
+    secretMessageList,
+    addMessage,
+    addSecretMessage,
+    nickname
+  ]);
 
-  }, [messageList, secretMessageList, addMessage, addSecretMessage, nickname]);
-
-  const sendMessagePublic = (event) => {
-    event.preventDefault();
+  const sendMessagePublic = () => {
     if (!message) return;
 
     const data = { text: message, from: nickname };
-
-    socket.emit('message-public', data, () => {
-      setMessage('');
-      addMessage(data);
-    });
+    setMessage('');
+    //addMessage(data);
+    socket.emit(SOCKET_EVENT.MESSAGE_PUBLIC, data);
   };
 
-  const sendMessageSecretly = (event) => {
-    event.preventDefault();
+  const sendMessageSecretly = useCallback(() => {
+
     if (!message) return;
+    if (!sendTo) return;
 
     const data = { text: message, from: nickname, to: sendTo };
 
     setMessage('');
-    addSecretMessage(data);
-    socket.emit('message-secret', data);
-  };
-
-  const LeaveAndstopVideo = () => {
-    socket.emit('leave room');
-    videoRef.current.srcObject.getVideoTracks()[0].enabled = false;
-    streamRef.current.getVideoTracks()[0].enabled = false;
-  };
-
-  const sendMessage = mode === PUBLIC_CHAT ? sendMessagePublic : sendMessageSecretly;
-
-  const toggleAudio = () => {
-    if (streamRef.current) {
-      streamRef.current
-        .getAudioTracks()
-        .forEach(track => track.enabled = audioMuted);
-    }
-
-    setAudioMuted(!audioMuted);
-  };
+    // addSecretMessage(data);
+    socket.emit(SOCKET_EVENT.MESSAGE_SECRET, data);
+  }, [sendTo]);
 
   return (
     <div className={styles.VideoConferenceRoom}>
       <div className={styles.LogoWrapper}>
-        <Link to='/'>
-          <Logo />
-        </Link>
+        <Logo />
       </div>
       <div className={styles.Content}>
         <div className={styles.LeftSide}>
           <div className={styles.CanvasOnVideo}>
-            {isHost ?
-              <MyVideo isHost={isHost} videoRef={videoRef} canvasRef={canvasRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} /> :
-              peers.length && <HostVideo peers={peers} hostId={hostId} handleVideoPlay={handleVideoPlay} />
+            {isHost
+              ? <MyVideo
+                isHost={isHost}
+                videoRef={myVideoRef}
+                canvasRef={myCanvasRef}
+                isMuted={isMuted} />
+              : members.map((member, index) => {
+                if (member.socketId === hostSocketId) {
+                  const host = peersVideoRef.current[hostSocketId];
+
+                  return <HostVideo key={index} host={host} setIntervalName={setIntervalName} />;
+                }
+                return null;
+              })
             }
-            <canvas
-              className={styles.Canvas}
-              ref={canvasRef}
-            />
           </div>
           <div className={styles.MenuBar}>
             <MenuBar
-              audioMuted={audioMuted}
-              toggleAudio={toggleAudio}
-              stopVideo={LeaveAndstopVideo}
               setMode={setMode}
-            />
+              isMuted={isMuted}
+              toggleAudio={toggleAudio} />
           </div>
         </div>
         <div className={styles.RightSide}>
-          <img src={image} alt="background" className={styles.BackgroundImage} />
+          <img src={BACKGROUND_IMG.RIGHTSIDE} alt="background" className={styles.BackgroundImage} />
           {
             isHost
-              ? peers.map((peer, index) => {
-                return (
-                  <PeerVideo
-                    calssName={styles.PeerVideo}
-                    faceapi={faceapi}
-                    analyzeFace={analyzeFace}
-                    key={index}
-                    peer={peer} />
-                );
-              })
+              ? <PeerVideoWrapper
+                members={members}
+                peersVideoRef={peersVideoRef}
+                userId={userId}
+                mySocketId={mySocketId}
+                hostSocketId={hostSocketId}
+                setIntervalName={setIntervalName}
+                currentVideoRoomId={currentVideoRoomId} />
               : <>
-                <MyVideo isHost={isHost} videoRef={videoRef} canvasRef={canvasRef} audioMuted={audioMuted} handleVideoPlay={handleVideoPlay} />
-                {
-                  peers.slice(1).map((peer, index) => {
-                    return (
-                      <PeerVideo
-                        className={styles.PeerVideo}
-                        faceapi={faceapi}
-                        analyzeFace={analyzeFace}
-                        key={index}
-                        peer={peer} />
-                    );
-                  })
-                }
+                <MyVideo
+                  isHost={isHost}
+                  videoRef={myVideoRef}
+                  canvasRef={myCanvasRef}
+                  isMuted={isMuted} />
+                <PeerVideoWrapper
+                  members={members}
+                  peersVideoRef={peersVideoRef}
+                  userId={userId}
+                  mySocketId={mySocketId}
+                  hostSocketId={hostSocketId}
+                  setIntervalName={setIntervalName}
+                  currentVideoRoomId={currentVideoRoomId} />
               </>
           }
-          {
-            <div
-              className={`${styles.RightSideInnerOnMode}`}
-              ref={rightSideRef} >
-              {
-                (() => {
-                  switch (mode) {
-                    case PUBLIC_CHAT:
-                    case QUESTION_CHAT:
-                      rightSideRef.current.style.display = "block";
-                      return (
-                        <Chat
-                          mode={mode}
-                          message={message}
-                          nickname={nickname}
-                          setMessage={setMessage}
-                          sendMessage={sendMessage}
-                          targetMessage={targetMessage}
-                          setSendTo={setSendTo} />
-                      );
-                    case SCREEN_SHARE:
-                      rightSideRef.current.style.display = "block";
-                      return shareScreen();
-                    case INVITE:
-                      rightSideRef.current.style.display = "block";
-                      return (
-                        <GroupListInVideoRoom
-                          className={styles.Invite}
-                          groups={currentUser.groups}
-                          sender={currentUser.email} />
-                      );
-                    case STUDENTS:
-                    default:
-                      if (rightSideRef.current) {
-                        rightSideRef.current.style.display = "none";
-                      }
-                  }
-                })()
-              }
-            </div>
-          }
+          <div
+            className={styles.RightSideInnerOnMode}
+            ref={rightSideRef} >
+            {
+              (() => {
+                switch (mode) {
+                  case PUBLIC_CHAT:
+                  case QUESTION_CHAT:
+                    rightSideRef.current.style.display = "block";
+                    return (
+                      <Chat
+                        mode={mode}
+                        message={message}
+                        nickname={nickname}
+                        setMessage={setMessage}
+                        //sendMessage={sendMessage}
+                        //targetMessage={targetMessage}
+                        publicMessage={messageList}
+                        secretMessage={secretMessageList}
+                        sendMessagePublic={sendMessagePublic}
+                        sendMessageSecretly={sendMessageSecretly}
+                        setSendTo={setSendTo} />
+                    );
+                  case SCREEN_SHARE:
+                    rightSideRef.current.style.display = "none";
+                    return;
+                  case INVITE:
+                    rightSideRef.current.style.display = "block";
+                    return (
+                      <GroupListInVideoRoom
+                        className={styles.Invite}
+                        groups={currentUser.groups}
+                        sender={currentUser.email} />
+                    );
+                  case STUDENTS:
+                  default:
+                    if (rightSideRef.current) return rightSideRef.current.style.display = "none";
+                }
+              })()
+            }
+          </div>
         </div>
       </div>
     </div>

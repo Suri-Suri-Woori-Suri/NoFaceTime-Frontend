@@ -1,40 +1,50 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styles from './PeerVideo.module.css';
+import { analyzeFacialExpression } from '../../utils/face-api';
+import { BACKGROUND_IMG } from '../../constants';
 
-const PeerVideo = ({ faceapi, peer, analyzeFace }) => {
+const PeerVideo = ({ peer, setIntervalName }) => {
   const videoRef = useRef();
   const canvasRef = useRef();
-  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    if (!initialized) return;
-    const useInterval = setInterval(analyzeFace, 5000);
+    if (!peer) return;
 
-    return (() => {
-      clearInterval(useInterval);
-      setInitialized(false);
-    });
-  }, [initialized, analyzeFace]);
+    peer.on('stream', stream => {
+      const canvas = {
+        canvasRef,
+        width: canvasRef.current.width,
+        height: canvasRef.current.height,
+      };
 
-  useEffect(() => {
-    peer.peer.on("stream", stream => {
+      const video = {
+        videoRef,
+        width: videoRef.current.width,
+        height: videoRef.current.height
+      };
+
+      analyzeFacialExpression(canvas, video, setIntervalName);
       videoRef.current.srcObject = stream;
     });
-  }, [peer.peer]);
+  }, [peer]);
 
   return (
-    <div className={styles.PeerVideoWrapper}>
+    <div className={styles.Wrapper}>
       <video
-        className={styles.PeerVideo}
         ref={videoRef}
+        className={styles.Video}
+        poster={BACKGROUND_IMG.WAITING_MEMBER}
         autoPlay
         playsInline
-        onPlay={() => setInitialized(true)}
+        width={500}
+        height={375}
       />
       <canvas
-        className={styles.Canvas}
         ref={canvasRef}
-      />
+        className={styles.Canvas}
+        width={500}
+        height={375}>
+      </canvas>
     </div>
   );
 };
