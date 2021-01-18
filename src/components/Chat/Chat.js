@@ -4,25 +4,24 @@ import { MENU_MODE } from '../../constants/index';
 
 const Chat = ({
   mode,
+  nickname,
   message,
   setMessage,
   publicMessage,
   secretMessage,
   sendMessagePublic,
   sendMessageSecretly,
-  nickname,
   setSendTo
 }) => {
   const { PUBLIC_CHAT } = MENU_MODE;
-
   const sendMessage = mode === PUBLIC_CHAT ? sendMessagePublic : sendMessageSecretly;
   const targetMessage = mode === PUBLIC_CHAT ? publicMessage : secretMessage;
-  const handleTextInputKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      sendMessage(e);
-      setMessage('');
-    }
 
+  const handleTextInputKeyPress = (e) => {
+    if (e.key !== 'Enter') return;
+
+    sendMessage(e);
+    setMessage('');
     return;
   };
 
@@ -31,6 +30,7 @@ const Chat = ({
     setMessage('');
     return;
   };
+
 
   const messageList = targetMessage.map((message, index) => {
     const { from, text, to } = message;
@@ -50,9 +50,9 @@ const Chat = ({
           </div>
         )
         : (
-          <div className={styles.NotMyMessage}>
+          <div key={index} className={styles.NotMyMessage}>
             <div className={styles.Nickname}>{from}</div>
-            <div key={index} className={styles.Message} onClick={() => setSendTo(from)}>
+            <div className={styles.Message} onClick={() => setSendTo(from)}>
               <p className={styles.text}>{text}</p>
             </div>
           </div>
