@@ -47,9 +47,7 @@ const VideoConferenceRoom = ({
   const [socketIdAndIntervalName, setSocketIdAndIntervalName] = useState({});
   const [message, setMessage] = useState('');
   const [sendTo, setSendTo] = useState('');
-  const [targetMessage, setTargetMessage] = useState([]);
   const [isNewMember, setIsNewMember] = useState(false);
-  const [leftMemberSocketId, setLeftMemberSocektId] = useState('');
 
   const myVideoRef = useRef();
   const myCanvasRef = useRef();
@@ -89,55 +87,24 @@ const VideoConferenceRoom = ({
       });
   }, [STUDENTS, handleStreamSuccess, handleStreamError]);
 
-  // const handleRoomExitButtonClick = useCallback(() => {
-  //   //clearFaceDetectionInterval(result);
-  //   clearAnalyzeFacialExpression(result);
-  //   setIntervalName(null);
-  //   setIsStreaming(false);
+  const sendMessagePublic = () => {
+    if (!message) return;
 
-  //   const stream = myVideoRef.current.srcObject;
-  //   const tracks = stream.getTracks();
+    const data = { text: message, from: nickname };
+    setMessage('');
 
-  //   tracks.forEach((track) => {
-  //     console.log("TRACKS", tracks);
-  //     track.stop();
-  //     track.enabled = false;
-  //   });
+    socket.emit(SOCKET_EVENT.MESSAGE_PUBLIC, data);
+  };
 
-  //   myVideoRef.current.srcObject = null;
+  const sendMessageSecretly = () => {
+    if (!message) return;
 
-  //   socket.emit(SOCKET_EVENT.LEAVE_ROOM);
-  //   window.history.back();
-  // }, []);
+    const data = { text: message, from: nickname, to: sendTo };
+    setMessage('');
+    addSecretMessage(data);
 
-  // useEffect(() => {
-
-  // }, []);
-
-  // const clearFaceDetectionInterval = useCallback((arr) => {
-  //   clearAnalyzeFacialExpression(arr);
-  // }, []);
-
-  // const sendMessagePublic = useCallback(() => {
-  //   if (!message) return;
-
-  //   const data = { text: message, from: nickname };
-
-  //   socket.emit(SOCKET_EVENT.MESSAGE_PUBLIC, data, () => {
-  //     setMessage('');
-  //     addMessage(data);
-  //   });
-  // }, [message, nickname, addMessage]);
-
-  // const sendMessageSecretly = useCallback(() => {
-  //   if (!message) return;
-
-  //   const data = { text: message, from: nickname, to: sendTo };
-
-  //   setMessage('');
-  //   addSecretMessage(data);
-  //   socket.emit(SOCKET_EVENT.MESSAGE_SECRET, data);
-  // }, [message, nickname, sendTo, addSecretMessage]);
+    socket.emit(SOCKET_EVENT.MESSAGE_SECRET, data);
+  };
 
   useEffect(() => {
     init();
@@ -181,7 +148,6 @@ const VideoConferenceRoom = ({
 
     socket.on(SOCKET_EVENT.DUPLICATE, () => {
       alert(' 이미 다른 방에 입장해있습니다!');
-      //handleRoomExitButtonClick();
       setMode(OUT);
     });
 
@@ -224,10 +190,8 @@ const VideoConferenceRoom = ({
     currentVideoRoomId,
     joinMember,
     deleteLeavingMember,
-    //    socketIdAndIntervalName,
   ]);
 
-  /* peer */
   useEffect(() => {
     if (!intervalName[0]) return;
 
@@ -248,7 +212,6 @@ const VideoConferenceRoom = ({
     setSocketIdAndIntervalName({ ...socketIdAndIntervalName, ...newPeer });
   }, [peers, intervalName]);
 
-  /* host */
   useEffect(() => {
     if (!hostSocketId) return;
     if (!intervalName[0]) return;
@@ -264,7 +227,6 @@ const VideoConferenceRoom = ({
     setSocketIdAndIntervalName({ ...socketIdAndIntervalName, ...hostSocketIdAndIntervalName });
   }, [hostSocketId, intervalName]);
 
-  /* my */
   useEffect(() => {
     if (!mySocketId) return;
     if (!intervalName[0]) return;
@@ -361,11 +323,9 @@ const VideoConferenceRoom = ({
       socket.emit(SOCKET_EVENT.LEAVE_ROOM);
       clearAnalyzeFacialExpression(intervalName);
       setIsStreaming(false);
-      //setIntervalName([]);
       window.history.back();
     }
   }, [mode, intervalName]);
-
 
   useEffect(() => {
     if (!myCanvasRef.current) return;
@@ -384,8 +344,7 @@ const VideoConferenceRoom = ({
     });
 
     socket.on(SOCKET_EVENT.MESSAGE_SECRET, message => {
-      const { from } = message;
-      if (from !== nickname) addSecretMessage(message);
+      addSecretMessage(message);
     });
 
     return () => {
@@ -399,27 +358,6 @@ const VideoConferenceRoom = ({
     addSecretMessage,
     nickname
   ]);
-
-  const sendMessagePublic = () => {
-    if (!message) return;
-
-    const data = { text: message, from: nickname };
-    setMessage('');
-    //addMessage(data);
-    socket.emit(SOCKET_EVENT.MESSAGE_PUBLIC, data);
-  };
-
-  const sendMessageSecretly = useCallback(() => {
-
-    if (!message) return;
-    if (!sendTo) return;
-
-    const data = { text: message, from: nickname, to: sendTo };
-
-    setMessage('');
-    // addSecretMessage(data);
-    socket.emit(SOCKET_EVENT.MESSAGE_SECRET, data);
-  }, [sendTo]);
 
   return (
     <div className={styles.VideoConferenceRoom}>
@@ -492,11 +430,9 @@ const VideoConferenceRoom = ({
                     return (
                       <Chat
                         mode={mode}
-                        message={message}
                         nickname={nickname}
+                        message={message}
                         setMessage={setMessage}
-                        //sendMessage={sendMessage}
-                        //targetMessage={targetMessage}
                         publicMessage={messageList}
                         secretMessage={secretMessageList}
                         sendMessagePublic={sendMessagePublic}
