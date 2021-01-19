@@ -9,29 +9,125 @@ Two Face Time은 얼굴을 인식하고 표정을 분석해 그에 맞는 이모
 ## 🔍 Contents
 
 - Introduction
+- Installation
 - Features
 - Tech
+- Collaboration Tools for Team project
 - Motivation
 - Duration and Process
 - Challenges
 - Troubleshoooting
 - Things to do
-- Links
-- 프로젝트를 마치며
 - Who participated
+- Links
 
 ---
 
-## 📱 Features
+## 💿 Installation
 
-|                     Feature                     | Image |
-| :---------------------------------------------: | :---: |
-|         Google Login을 통해 서비스 이용         |       |
-|          Group별로 초대 메일 발송 기능          |       |
-|                Public Chat 기능                 |       |
-|               Question Chat 기능                |       |
-|                ScreenShare 기능                 |       |
-| 화면의 '얼굴'을 인식해 이모티콘이 띄워지는 기능 |       |
+### Requirements
+
+- 최신 버전의 크롬 브라우저 사용을 권장합니다.
+- 마이크 / 카메라 접근 권한이 필요합니다.
+- [Firebase] Firebase API Config key
+- [Nodemailer] Nodemailer에서 사용할 메일 주소 및 비밀번호
+- [MongoDB] MongoDB 주소
+- [Open SSL] Open SSL을 통해 생성한 key
+
+### Frontend
+
+```js
+git clone https://github.com/twofacetime/frontend
+cd frontend
+code .
+npm install
+npm start
+```
+
+Two Face Time은 Firebase를 이용한 Social Login(구글)이 구현되어 있습니다.
+이를 위해 Firebase 프로젝트가 필요합니다.
+
+- Firebase 접속 후, 프로젝트 추가
+- 생성 된 프로젝트의 설정으로 이동
+- 아래와 같은 Firebase SDK snippet 내 firebaseConfig를 복사
+
+```js
+  var firebaseConfig = {
+    apiKey:<Your Firebase API Key>,
+    authDomain: <Your Firebase Auth Domain>,
+    databaseURL: <Your Firebase Database URL>,
+    projectId:<Your Firebase Project ID>,
+    storageBucket:<Your Firebase Storage Bucket>,
+    messagingSenderId: <Your Firebase Messaging Sender ID>
+    appId: <Your Firebase App ID>
+  };
+```
+
+Root 디렉토리에 .env 파일을 생성하여 복사한 항목들을 다음과 같이 입력하여 줍니다.
+환경변수의 값은 입력 시, ""를 입력하지 않습니다.
+
+```js
+REACT_APP_API_KEY=<Your Firebase API Key>
+REACT_APP_AUTH_DOMAIN=<Your Firebase Auth Domain>
+REACT_APP_DATABASE_URL=<Your Firebase Database URL>
+REACT_APP_PROJECT_ID=<Your Firebase Project ID>
+REACT_APP_STORAGE_BUCKET=<Your Firebase Storage Bucket>
+REACT_APP_MESSAGING_SENDER_ID=<Your Firebase Messaging Sender ID>
+REACT_APP_APP_ID=<Your Firebase App ID>
+
+```
+
+추가적으로 필요한 환경변수는 다음과 같습니다. 로컬 환경에서 서버로 사용할 주소를 다음과 같이 입력하세요.
+
+```js
+REACT_APP_EDITOR=atom
+REACT_APP_PROXY_URL=<Your local server address>
+REACT_APP_SERVER_URL=<Your local server address>
+
+```
+
+로컬 환경의 서버 주소를 package.json파일의 'proxy'키의 값으로도 넣어줍니다.
+
+```js
+  ...
+  "proxy": <Your local server address>,
+  ...
+```
+
+### Backend
+
+```js
+git clone https://github.com/twofacetime/backend
+cd backend
+code .
+npm install
+npm start
+```
+
+Root 디렉토리에 .env 파일을 생성합니다.
+JWT_SECRET_KEY에는 JWT token 생성에 필요한 랜덤한 secret key를 입력합니다.
+MONGO_URI에는 Database로 사용할 MongoDB URI를 입력합니다.
+Member들에게 초대 메일을 보낼 메일 주소와 그 계정의 비밀번호를 입력하여 줍니다.
+
+```js
+JWT_SECRET_KEY=<Your JWT Secret Key>
+MONGO_URI=<Your Mongo DB URI>
+NODE_MAILER_ID=<Your Email Address>
+NODE_MAILER_PASSWORD=<Your Emaill Address Password>
+```
+
+---
+
+## 🎥 Features
+
+|                     Feature                     |                                 Image                                  |
+| :---------------------------------------------: | :--------------------------------------------------------------------: |
+|         Google Login을 통해 서비스 이용         |                                                                        |
+|          Group별로 초대 메일 발송 기능          |                                                                        |
+|                Public Chat 기능                 |                                                                        |
+|               Question Chat 기능                |                                                                        |
+|                ScreenShare 기능                 |                                                                        |
+| 화면의 '얼굴'을 인식해 이모티콘이 띄워지는 기능 | <img src='./src/assets/two-face-time-features-emoji.gif' width='300'/> |
 
 ---
 
@@ -133,15 +229,11 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 
 ## 🌋 Challenges
 
-#### &nbsp;
-
 ### &nbsp; 1. state 관리를 위한 Redux의 늦은 도입
 
 &nbsp; 프로젝트 기획 단계에서 이번 프로젝트는 Redux를 이용해 상태 관리를 할 필요가 없다고 생각 하였습니다. 그런데 프로젝트가 진행 될수록 상위에서 하위 컴포넌트로 넘겨줘야 하는 props들이 생각보다 너무 많아져, container의 필요성을 느끼게 되었습니다. 그렇게 프로젝트 10일차가 되던 11월 18일, Redux를 도입하게 되고 그동안 작성한 모든 코드들을 전면적으로 Refactoring 하게 되었습니다. 이미 Backend에 DB schema를 통해 일정한 형태로 데이터를 저장하고 주고 받고 있는 상황에서 Redux를 도입하다 보니 reducer 함수를 작성할 때 특히, 힘들었던 것 같습니다.
 
 &nbsp; 기획 단계에서 신중하게 생각하지 않는다면 프로젝트가 진행되는 중간에 예기치 못한 딜레이가 발생할 수 있다는 것을 몸소 느낀 경험이었습니다.
-
-#### &nbsp;
 
 #### &nbsp;
 
@@ -152,8 +244,6 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 &nbsp; 이 문제를 해결하기 위해서 처음 시도했던 방법은 document.referrer나 history를 이용해 ‘이전 URL’을 찾는 것이었습니다. 만약 ‘이전 URL’이 '메일함'인지 알 수 있다면 이 user를 초대 링크를 타고 온 user라고 판단할 수 있다고 생각했습니다. 하지만 초대 링크가 눌려지면 새로운 창이 열리면서 들어오기 때문에 history 추적이 되지 않다는 것을 알게 되었고 다른 방법을 찾아야 했습니다.
 
 &nbsp; 초대 링크를 받고 들어 온 user와 일반 user를 판별할 수 있는 방법이 ‘이전 URL’ 뿐일까를 고민하다가 ‘어떤 URL을 입력하여서 진입하였는지를 확인해보면 되겠다'는 생각에 이르렀습니다. 먼저, ‘react-router-dom’의 ‘useRouteMatch’ hook을 활용해 서비스에 진입하는 모든 user들이 어떠한 URL로 진입하였는지를 체크해 보았습니다. 가정대로 초대 링크를 받고 들어 온 user와 일반 user를 구분지을 수 있었습니다. 이렇게 validation 과정을 만들고 만약 고유한 Room link로 진입한 user가 있다면 그 Room Link는 로그인 성공 후, redirect 시켜주기 위해서 localStorage에 저장시켰습니다. 로그인에 성공했을 경우, localStorage에 저장된 라우트로 history.push 시켜 초대 링크를 받아 들어온 user를 로그인 후 해당 room으로 redirect 시킬 수 있게 되었습니다.
-
-#### &nbsp;
 
 #### &nbsp;
 
@@ -173,12 +263,10 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 
 ## 📂 Things to do
 
-<ul style="list-style:none">
-  <li style="text-decoration:line-through"><input type='checkbox' checked> Frontend Test</input></li>
-  <li style="text-decoration:line-through"><input type='checkbox' checked> Backend Test</input></li>
-  <li style="text-decoration:line-through"><input type='checkbox' checked> Cypress를 이용한 E2E Test</input></li>
-  <li><input type='checkbox'> 다자간 영상 연결 시, stream 안정화</input></li>
-</ul>
+- [x] Frontend Test
+- [x] Backend Test
+- [x] Cypress를 이용한 E2E Test
+- [] 다자간 영상 연결 시, stream 안정화
 
 ---
 
@@ -208,7 +296,7 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 <li>[Back] AWS CodePipeline 연결을 통한 Backend 배포 자동화 구현</li>
 <li>[Front, Back] 상수화, 유틸함수화, 로직 분리 등을 포함한 전체적인 리팩토링</li>
 <li> README 작성</li>
-<li> Frontend, Backend Test 작성 및 E2E Test 작성</li>
+<li> Frontend, Backend Test 작성 및 E2E Test 작성</li>
 <li> 개발 일지로 활용한 google docs 및 github repository 관리</li>
 <li> Demo day, presentation 담당</li>
 </ul>
@@ -223,7 +311,7 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 <li>[Front, Back] <b>실시간 채팅을 위한 socket 로직 담당</b></li>
 <li>[Front, Back] Socket.io를 활용한 Public Chat, Question Chat 기능 구현</li>
 <li>[Front, Back] <b>WebRTC, Socket.io, Simple-peer.js를 이용한 실시간 화상 채팅 '전반' 작업</b></li>
-<li><b>[Front] Face-api.js를 이용해 얼굴 인식 후, 표정 분석하는 함수 작성</b></li>
+<li>[Front]<b> Face-api.js를 이용해 얼굴 인식 후, 표정 분석하는 함수 작성</b></li>
 </ul>
 <br>
 공동작업
@@ -256,9 +344,3 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 <a ref="https://lucid.app/lucidchart/invitations/accept/0bc1305f-98bf-4f87-9020-dd7d6afb4bc2">DB Schema in 'LucidChart</a>
 </li>
 </ul>
-
----
-
-## 🦋 프로젝트를 마치며...
-
-####
