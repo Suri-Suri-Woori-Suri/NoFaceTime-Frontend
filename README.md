@@ -2,7 +2,7 @@
 
 ## 😃 Introduction
 
-#### Two Face Time은 화상수업 및 회의에서 얼굴이 그대로 노출되는 것이 부담스럽고 어려운 이들을 위한 '이모티콘' 부착 웹 애플리케이션 입니다.
+#### Two Face Time은 얼굴을 인식하고 표정을 분석해 그에 맞는 이모티콘을 얼굴 위에 띄워주는 '실시간 화상 채팅 웹 애플리케이션'으로 '나의 얼굴과 이모티콘, 2개의 얼굴로 화상 채팅을 한다'는 의미입니다.
 
 ---
 
@@ -41,15 +41,18 @@ Frontend
 <ul>
 <li>React for component-based-architecture</li>
 <li>Redux for state management</li>
-<li>Styled Component</li>
+<li>Css module</li>
 <li>Firebase for social login</li>
 <li>AWS S3 for save image file</li>
 <li>Socket.io</li>
 <li>Web RTC for real time communication</li>
 <li>Jest for unit-test</li>
 <li>Enzyme for component-test</li>
+<li></li>
 </ul>
+
 Backend
+
 <ul>
 <li>Node.js</li>
 <li>Express</li>
@@ -133,31 +136,28 @@ Task Tools
 
 ---
 
+## Troubleshoooting
+
+---
+
 ## 📂 Things to do
 
-<ul>
-<li><input type='checkbox'> Frontend Test</input></li>
-<li><input type='checkbox'> Backend Test</input></li>
-<li><input type='checkbox'> Cypress를 이용한 E2E Test</input></li>
+<ul style="list-style:none">
+  <li style="text-decoration:line-through"><input type='checkbox' checked> Frontend Test</input></li>
+  <li style="text-decoration:line-through"><input type='checkbox' checked> Backend Test</input></li>
+  <li style="text-decoration:line-through"><input type='checkbox' checked> Cypress를 이용한 E2E Test</input></li>
+  <li><input type='checkbox'> 다자간 영상 연결 시, stream 안정화</input></li>
 </ul>
 
 ---
 
-## 🌈 Links
+## 🤝 Collaboration tools
 
-- [Frontend Repo in Github](https://github.com/Suri-Suri-Woori-Suri/TwoFaceTime-Frontend)
+#### git
 
-- [Backend Repo in Github](https://github.com/Suri-Suri-Woori-Suri/TwoFaceTime-Backend)
+#### slack
 
-- [Mockup in Moqups](https://app.moqups.com/SEO7ODTGMx/view/page/a13f1c27d?fit_width=1)
-
-- [Tasks in Trello](https://trello.com/b/ZHl4yPos/tasks)
-
-- [DB Schema in LucidChard](https://lucid.app/lucidchart/invitations/accept/0bc1305f-98bf-4f87-9020-dd7d6afb4bc2)
-
----
-
-## 🦋 프로젝트를 마치며...
+#### google docs
 
 ####
 
@@ -167,17 +167,76 @@ Task Tools
 
 ### Team Name
 
-<ul> 수리수리 우리 수리</ul>
+<ul> 수리수리 우리수리</ul>
 
-### Team Members
+### Team Members and Role
 
 <ul>
-황수정 
+황수정 (dev.crystalhwang@gmail.com)
 <ul>
-<li>email : crystal.hwang007@gmail.com</li>
+<li>[Front] CRA(create-react-app)를 이용한 Frontend 초기 세팅</li>
+<li>[Front] Firebase를 이용한 Social Login(Google) 기능 담당</li>
+<li>[Front] 초대 링크를 통해 들어오는 Member들을 해당 Room으로 Redirection 시키는 기능 구현</li>
+<li>[Front] CSS module을 이용한 서비스 레이아웃 및 디자인 </li>
+<li>[Front] Logo를 포함한 서비스 내 필요한 이미지 생성</li>
+<li>[Front] AWS S3에 이모티콘을 포함한 서비스 내 이미지를 저장 및 사용 </li>
+<li>[Back] Nodemailer를 이용한 그룹 내 멤버들에게 초대 보내는 기능 구현</li>
+<li>[Front, Back] <b>WebRTC, Socket.io, Simple-peer.js를 이용한 실시간 화상 채팅 '후반' 작업</b></li>
+<li>[Frontend]<b> Face-api.js와 canvas를 활용해 모든 참여자들의 얼굴 위에 이모티콘을 띄우는 기능 구현</b></li>
+<li>[Back] Backend controller 로직 담당</li>
+<li>[Back] Backend service 로직 담당</li>
+<li>[Back] AWS CodePipeline 연결을 통한 Backend 배포 자동화 구현</li>
+<li>[Front, Back] 상수화, 유틸함수화, 로직 분리 등을 포함한 전체적인 리팩토링</li>
+<li> README 작성</li>
+<li> Frontend, Backend Test 작성 및 E2E Test 작성</li>
+<li> 개발 일지로 활용한 google docs 및 github repository 관리</li>
+<li> Demo day, presentation 담당</li>
 </ul>
-한우리
+한우리 (wrh95222@gamil.com)
 <ul>
-<li>email : wrh95222@gmail.com </li>
+<li>[Back] Express를 활용한 Backend 초기 세팅</li>
+<li>[Back] Database로 이용한 MongoDB 연결 및 초기 세팅</li>
+<li>[Front] Room 생성 및 Video Setting 시 필요한 Modal 구현 </li>
+<li>[Front] Group List, Member List 생성 및 삭제 등의 관리 기능 구현 </li>
+<li>[Front, Back] openSSL을 이용한 https로의 접근 해결</li>
+<li>[Front, Back] <b>실시간 채팅을 위한 socket 로직 담당</b></li>
+<li>[Front, Back] Socket.io를 활용한 Public Chat, Question Chat 기능 구현</li>
+<li>[Front, Back] <b>WebRTC, Socket.io, Simple-peer.js를 이용한 실시간 화상 채팅 '전반' 작업</b></li>
+<li><b>[Front] Face-api.js를 이용해 얼굴 인식 후, 표정 분석하는 함수 작성</b></li>
 </ul>
+공동작업
+<ul>
+<li>프로젝트 기획, 'moqups'에 mockup 제작, 'Trello'에 task 작성, 'LucidChart'에 DB schema 설계</li>
+<li>'Netlify'를 통한 Frontend 배포</li>
+<li>'AWS ElasticBeanstalk'을 통한 Backend 배포</li>
 </ul>
+</>
+
+---
+
+## 🌈 Links
+
+<ul style="list-style:none">
+<li>
+<a ref="https://github.com/twofacetime/frontend">Frontend Repository </a>
+</li>
+<li>
+<a ref="https://github.com/twofacetime/backend">Backend Repository </a>
+</li>
+<br>
+<li>
+<a ref="https://app.moqups.com/SEO7ODTGMx/view/page/a13f1c27d?fit_width=1">Mockup in 'Moqups' </a>
+</li>
+<li>
+<a ref="https://trello.com/b/ZHl4yPos/tasks">Tasks in 'Trello' </a>
+</li>
+<li>
+<a ref="https://lucid.app/lucidchart/invitations/accept/0bc1305f-98bf-4f87-9020-dd7d6afb4bc2">DB Schema in 'LucidChart</a>
+</li>
+</ul>
+
+---
+
+## 🦋 프로젝트를 마치며...
+
+####
