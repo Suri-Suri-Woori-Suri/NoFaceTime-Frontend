@@ -32,7 +32,7 @@ Two Face Time은 얼굴을 인식하고 표정을 분석해 그에 맞는 이모
 - [Firebase] Firebase API Config key
 - [Nodemailer] Nodemailer에서 사용할 메일 주소 및 비밀번호
 - [MongoDB] MongoDB 주소
-- [Open SSL] Open SSL을 통해 생성한 key
+- [openSSL] openSSL을 통해 생성한 key
 
 ### Frontend
 
@@ -120,47 +120,47 @@ NODE_MAILER_PASSWORD=<Your Emaill Address Password>
 
 ## 🎥 Features
 
-|                     Feature                     |                                 Image                                  |
-| :---------------------------------------------: | :--------------------------------------------------------------------: |
-|         Google Login을 통해 서비스 이용         |                                                                        |
-|          Group별로 초대 메일 발송 기능          |                                                                        |
-|                Public Chat 기능                 |                                                                        |
-|               Question Chat 기능                |                                                                        |
-|                ScreenShare 기능                 |                                                                        |
-| 화면의 '얼굴'을 인식해 이모티콘이 띄워지는 기능 | <img src='./src/assets/two-face-time-features-emoji.gif' width='300'/> |
+|                                                 Feature                                                 |                          Image                          |
+| :-----------------------------------------------------------------------------------------------------: | :-----------------------------------------------------: |
+|                                     Google Login을 통해 서비스 이용                                     | <img src='./src/assets/feature-login.gif' width='300'/> |
+|                                      Group별로 초대 메일 발송 기능                                      |                                                         |
+|                                            Public Chat 기능                                             |                                                         |
+|                                           Question Chat 기능                                            |                                                         |
+|                                            ScreenShare 기능                                             |                                                         |
+| 화면의 '얼굴'을 인식해 이모티콘이 띄워지는 기능. <br>얼굴이 인식되지 않을 때는 '전체화면'에 🤖 이모티콘 | <img src='./src/assets/feature-emoji.gif' width='300'/> |
 
 ---
 
 ## 💻 Tech
 
 <ul>
-Frontend 
-<ul>
-<li>ES2015+</li>
-<li>React for component-based-architecture</li>
-<li>Redux for state management</li>
-<li>module CSS for layout and design</li>
-<li>Firebase for social login</li>
-<li>AWS S3 for image files like logo and emojis</li>
-<li>Web RTC for real time communication</li>
-<li>Socket.io</li>
-<li>Simple-peer.js for detection face
-<li>Jest for unit-test</li>
-<li>Enzyme for component-test</li>
-<li>Testing-library/react </li>
-<li>Cypress for E2E Test </li>
-
-</ul>
-<br>
-Backend
-<ul>
-<li>Node.js</li>
-<li>Express</li>
-<li>MongoDB / MongoDB Atlas for data persistence</li>
-<li>Moongoose</li>
-<li>Nodemailer to send invitation mail for members  </li>
-<li>Chai / Mocha / SuperTest for unit-test</li>
-<li>AWS CodePipeline for automated release process</li>
+  Frontend 
+  <ul>
+    <li>ES2015+</li>
+    <li>React for component-based-architecture</li>
+    <li>Redux for state management</li>
+    <li>module CSS for layout and design</li>
+    <li>Firebase for social login</li>
+    <li>AWS S3 for image files like logo and emojis</li>
+    <li>Web RTC for real time communication</li>
+    <li>Socket.io</li>
+    <li>Simple-peer.js for detection face
+    <li>Jest for unit-test</li>
+    <li>Enzyme for component-test</li>
+    <li>Testing-library/react </li>
+    <li>Cypress for E2E Test </li>
+  </ul>
+  <br>
+  Backend
+  <ul>
+    <li>Node.js</li>
+    <li>Express</li>
+    <li>MongoDB / MongoDB Atlas for data persistence</li>
+    <li>Moongoose</li>
+    <li>Nodemailer to send invitation mail for members  </li>
+    <li>Chai / Mocha / SuperTest for unit-test</li>
+    <li>AWS CodePipeline for automated release process</li>
+  </ul>
 </ul>
 
 ---
@@ -257,7 +257,7 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 
 ## 🔥 Troubleshoooting
 
-현재, 3명 이상의 연결이 불안정한 상태입니다.
+21년 1월 현재, 3명 이상의 연결이 불안정한 상태입니다.
 
 ---
 
@@ -266,7 +266,7 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 - [x] Frontend Test
 - [x] Backend Test
 - [x] Cypress를 이용한 E2E Test
-- [] 다자간 영상 연결 시, stream 안정화
+- [ ] 다자간 영상 연결 시, stream 안정화
 
 ---
 
@@ -327,20 +327,20 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 ## 🌈 Links
 
 <ul style="list-style:none">
-<li>
-<a ref="https://github.com/twofacetime/frontend">Frontend Repository </a>
-</li>
-<li>
-<a ref="https://github.com/twofacetime/backend">Backend Repository </a>
-</li>
-<br>
-<li>
-<a ref="https://app.moqups.com/SEO7ODTGMx/view/page/a13f1c27d?fit_width=1">Mockup in 'Moqups' </a>
-</li>
-<li>
-<a ref="https://trello.com/b/ZHl4yPos/tasks">Tasks in 'Trello' </a>
-</li>
-<li>
-<a ref="https://lucid.app/lucidchart/invitations/accept/0bc1305f-98bf-4f87-9020-dd7d6afb4bc2">DB Schema in 'LucidChart</a>
-</li>
+  <li>
+    <a href="https://github.com/twofacetime/frontend">Frontend Repository </a>
+  </li>
+  <li>
+    <a href="https://github.com/twofacetime/backend">Backend Repository </a>
+  </li>
+  <br>
+  <li>
+    <a href="https://app.moqups.com/SEO7ODTGMx/view/page/a13f1c27d?fit_width=1">Mockup in 'Moqups' </a>
+  </li>
+  <li>
+    <a href="https://trello.com/b/ZHl4yPos/tasks">Tasks in 'Trello' </a>
+  </li>
+  <li>
+    <a href="https://lucid.app/lucidchart/invitations/accept/0bc1305f-98bf-4f87-9020-dd7d6afb4bc2">DB Schema in 'LucidChart</a>
+  </li>
 </ul>
