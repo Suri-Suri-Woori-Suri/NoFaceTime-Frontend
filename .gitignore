@@ -22,3 +22,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+*.pem
+
+# cypress
+cypress.config.json
+cypress.env.json
+serviceAccount.json
