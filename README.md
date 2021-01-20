@@ -1,4 +1,4 @@
-![image](./src/assets/TwoFaceTime.gif)
+![image](./src/assets/home.png)
 
 ## 😃 Introduction
 
@@ -255,9 +255,10 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 
 ---
 
-## 🔥 Troubleshoooting
+## 🔥
 
-21년 1월 현재, 3명 이상의 연결이 불안정한 상태입니다.
+- E2E Test는 Firebase를 이용하여 구현한 로그인 기능이 '팝업' 형태이므로 Cypress로 테스트를 더 진행시키기 어려운 상태입니다.
+- 21년 1월 현재, 3명 이상의 연결이 불안정한 상태입니다.
 
 ---
 
@@ -265,7 +266,7 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 
 - [x] Frontend Test
 - [x] Backend Test
-- [x] Cypress를 이용한 E2E Test
+- [ ] 추가 라이브러리를 사용하여 로그인 이후 로직에 대하여 E2E Test 진행
 - [ ] 다자간 영상 연결 시, stream 안정화
 
 ---
