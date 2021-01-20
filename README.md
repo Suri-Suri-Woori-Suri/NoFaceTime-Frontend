@@ -120,14 +120,14 @@ NODE_MAILER_PASSWORD=<Your Emaill Address Password>
 
 ## 🎥 Features
 
-|                                                 Feature                                                 |                          Image                          |
-| :-----------------------------------------------------------------------------------------------------: | :-----------------------------------------------------: |
-|                                     Google Login을 통해 서비스 이용                                     | <img src='./src/assets/feature-login.gif' width='300'/> |
-|                                      Group별로 초대 메일 발송 기능                                      |                                                         |
-|                                            Public Chat 기능                                             |                                                         |
-|                                           Question Chat 기능                                            |                                                         |
-|                                            ScreenShare 기능                                             |                                                         |
-| 화면의 '얼굴'을 인식해 이모티콘이 띄워지는 기능. <br>얼굴이 인식되지 않을 때는 '전체화면'에 🤖 이모티콘 | <img src='./src/assets/feature-emoji.gif' width='300'/> |
+|                                                 Feature                                                 |                          Image                           |
+| :-----------------------------------------------------------------------------------------------------: | :------------------------------------------------------: |
+|                                     Google Login을 통해 서비스 이용                                     | <img src='./src/assets/feature-login.gif' width='300'/>  |
+|                                      Group별로 초대 메일 발송 기능                                      |     <img src='./src/assets/invite.gif' width='300'/>     |
+|                                            Public Chat 기능                                             |  <img src='./src/assets/public-chat.gif' width='300' />  |
+|                                           Question Chat 기능                                            | <img src='./src/assets/question-chat.gif' width='300' /> |
+|                                            ScreenShare 기능                                             |  <img src='./src/assets/screen-share.gif' width='300'>   |
+| 화면의 '얼굴'을 인식해 이모티콘이 띄워지는 기능. <br>얼굴이 인식되지 않을 때는 '전체화면'에 🤖 이모티콘 | <img src='./src/assets/feature-emoji.gif' width='300'/>  |
 
 ---
 
@@ -319,6 +319,7 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 <li>프로젝트 기획, 'moqups'에 mockup 제작, 'Trello'에 task 작성, 'LucidChart'에 DB schema 설계</li>
 <li>'Netlify'를 통한 Frontend 배포</li>
 <li>'AWS ElasticBeanstalk'을 통한 Backend 배포</li>
+</ul>
 </ul>
 </br>
 
