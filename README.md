@@ -1,4 +1,4 @@
-![image](./src/assets/home.png)
+![image](./readmeAssets/home.png)
 
 ## 😃 Introduction
 
@@ -120,14 +120,14 @@ NODE_MAILER_PASSWORD=<Your Emaill Address Password>
 
 ## 🎥 Features
 
-|                                                                                        Feature                                                                                        |                          Image                           |
-| :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------: |
-|                                                                            Google Login을 통해 서비스 이용                                                                            | <img src='./src/assets/feature-login.gif' width='500'/>  |
-|                                                                             Group별로 초대 메일 발송 기능                                                                             |     <img src='./src/assets/invite.gif' width='500'/>     |
-|                                                                                   Public Chat 기능                                                                                    |  <img src='./src/assets/public-chat.gif' width='500' />  |
-|                                                                                  Question Chat 기능                                                                                   | <img src='./src/assets/question-chat.gif' width='500' /> |
-|                                                                                   ScreenShare 기능                                                                                    |  <img src='./src/assets/screen-share.gif' width='500'>   |
-| 화면의 '얼굴'을 인식해 이모티콘이 띄워지는 기능. <br>얼굴이 인식되지 않을 때는 '전체화면'에 🤖 이모티콘 <br> \* 21년 1월 현재, 3명 이상의 연결이 불안정하여 지원하지 않는 상태입니다. | <img src='./src/assets/feature-emoji.gif' width='500'/>  |
+|                                                                                        Feature                                                                                        |                           Image                            |
+| :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------: |
+|                                                                            Google Login을 통해 서비스 이용                                                                            |     <img src='./readmeAssets/login.gif' width='500'/>      |
+|                                                                             Group별로 초대 메일 발송 기능                                                                             |     <img src='./readmeAssets/invite.gif' width='500'/>     |
+|                                                                                   Public Chat 기능                                                                                    |  <img src='./readmeAssets/public-chat.gif' width='500' />  |
+|                                                                                  Question Chat 기능                                                                                   | <img src='./readmeAssets/question-chat.gif' width='500' /> |
+|                                                                                   ScreenShare 기능                                                                                    |  <img src='./readmeAssets/screen-share.gif' width='500'>   |
+| 화면의 '얼굴'을 인식해 이모티콘이 띄워지는 기능. <br>얼굴이 인식되지 않을 때는 '전체화면'에 🤖 이모티콘 <br> \* 21년 1월 현재, 3명 이상의 연결이 불안정하여 지원하지 않는 상태입니다. |     <img src='./readmeAssets/emoji.gif' width='500'/>      |
 
 ---
 
