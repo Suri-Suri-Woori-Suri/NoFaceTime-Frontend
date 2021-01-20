@@ -1,4 +1,4 @@
-![image](./src/assets/TwoFaceTime.gif)
+![image](./src/assets/home.png)
 
 ## 😃 Introduction
 
@@ -120,14 +120,14 @@ NODE_MAILER_PASSWORD=<Your Emaill Address Password>
 
 ## 🎥 Features
 
-|                                                 Feature                                                 |                          Image                           |
-| :-----------------------------------------------------------------------------------------------------: | :------------------------------------------------------: |
-|                                     Google Login을 통해 서비스 이용                                     | <img src='./src/assets/feature-login.gif' width='500'/>  |
-|                                      Group별로 초대 메일 발송 기능                                      |     <img src='./src/assets/invite.gif' width='500'/>     |
-|                                            Public Chat 기능                                             |  <img src='./src/assets/public-chat.gif' width='500' />  |
-|                                           Question Chat 기능                                            | <img src='./src/assets/question-chat.gif' width='500' /> |
-|                                            ScreenShare 기능                                             |  <img src='./src/assets/screen-share.gif' width='500'>   |
-| 화면의 '얼굴'을 인식해 이모티콘이 띄워지는 기능. <br>얼굴이 인식되지 않을 때는 '전체화면'에 🤖 이모티콘 | <img src='./src/assets/feature-emoji.gif' width='500'/>  |
+|                                                                                        Feature                                                                                        |                          Image                           |
+| :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------: |
+|                                                                            Google Login을 통해 서비스 이용                                                                            | <img src='./src/assets/feature-login.gif' width='500'/>  |
+|                                                                             Group별로 초대 메일 발송 기능                                                                             |     <img src='./src/assets/invite.gif' width='500'/>     |
+|                                                                                   Public Chat 기능                                                                                    |  <img src='./src/assets/public-chat.gif' width='500' />  |
+|                                                                                  Question Chat 기능                                                                                   | <img src='./src/assets/question-chat.gif' width='500' /> |
+|                                                                                   ScreenShare 기능                                                                                    |  <img src='./src/assets/screen-share.gif' width='500'>   |
+| 화면의 '얼굴'을 인식해 이모티콘이 띄워지는 기능. <br>얼굴이 인식되지 않을 때는 '전체화면'에 🤖 이모티콘 <br> \* 21년 1월 현재, 3명 이상의 연결이 불안정하여 지원하지 않는 상태입니다. | <img src='./src/assets/feature-emoji.gif' width='500'/>  |
 
 ---
 
@@ -255,9 +255,8 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 
 ---
 
-## 🔥 Troubleshoooting
-
-21년 1월 현재, 3명 이상의 연결이 불안정한 상태입니다.
+- E2E Test는 Firebase를 이용하여 구현한 로그인 기능이 '팝업' 형태이므로 Cypress로 테스트를 더 진행시키기 어려운 상태입니다.
+- 21년 1월 현재, 3명 이상의 연결이 불안정한 상태입니다.
 
 ---
 
@@ -265,8 +264,8 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 
 - [x] Frontend Test
 - [x] Backend Test
-- [x] Cypress를 이용한 E2E Test
-- [ ] 다자간 영상 연결 시, stream 안정화
+- [ ] E2E Test는 Firebase를 이용하여 구현한 로그인 기능이 '팝업' 형태이므로 Cypress로 테스트를 더 진행시키기 어려운 상태입니다. <br>추가 라이브러리를 사용하여 로그인 이후 로직에 대하여 E2E Test 진행 예정에 있습니다.
+- [ ] 3명 이상 연결 시, stream이 불안정한 상태입니다. <br> 연결 상태 안정화 진행 예정에 있습니다.
 
 ---
 
