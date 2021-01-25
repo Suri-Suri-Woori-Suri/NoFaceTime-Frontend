@@ -144,7 +144,8 @@ NODE_MAILER_PASSWORD=<Your Emaill Address Password>
     <li>AWS S3 for image files like logo and emojis</li>
     <li>Web RTC for real time communication</li>
     <li>Socket.io</li>
-    <li>Simple-peer.js for detection face
+    <li>Simple-peer.js </li>
+    <li>Face-api.js for detecting and analyzing face</li>
     <li>Jest for unit-test</li>
     <li>Enzyme for component-test</li>
     <li>Testing-library/react </li>
