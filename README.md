@@ -300,8 +300,11 @@ Two Face Time은 얼굴이 그대로 노출되는 화상수업과 회의가 부�
 <ul>
 <li>[Back] Express를 활용한 Backend 초기 세팅</li>
 <li>[Back] Database로 이용한 MongoDB 연결 및 초기 세팅</li>
+<li>[Back] 로그인 요청에 대해 응답하는 백엔드 로직 </li>
 <li>[Front] Room 생성 및 Video Setting 시 필요한 Modal 구현 </li>
-<li>[Front] Group List, Member List 생성 및 삭제 등의 관리 기능 구현 </li>
+<li>[Front] 화면 공유 기능 </li>
+<li>[Front] 스피커 mute 기능 </li> 
+<li>[Front, Back] Group List, Member List 생성 및 삭제 등의 관리 기능 구현 </li>
 <li>[Front, Back] openSSL을 이용한 https로의 접근 해결</li>
 <li>[Front, Back] <b>실시간 채팅을 위한 socket 로직 담당</b></li>
 <li>[Front, Back] Socket.io를 활용한 Public Chat, Question Chat 기능 구현</li>
